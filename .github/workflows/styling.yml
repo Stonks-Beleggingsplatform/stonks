@@ -6,13 +6,13 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   styling:
     runs-on: ubuntu-latest
 
-    name: Code Style Check
+    name: Laravel Pint
 
     steps:
       - name: Checkout code
@@ -27,5 +27,12 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Run styling checks
-        run: composer run-script style-check
+      - name: Run Laravel Pint
+        run: ./vendor/bin/pint
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: apply Laravel Pint fixes"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
