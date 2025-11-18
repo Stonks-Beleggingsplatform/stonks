@@ -1,0 +1,32 @@
+---
+services:
+  app:
+    image: 'stonksdev/laravel'
+    restart: unless-stopped
+    build:
+      context: .
+      args:
+        IMAGE: 'development'
+    volumes:
+      - './storage:/app/storage'
+      - './:/app/files'
+
+  pgsql:
+    image: 'postgres:latest'
+    restart: unless-stopped
+    environment:
+        POSTGRES_DB: '${DB_DATABASE}'
+        POSTGRES_USER: '${DB_USERNAME}'
+        POSTGRES_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - 'pgsql:/var/lib/postgresql/data'
+
+  redis:
+    image: 'redis:latest'
+    restart: unless-stopped
+    volumes:
+      - 'redis:/data'
+
+volumes:
+  redis:
+  pgsql:
