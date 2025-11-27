@@ -2,48 +2,44 @@ name: Tests
 
 on:
   push:
-
-permissions:
-  contents: read
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
-      matrix:
-        php: [8.3]
-
-    name: PHP ${{ matrix.php }}
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@2.36.0
         with:
-          node-version: '18'
-
-      - name: Install Node.js dependencies
-        run: npm install
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          php-version: '8.3'
+          extensions: mbstring, intl, xml, curl, json
           coverage: none
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Copy environment file
-        run: cp .env.example .env
+      - name: Install Dependencies
+        run: |
+          composer install --no-interaction --no-progress --ansi
+          npm install
 
-      - name: Generate app key
-        run: php artisan key:generate
-
-      - name: Execute tests
-        run: php artisan test
+      - name: Build NPM Assets
+        run: |
+          npm run build
+          
+      - name: Initialize Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          
+      - name: Run Tests
+        run: |
+          php artisan test
