@@ -60,7 +60,7 @@ jobs:
         run: php artisan migrate --env=testing --force
 
       - name: Run tests
-        run: vendor/bin/phpunit --colors=always --verbose
+        run: php artisan test
         env:
           APP_ENV: testing
           APP_DEBUG: 1
