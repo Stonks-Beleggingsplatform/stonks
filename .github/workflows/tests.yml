@@ -2,48 +2,65 @@ name: Tests
 
 on:
   push:
-
-permissions:
-  contents: read
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
-      matrix:
-        php: [8.3]
-
-    name: PHP ${{ matrix.php }}
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, xml, curl, json
+          coverage: none
+
+      - name: Cache Composer deps
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
-      - name: Install Node.js dependencies
-        run: npm install
+      - name: Install Node dependencies
+        run: |
+          npm ci
+          
+      - name: Build frontend assets (Vite)
+        run: |
+          npm run build
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
-          coverage: none
+      - name: Verify Vite manifest exists
+        run: |
+          if [ ! -f public/build/manifest.json ]; then
+            echo "Error: Vite manifest not found at public/build/manifest.json"
+            echo "Listing public directory:"
+            ls -la public || true
+            echo "Listing public/build directory:"
+            ls -la public/build || true
+            exit 1
+          fi
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Run database migrations
+        run: php artisan migrate --env=testing --force
 
-      - name: Copy environment file
-        run: cp .env.example .env
-
-      - name: Generate app key
-        run: php artisan key:generate
-
-      - name: Execute tests
-        run: php artisan test
+      - name: Run tests
+        run: vendor/bin/phpunit --colors=always --verbose
+        env:
+          APP_ENV: testing
+          APP_DEBUG: 1
