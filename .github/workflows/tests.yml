@@ -55,6 +55,8 @@ jobs:
             ls -la public/build || true
             exit 1
           fi
+      - name: Create .env
+        run: cp .env.example .env
 
       - name: Create Application key
         run: php artisan key:generate
