@@ -12,7 +12,7 @@ services:
       - './:/app/files'
 
   pgsql:
-    image: 'postgres:latest'
+    image: 'postgres:16'
     restart: unless-stopped
     environment:
         POSTGRES_DB: '${DB_DATABASE}'
