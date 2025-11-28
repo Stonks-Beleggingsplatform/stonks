@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 abstract class Securityable extends Model
 {
+    protected $guarded = ['id'];
+
     protected $with = ['security'];
 
     public function security(): MorphOne
