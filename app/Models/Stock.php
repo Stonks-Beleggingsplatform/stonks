@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Stock extends Securityable
 {
     use HasFactory;
+
+    protected $guarded = ['id'];
 }
