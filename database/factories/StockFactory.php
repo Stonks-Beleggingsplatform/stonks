@@ -2,22 +2,13 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Stock>
- */
-class StockFactory extends Factory
+class StockFactory extends SecurityFactory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'pe_ratio' => $this->faker->randomFloat(2, 5, 30),
+            'dividend_yield' => $this->faker->randomFloat(2, 0, 10),
         ];
     }
 }

@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Security extends Model
 {
-    protected $guarded = [];
+    protected $guarded = ['id'];
+
     public function securityable(): MorphTo
     {
         return $this->morphTo();
