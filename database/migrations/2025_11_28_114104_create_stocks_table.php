@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->integer('pe_ratio', 10)->nullable();
-            $table->integer('dividend_yield', 5)->nullable();
+            $table->integer('pe_ratio')->nullable();
+            $table->integer('dividend_yield')->nullable();
             $table->timestamps();
         });
     }

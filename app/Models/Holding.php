@@ -7,14 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Holding extends Model
 {
-    protected $fillable = [
-        'portfolio_id',
-        'security_id',
-        'quantity',
-        'purchase_price',
-        'avg_price',
-        'gain_loss',
-    ];
+    protected $guarded = ['id'];
 
     public function portfolio()
     {
