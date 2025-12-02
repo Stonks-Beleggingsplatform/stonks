@@ -1,7 +1,7 @@
 ARG IMAGE='production'
 
 # ---- BASE IMAGE ---- #
-FROM ghcr.io/sitepilot/php-nginx:8.3-1.x AS base
+FROM ghcr.io/sitepilot/php-nginx:8.4-1.x AS base
 
 USER root
 
@@ -15,7 +15,7 @@ FROM base AS development
 
 USER root
 
-RUN apt-get update && apt-get install -y php8.3-pgsql
+RUN apt-get update && apt-get install -y php8.4-pgsql
 
 RUN curl -fsSL https://nodejs.org/dist/v18.20.2/node-v18.20.2-linux-x64.tar.xz \
     | tar -xJ -C /usr/local --strip-components=1 \
