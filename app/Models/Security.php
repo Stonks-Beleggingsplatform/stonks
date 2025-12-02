@@ -13,4 +13,10 @@ class Security extends Model
     {
         return $this->morphTo();
     }
+
+    public function watchlists()
+    {
+        return $this->belongsToMany(Watchlist::class, 'watchlist_security')
+            ->withTimestamps();
+    }
 }
