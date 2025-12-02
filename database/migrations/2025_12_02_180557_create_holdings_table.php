@@ -17,10 +17,10 @@ return new class extends Migration
         $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
         $table->foreignId('security_id')->constrained()->onDelete('cascade');
 
-        $table->decimal('quantity', 15, 4);
-        $table->decimal('purchase_price', 15, 4)->nullable();
-        $table->decimal('avg_price', 15, 4)->nullable();
-        $table->decimal('gain_loss', 15, 4)->nullable();
+        $table->integer('quantity', 15, 4);
+        $table->integer('purchase_price', 15, 4)->nullable();
+        $table->integer('avg_price', 15, 4)->nullable();
+        $table->integer('gain_loss', 15, 4)->nullable();
 
         $table->timestamps();
 

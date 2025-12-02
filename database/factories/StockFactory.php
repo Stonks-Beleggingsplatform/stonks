@@ -7,8 +7,8 @@ class StockFactory extends SecurityFactory
     public function definition(): array
     {
         return [
-            'pe_ratio' => $this->faker->randomFloat(2, 5, 30),
-            'dividend_yield' => $this->faker->randomFloat(2, 0, 10),
+            'pe_ratio' => $this->faker->numberBetween(5, 30),
+            'dividend_yield' => $this->faker->numberBetween(0, 10),
         ];
     }
 }

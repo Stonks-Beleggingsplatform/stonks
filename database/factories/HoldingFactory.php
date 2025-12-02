@@ -10,8 +10,8 @@ class HoldingFactory extends Factory
 {
     public function definition(): array
     {
-       $purchasePrice = $this->faker->randomFloat(4, 10, 500);
-        $avgPrice = $this->faker->randomFloat(4, 10, 500);
+       $purchasePrice = $this->faker->numberBetween(10, 500);
+        $avgPrice = $this->faker->numberBetween(10, 500);
         $quantity = $this->faker->numberBetween(1, 500);
 
         return [

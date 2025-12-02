@@ -15,9 +15,9 @@ return new class extends Migration
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-        $table->decimal('cash', 15, 2)->default(0);
-        $table->decimal('total_value', 15, 2)->default(0);
-        $table->decimal('total_return', 15, 2)->default(0);
+        $table->integer('cash', 15, 2)->default(0);
+        $table->integer('total_value', 15, 2)->default(0);
+        $table->integer('total_return', 15, 2)->default(0);
 
         $table->timestamps();
     });

@@ -11,9 +11,9 @@ class PortfolioFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'cash' => $this->faker->randomFloat(2, 0, 10000),
-            'total_value' => $this->faker->randomFloat(2, 0, 100000),
-            'total_return' => $this->faker->randomFloat(2, -5000, 20000),
+            'cash' => $this->faker->numberBetween(0, 10000),
+            'total_value' => $this->faker->numberBetween(0, 100000),
+            'total_return' => $this->faker->numberBetween(-5000, 20000),
         ];
     }
 }
