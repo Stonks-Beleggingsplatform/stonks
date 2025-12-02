@@ -25,8 +25,7 @@ abstract class Securityable extends Model
             return $attribute;
         }
 
-
-        //If the securityable does not have the attribute, check the related security model
+        // If the securityable does not have the attribute, check the related security model
         $this->loadMissing('security');
 
         if ($this->relationLoaded('security') && $this->security) {
