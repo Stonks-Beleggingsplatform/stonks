@@ -15,6 +15,8 @@ FROM base AS development
 
 USER root
 
+RUN apt-get update && apt-get install -y php8.3-pgsql
+
 RUN curl -fsSL https://nodejs.org/dist/v18.20.2/node-v18.20.2-linux-x64.tar.xz \
     | tar -xJ -C /usr/local --strip-components=1 \
     && ln -s /usr/local/bin/node /usr/bin/node \
