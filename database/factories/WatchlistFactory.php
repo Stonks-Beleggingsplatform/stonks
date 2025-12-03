@@ -11,7 +11,7 @@ class WatchlistFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'ticker' => strtoupper($this->faker->lexify('???')),
+            'name' => $this->faker->words(3, true),
         ];
     }
 }
