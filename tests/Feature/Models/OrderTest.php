@@ -5,9 +5,8 @@ use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use App\Models\Order;
 use App\Models\Portfolio;
-use Carbon\CarbonInterface;
-use Illuminate\Support\Carbon;
 use App\Models\Security;
+use Carbon\CarbonInterface;
 
 beforeEach(function () {
     $this->order = Order::factory()->create();
