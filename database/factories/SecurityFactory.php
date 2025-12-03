@@ -13,7 +13,7 @@ abstract class SecurityFactory extends Factory
             $securityable->security()->create([
                 'name' => $this->faker->company(),
                 'ticker' => $this->faker->unique()->regexify('[A-Z]{3,5}'),
-                'price' => $this->faker->randomFloat(2, 10, 500),
+                'price' => $this->faker->numberBetween(10, 500),
             ]);
         });
     }

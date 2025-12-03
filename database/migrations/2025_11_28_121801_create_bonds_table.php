@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('bonds', function (Blueprint $table) {
             $table->id();
-            $table->decimal('nominal_value', 15);
-            $table->decimal('coupon_rate', 5);
+            $table->bigInteger('nominal_value');
+            $table->integer('coupon_rate');
             $table->date('maturity_date');
             $table->timestamps();
         });
