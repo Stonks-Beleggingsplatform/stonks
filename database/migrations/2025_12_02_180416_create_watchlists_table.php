@@ -10,18 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::create('watchlists', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        
-        $table->string('ticker');
-        
-        $table->timestamps();
+    {
+        Schema::create('watchlists', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-        $table->unique(['user_id', 'ticker']);
-    });
-}
+            $table->string('ticker');
+
+            $table->timestamps();
+
+            $table->unique(['user_id', 'ticker']);
+        });
+    }
 
     /**
      * Reverse the migrations.

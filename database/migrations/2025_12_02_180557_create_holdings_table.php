@@ -10,23 +10,23 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::create('holdings', function (Blueprint $table) {
-        $table->id();
+    {
+        Schema::create('holdings', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
-        $table->foreignId('security_id')->constrained()->onDelete('cascade');
+            $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
+            $table->foreignId('security_id')->constrained()->onDelete('cascade');
 
-        $table->integer('quantity');
-        $table->integer('purchase_price')->nullable();
-        $table->integer('avg_price')->nullable();
-        $table->integer('gain_loss')->nullable();
+            $table->integer('quantity');
+            $table->integer('purchase_price')->nullable();
+            $table->integer('avg_price')->nullable();
+            $table->integer('gain_loss')->nullable();
 
-        $table->timestamps();
+            $table->timestamps();
 
-        $table->unique(['portfolio_id', 'security_id']);
-    });
-}
+            $table->unique(['portfolio_id', 'security_id']);
+        });
+    }
 
     /**
      * Reverse the migrations.

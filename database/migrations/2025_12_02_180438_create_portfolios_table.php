@@ -10,18 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::create('portfolios', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    {
+        Schema::create('portfolios', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-        $table->integer('cash')->default(0);
-        $table->integer('total_value')->default(0);
-        $table->integer('total_return')->default(0);
+            $table->integer('cash')->default(0);
+            $table->integer('total_value')->default(0);
+            $table->integer('total_return')->default(0);
 
-        $table->timestamps();
-    });
-}
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

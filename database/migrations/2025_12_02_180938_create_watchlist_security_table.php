@@ -9,20 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::create('watchlist_security', function (Blueprint $table) {
-        $table->id();
+    public function up()
+    {
+        Schema::create('watchlist_security', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('watchlist_id')->constrained()->onDelete('cascade');
-        $table->foreignId('security_id')->constrained()->onDelete('cascade');
+            $table->foreignId('watchlist_id')->constrained()->onDelete('cascade');
+            $table->foreignId('security_id')->constrained()->onDelete('cascade');
 
-        $table->timestamps();
+            $table->timestamps();
 
-        $table->unique(['watchlist_id', 'security_id']);
-    });
-}
-
+            $table->unique(['watchlist_id', 'security_id']);
+        });
+    }
 
     /**
      * Reverse the migrations.
