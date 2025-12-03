@@ -15,7 +15,7 @@ test('stock attributes', function () {
         ->and($this->stock->dividend_yield)->toBeLessThanOrEqual(10);
 });
 
-test('stock security relationship', function () {
+test('stock relationships', function () {
     expect($this->stock->security)->not->toBeNull()
         ->and($this->stock->security)->toBeInstanceOf(Security::class);
 });
