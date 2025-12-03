@@ -9,17 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('watchlists', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-            $table->string('ticker');
+            $table->string('name');
 
             $table->timestamps();
-
-            $table->unique(['user_id', 'ticker']);
         });
     }
 
