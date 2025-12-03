@@ -13,7 +13,6 @@ test('user attributes', function () {
 });
 
 test('user relationships', function () {
-    //No relationships to test currently
+    // No relationships to test currently
     expect(true)->toBeTrue();
 });
-

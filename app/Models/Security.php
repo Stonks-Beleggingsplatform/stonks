@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Security extends Model
 {
     use HasFactory;
+
     protected $guarded = ['id'];
 
     public function securityable(): MorphTo

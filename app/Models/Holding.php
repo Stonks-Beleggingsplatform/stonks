@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Holding extends Model
 {
     use HasFactory;
+
     protected $guarded = ['id'];
 
     public function portfolio(): BelongsTo
