@@ -1,17 +1,31 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../lib/axios';
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
+    const location = useLocation(); // the current slug or location of the page
 
-    useEffect(() => {
-        axios.get('/api/user').then(response => {
-            setUser(response.data);
-        }).catch(() => {
-            // User not logged in
+    const handleLogout = () => {
+        api.post('/logout').then(() => {
+            setUser(null);
+            localStorage.removeItem('isAuth');
         });
-    }, []);
+    };
+
+    // fetch user data on mount and when location changes
+    useEffect(() => {
+        const isAuth = localStorage.getItem('isAuth') === 'true';
+
+        if (isAuth) {
+            api.get('/user').then(response => {
+                setUser(response.data);
+            }).catch(() => {
+                setUser(null);
+                localStorage.removeItem('isAuth');
+            });
+        }
+    }, [location.pathname]);
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -32,12 +46,28 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium text-gray-600 hidden sm:block">
-                        {user ? `Hello, ${user.name}` : 'Guest'}
-                    </span>
-                    <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                        Deposit
-                    </button>
+                    {user ? (
+                        <>
+                            <span className="text-sm font-medium text-gray-600 hidden sm:block">
+                                Hello, {user.name}
+                            </span>
+                            <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                                Logout
+                            </button>
+                            <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                Deposit
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                                Login
+                            </Link>
+                            <Link to="/register" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                Register
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>
