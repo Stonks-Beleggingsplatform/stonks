@@ -7,6 +7,7 @@ use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -20,4 +21,14 @@ class Order extends Model
         'status' => OrderStatus::class,
         'end_date' => 'immutable_date',
     ];
+
+    public function portfolio(): BelongsTo
+    {
+        return $this->belongsTo(Portfolio::class);
+    }
+
+    public function security(): BelongsTo
+    {
+        return $this->belongsTo(Security::class);
+    }
 }
