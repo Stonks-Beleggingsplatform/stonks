@@ -19,7 +19,6 @@ class OrderFactory extends Factory
             Bond::class,
         ]);
 
-
         return [
             'quantity' => $this->faker->numberBetween(1, 100),
             'price' => $this->faker->numberBetween(10, 1000),
