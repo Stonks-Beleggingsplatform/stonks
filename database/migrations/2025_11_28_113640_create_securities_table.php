@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('ticker')->unique();
             $table->string('name');
-            $table->decimal('price', 15);
+            $table->integer('price');
             $table->morphs('securityable');
             $table->timestamps();
         });
