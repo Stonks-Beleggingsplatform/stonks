@@ -1,31 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import api from '../lib/axios';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-    const [user, setUser] = useState(null);
+    const { user, logout } = useAuth();
     const location = useLocation(); // the current slug or location of the page
 
     const handleLogout = () => {
-        api.post('/logout').then(() => {
-            setUser(null);
-            localStorage.removeItem('isAuth');
-        });
+        logout();
     };
-
-    // fetch user data on mount and when location changes
-    useEffect(() => {
-        const isAuth = localStorage.getItem('isAuth') === 'true';
-
-        if (isAuth) {
-            api.get('/user').then(response => {
-                setUser(response.data);
-            }).catch(() => {
-                setUser(null);
-                localStorage.removeItem('isAuth');
-            });
-        }
-    }, [location.pathname]);
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">

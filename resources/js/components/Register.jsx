@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import api from '../lib/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
+    const { register } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -33,13 +34,7 @@ export default function Register() {
         setErrors({});
 
         try {
-            // csrf
-            await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
-
-            // register on success, along with a cookie
-            const response = await api.post('/register', formData);
-            localStorage.setItem('isAuth', 'true');
-
+            await register(formData);
             navigate('/');
         } catch (error) {
             if (error.response && error.response.status === 422) {
