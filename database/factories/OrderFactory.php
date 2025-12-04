@@ -5,10 +5,10 @@ namespace Database\Factories;
 use App\Enums\OrderAction;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
-use App\Models\Portfolio;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Bond;
+use App\Models\Portfolio;
 use App\Models\Stock;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderFactory extends Factory
 {

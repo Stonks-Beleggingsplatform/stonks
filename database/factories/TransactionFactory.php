@@ -6,7 +6,6 @@ use App\Enums\TransactionType;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-
 class TransactionFactory extends Factory
 {
     public function definition(): array
