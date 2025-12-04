@@ -6,23 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('securities', function (Blueprint $table) {
+        Schema::create('fees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exchange_id')->constrained()->onDelete('cascade');
-            
-            $table->string('ticker')->unique();
-            $table->string('name');
-            $table->integer('price');
+            $table->foreignId('transaction_id')->constrained()->onDelete('cascade');
 
-            $table->morphs('securityable');
+            $table->integer('amount');
+
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('securities');
+        Schema::dropIfExists('fees');
     }
 };
