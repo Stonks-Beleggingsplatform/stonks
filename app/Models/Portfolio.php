@@ -23,9 +23,8 @@ class Portfolio extends Model
         return $this->hasMany(Holding::class);
     }
 
-    // Order does not exist yet
-    // public function orders(): HasMany
-    // {
-    //     return $this->hasMany(Order::class);
-    // }
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }

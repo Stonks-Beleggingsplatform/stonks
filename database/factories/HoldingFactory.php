@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Bond;
+use App\Models\Exchange;
 use App\Models\Portfolio;
 use App\Models\Security;
 use App\Models\Stock;
@@ -20,6 +21,7 @@ class HoldingFactory extends Factory
 
         $security = Security::create([
             'name' => $this->faker->company(),
+            'exchange_id' => Exchange::factory()->create()->id,
             'ticker' => $this->faker->unique()->regexify('[A-Z]{3,5}'),
             'price' => $this->faker->numberBetween(10, 500),
             'securityable_type' => $securityType,
