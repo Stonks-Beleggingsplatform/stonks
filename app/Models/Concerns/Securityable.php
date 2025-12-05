@@ -17,6 +17,11 @@ abstract class Securityable extends Model
         return $this->morphOne(Security::class, 'securityable');
     }
 
+    public function getType(): string
+    {
+        return class_basename($this);
+    }
+
     public function getAttribute($key)
     {
         $attribute = parent::getAttribute($key);
