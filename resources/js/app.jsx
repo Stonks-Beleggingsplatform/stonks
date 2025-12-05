@@ -5,6 +5,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 
+import Register from './components/Register';
+import Login from './components/Login';
+import { AuthProvider } from './context/AuthContext';
+
 function Portfolio() {
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -16,17 +20,21 @@ function Portfolio() {
 
 function App() {
     return (
-        <BrowserRouter>
-            <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
-                <Navbar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/portfolio" element={<Portfolio />} />
-                    {/* Add a 404 for React here */}
-                    <Route path="*" element={<div className="p-8 text-center"><h1>404 - Not Found</h1></div>} />
-                </Routes>
-            </div>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+                    <Navbar />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/portfolio" element={<Portfolio />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
+                        {/* Add a 404 for React here */}
+                        <Route path="*" element={<div className="p-8 text-center"><h1>404 - Not Found</h1></div>} />
+                    </Routes>
+                </div>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 
