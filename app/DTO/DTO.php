@@ -4,9 +4,8 @@ namespace App\DTO;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
-use Spatie\DataTransferObject\DataTransferObject;
 
-abstract class DTO extends DataTransferObject implements JsonSerializable, Arrayable
+abstract class DTO implements JsonSerializable, Arrayable
 {
     public function toArray(): array
     {
@@ -37,3 +36,4 @@ abstract class DTO extends DataTransferObject implements JsonSerializable, Array
         return $dto;
     }
 }
+
