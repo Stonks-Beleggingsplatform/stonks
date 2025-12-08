@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('securities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exchange_id')->constrained()->onDelete('cascade');
-            
+
             $table->string('ticker')->unique();
             $table->string('name');
             $table->integer('price');

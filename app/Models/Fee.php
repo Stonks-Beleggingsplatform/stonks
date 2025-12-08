@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Transaction;
 
 class Fee extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
-       
+
     protected $casts = [
         'amount' => 'integer',
         'exchange_id' => 'integer',

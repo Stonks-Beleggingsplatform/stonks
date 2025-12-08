@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Exchange;
 use App\Models\Transaction;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FeeFactory extends Factory
 {

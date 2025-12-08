@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Fee;
 use App\Models\Exchange;
+use App\Models\Fee;
 use App\Models\Transaction;
 
 beforeEach(function () {
