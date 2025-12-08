@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\Exchange;
 use App\Models\Security;
 use App\Models\Stock;
 
 beforeEach(function () {
     $this->security = Security::create([
         'ticker' => 'ASML',
+        'exchange_id' => Exchange::factory()->create()->id,
         'name' => 'ASML Holding N.V.',
         'price' => 1000,
         'securityable_type' => Stock::class,
