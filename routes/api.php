@@ -1,12 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function () {
+        return auth()->user();
+    });
 
-Route::get('/user', function () {
-    return response()->json(['name' => 'Jan Stonks', 'role' => 'Admin']);
+    Route::controller(PortfolioController::class)->group(function () {
+        Route::get('/portfolio', 'show')->name('portfolio.show');
+    });
 });
