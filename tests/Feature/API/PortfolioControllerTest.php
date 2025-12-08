@@ -16,5 +16,5 @@ test('show', function () {
     $response = $this->getJson(route('portfolio.show'));
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toBe(PortfolioDTO::fromModel($this->portfolio)->toArray());
+        ->and($response->json())->toBe(PortfolioDTO::make($this->portfolio)->toArray());
 });

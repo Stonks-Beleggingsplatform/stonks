@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+/** @typescript */
 class HoldingDTO extends DTO
 {
     public int $id;
@@ -11,9 +12,9 @@ class HoldingDTO extends DTO
     public float $avg_price;
     public float $gain_loss;
 
-    public static function fromModel(object $model): HoldingDTO
+    public static function make(object $model): HoldingDTO
     {
-        $base = parent::fromModel($model);
+        $base = parent::make($model);
 
         $base->ticker = $model->security->ticker;
 

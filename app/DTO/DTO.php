@@ -2,19 +2,23 @@
 
 namespace App\DTO;
 
+use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
+use Spatie\DataTransferObject\DataTransferObject;
 
-abstract class DTO implements JsonSerializable
+abstract class DTO extends DataTransferObject implements JsonSerializable, Arrayable
 {
     public function toArray(): array
     {
         return get_object_vars($this);
     }
+
     public function jsonSerialize(): array
     {
         return $this->toArray();
     }
-    public static function fromModel(object $model): DTO
+
+    public static function make(object $model): DTO
     {
         $dto = new static();
 
