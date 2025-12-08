@@ -9,8 +9,11 @@ use App\Models\Portfolio;
 class PortfolioDTO extends DTO
 {
     public int $id;
+
     public float $cash;
+
     public float $total_value;
+
     public float $total_return;
 
     public array $holdings;
@@ -22,7 +25,7 @@ class PortfolioDTO extends DTO
 
         $model->loadMissing('holdings', 'holdings.security');
 
-        $base->holdings = $model->holdings->map(fn(Holding $holding) => HoldingDTO::make($holding))->toArray();
+        $base->holdings = $model->holdings->map(fn (Holding $holding) => HoldingDTO::fromModel($holding))->toArray();
 
         return $base;
     }
