@@ -20,4 +20,3 @@ test('currency relationships', function () {
 
     expect($this->currency->portfolios)->each->toBeInstanceOf(Portfolio::class);
 });
-});

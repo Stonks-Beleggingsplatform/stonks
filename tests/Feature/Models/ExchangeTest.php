@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Exchange;
 use App\Models\Currency;
+use App\Models\Exchange;
 use App\Models\Fee;
 use App\Models\Security;
 
@@ -16,13 +16,7 @@ test('exchange attributes', function () {
 });
 
 test('exchange relationships', function () {
-    expect($this->exchange->currency)->toBeInstanceOf(Currency::class);
-
-    $this->exchange->fees->each(function ($fee) {
-        expect($fee)->toBeInstanceOf(Fee::class);
-    });
-
-    $this->exchange->securities->each(function ($security) {
-        expect($security)->toBeInstanceOf(Security::class);
-    });
+    expect($this->exchange->currency)->toBeInstanceOf(Currency::class)
+        ->and($this->exchange->fees)->each->toBeInstanceOf(Fee::class)
+        ->and($this->exchange->securities)->each->toBeInstanceOf(Security::class);
 });
