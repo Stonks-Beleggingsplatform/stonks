@@ -19,13 +19,14 @@ abstract class DTO implements JsonSerializable, Arrayable
 
     public static function make(object $model): DTO
     {
-        $dto = new static();
+        $dto = new static;
 
         foreach (get_object_vars($dto) as $property => $value) {
             if (property_exists($model, $property)) {
-                //if the property is an int on the model, but a float on the dto, convert cents to currency
+                // if the property is an int on the model, but a float on the dto, convert cents to currency
                 if (is_int($model->$property) && is_float($dto->$property)) {
-                    $dto->$property = (float)$model->$property / 100;
+                    $dto->$property = (float) $model->$property / 100;
+
                     continue;
                 }
 
