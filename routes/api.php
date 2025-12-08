@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function () {
-        return auth()->user();
+        return Auth()->user();
     });
 
     Route::controller(PortfolioController::class)->group(function () {
