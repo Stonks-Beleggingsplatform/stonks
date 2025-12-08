@@ -11,6 +11,7 @@ class Crypto extends Securityable
     use HasFactory;
 
     protected $guarded = ['id'];
+
     protected $casts = [
         'type' => CryptoType::class,
     ];
