@@ -18,7 +18,6 @@ test('currency relationships', function () {
     $exchange = Exchange::factory()->create(['currency_id' => $this->currency->id]);
     $portfolio = Portfolio::factory()->create(['currency_id' => $this->currency->id]);
 
-    $this->currency->portfolios->each(function ($portfolio) {
-    expect($portfolio)->toBeInstanceOf(Portfolio::class);
+    expect($this->currency->portfolios)->each->toBeInstanceOf(Portfolio::class);
 });
 });
