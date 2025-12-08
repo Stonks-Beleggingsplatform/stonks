@@ -9,16 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('portfolios', function (Blueprint $table) {
+        Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('currency_id')->constrained()->onDelete('cascade');
 
-            $table->integer('cash')->default(0);
-            $table->integer('total_value')->default(0);
-            $table->integer('total_return')->default(0);
+            $table->string('name')->unique();
 
             $table->timestamps();
         });
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolios');
+        Schema::dropIfExists('exchanges');
     }
 };
