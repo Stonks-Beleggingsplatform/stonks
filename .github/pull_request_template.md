@@ -8,3 +8,4 @@ Vink de onderstaande punten af om te bevestigen dat de code voldoet aan de kwali
 - [ ] De functionaliteit voldoet aan de eisen in de gekoppelde Issue
 - [ ] Er is geen onnodig commentaar of 'dead code' achtergebleven
 - [ ] Migraties en database-wijzigingen zijn getest
+- [ ] Bij aanpassingen aan DTO's of enums zijn alle referenties bijgewerkt `php artisan typescript:transform`

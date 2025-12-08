@@ -38,7 +38,8 @@ function App() {
     );
 }
 
-if (document.getElementById('app')) {
-    const root = ReactDOM.createRoot(document.getElementById('app'));
+const appElement = document.getElementById('app');
+if (appElement) {
+    const root = ReactDOM.createRoot(appElement);
     root.render(<App />);
 }

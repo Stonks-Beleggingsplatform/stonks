@@ -5,6 +5,7 @@ namespace App\DTO;
 use App\Models\Holding;
 use App\Models\Portfolio;
 
+/** @typescript */
 class PortfolioDTO extends DTO
 {
     public int $id;
@@ -17,10 +18,10 @@ class PortfolioDTO extends DTO
 
     public array $holdings;
 
-    public static function fromModel(object $model): PortfolioDTO
+    public static function make(object $model): PortfolioDTO
     {
         /* @var Portfolio $model */
-        $base = parent::fromModel($model);
+        $base = parent::make($model);
 
         $model->loadMissing('holdings', 'holdings.security');
 

@@ -2,9 +2,10 @@
 
 namespace App\DTO;
 
+use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
-abstract class DTO implements JsonSerializable
+abstract class DTO implements JsonSerializable, Arrayable
 {
     public function toArray(): array
     {
@@ -16,7 +17,7 @@ abstract class DTO implements JsonSerializable
         return $this->toArray();
     }
 
-    public static function fromModel(object $model): DTO
+    public static function make(object $model): DTO
     {
         $dto = new static;
 
@@ -36,3 +37,4 @@ abstract class DTO implements JsonSerializable
         return $dto;
     }
 }
+

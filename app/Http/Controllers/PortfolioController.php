@@ -9,7 +9,7 @@ class PortfolioController extends Controller
 {
     public function show(): PortfolioDTO
     {
-        return PortfolioDTO::fromModel(
+        return PortfolioDTO::make(
             Portfolio::where('user_id', auth()->id())->firstOrFail()
         );
     }
