@@ -16,7 +16,19 @@ abstract class DTO implements Arrayable, JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        $base = $this->toArray();
+
+        foreach ($base as $key => $value) {
+            if ($value instanceof DTO) {
+                $base[$key] = $value->jsonSerialize();
+            } elseif ($value instanceof Collection) {
+                $base[$key] = $value->map(function ($item) {
+                    return $item instanceof DTO ? $item->jsonSerialize() : $item;
+                })->toArray();
+            }
+        }
+
+        return $base;
     }
 
     public static function make(object $model): DTO

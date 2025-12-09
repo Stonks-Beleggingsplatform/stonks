@@ -19,7 +19,7 @@ class WatchlistController extends Controller
         ]);
 
         return response(
-            WatchlistDTO::make($watchlist)->toArray(),
+            WatchlistDTO::make($watchlist),
             201
         );
     }

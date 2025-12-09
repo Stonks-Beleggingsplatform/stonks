@@ -11,7 +11,7 @@ class WatchlistDTO extends DTO
 
     public string $name;
 
-    public array $user;
+    public UserDTO $user;
 
     public array $securities = [];
 
@@ -19,7 +19,7 @@ class WatchlistDTO extends DTO
     {
         $base = parent::make($model);
 
-        $base->user = UserDTO::make($model->user)->toArray();
+        $base->user = UserDTO::make($model->user);
         //TODO:: Implement securities DTO
 //        $base->securities = $model->securities->map(fn ($security) => SecurityDTO::fromModel($security))->toArray();
 
