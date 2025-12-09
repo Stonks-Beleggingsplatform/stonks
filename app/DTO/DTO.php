@@ -58,4 +58,9 @@ abstract class DTO implements Arrayable, JsonSerializable
         }
         return $dto;
     }
+
+    public static function collection(Collection $collection): Collection
+    {
+        return $collection->map(fn (Model $model) => static::make($model));
+    }
 }
