@@ -2,7 +2,9 @@
 
 namespace App\DTO;
 
-/** @typescript */
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+
+#[TypeScript]
 class HoldingDTO extends DTO
 {
     public int $id;

@@ -4,8 +4,9 @@ namespace App\DTO;
 
 use App\Models\Holding;
 use App\Models\Portfolio;
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
-/** @typescript */
+#[TypeScript]
 class PortfolioDTO extends DTO
 {
     public int $id;
