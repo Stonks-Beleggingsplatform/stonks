@@ -62,7 +62,7 @@ export default function WatchlistIndex() {
                         <p className="text-gray-600">Track your favorite stocks and monitor market trends</p>
                     </div>
                     <Link
-                        to="/watchlists/create"
+                        to="/watchlist/create"
                         className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                     >
                         Create Watchlist
@@ -83,7 +83,7 @@ export default function WatchlistIndex() {
                                     Create your first watchlist to start tracking stocks and building your investment strategy
                                 </p>
                                 <Link
-                                    to="/watchlists/create"
+                                    to="/watchlist/create"
                                     className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                                 >
                                     <span>+</span>
