@@ -25,7 +25,7 @@ class PortfolioDTO extends DTO
 
         $model->loadMissing('holdings', 'holdings.security');
 
-        $base->holdings = $model->holdings->map(fn (Holding $holding) => HoldingDTO::fromModel($holding))->toArray();
+        $base->holdings = $model->holdings->map(fn (Holding $holding) => HoldingDTO::make($holding))->toArray();
 
         return $base;
     }
