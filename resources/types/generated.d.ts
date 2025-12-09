@@ -22,7 +22,7 @@ email: string;
 export type WatchlistDTO = {
 id: number;
 name: string;
-user: Array<any>;
+user: App.DTO.UserDTO;
 securities: Array<any>;
 };
 }
