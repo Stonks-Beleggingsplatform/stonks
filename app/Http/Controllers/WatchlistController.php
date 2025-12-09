@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\DTO\WatchlistDTO;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class WatchlistController extends Controller
 {
-    public function create(Request $request): JsonResponse
+    public function create(Request $request): Response
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255']
