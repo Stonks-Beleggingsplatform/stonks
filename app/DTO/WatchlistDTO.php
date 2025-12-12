@@ -20,8 +20,8 @@ class WatchlistDTO extends DTO
         $base = parent::make($model);
 
         $base->user = UserDTO::make($model->user);
-        //TODO:: Implement securities DTO
-//        $base->securities = $model->securities->map(fn ($security) => SecurityDTO::fromModel($security))->toArray();
+        // TODO:: Implement securities DTO
+        //        $base->securities = $model->securities->map(fn ($security) => SecurityDTO::fromModel($security))->toArray();
 
         return $base;
     }

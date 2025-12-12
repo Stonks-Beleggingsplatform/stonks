@@ -38,13 +38,13 @@ abstract class DTO implements Arrayable, JsonSerializable
         $properties = get_class_vars($dto::class);
 
         foreach ($properties as $property => $defaultValue) {
-            if (!isset($model->$property) || $model->$property instanceof Model) {
+            if (! isset($model->$property) || $model->$property instanceof Model) {
                 continue;
             }
 
-            //if the property is an int on the dto but a float on the model, cast it to int
+            // if the property is an int on the dto but a float on the model, cast it to int
             if (is_int($defaultValue) && is_float($model->$property)) {
-                $dto->$property = (int)$model->$property * 100;
+                $dto->$property = (int) $model->$property * 100;
 
                 continue;
             }
@@ -56,6 +56,7 @@ abstract class DTO implements Arrayable, JsonSerializable
             $dto->$property = $model->$property;
 
         }
+
         return $dto;
     }
 
