@@ -15,7 +15,7 @@ export default function Login() {
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e. target.value
+            [e.target.name]: e.target.value
         });
         // clear the errors
         if (errors[e.target.name]) {
