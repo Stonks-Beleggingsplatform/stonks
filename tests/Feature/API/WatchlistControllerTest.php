@@ -3,9 +3,9 @@
 use App\DTO\WatchlistDTO;
 
 test('create', function () {
-   $data = [
-       'name' => 'My Watchlist',
-   ];
+    $data = [
+        'name' => 'My Watchlist',
+    ];
 
     $response = $this->postJson(route('watchlist.create'), $data);
 
