@@ -2,6 +2,26 @@
 
 use App\DTO\WatchlistDTO;
 
+test('index', function () {
+    $this->user->watchlists()->createMany([
+        ['name' => 'Watchlist 1'],
+        ['name' => 'Watchlist 2'],
+    ]);
+
+    $response = $this->getJson(route('watchlist.index'));
+
+    expect($response->status())->toBe(200)
+        ->and($response->json())->toEqual(
+            WatchlistDTO::collection(
+                $this->user->watchlists()
+                    ->with(['user', 'securities'])
+                    ->get()
+            )
+                ->map(fn(WatchlistDTO $dto) => $dto->jsonSerialize())
+                ->toArray()
+        );
+});
+
 test('create', function () {
     $data = [
         'name' => 'My Watchlist',

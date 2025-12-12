@@ -19,6 +19,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::controller(WatchlistController::class)->group(function () {
+        Route::get('/watchlist', 'index')->name('watchlist.index');
         Route::post('/watchlist/create', 'create')->name('watchlist.create');
     });
 });
