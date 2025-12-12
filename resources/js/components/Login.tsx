@@ -21,7 +21,7 @@ export default function Login() {
         if (errors[e.target.name]) {
             setErrors({
                 ...errors,
-                [e. target.name]: null
+                [e.target.name]: null
             });
         }
     };
