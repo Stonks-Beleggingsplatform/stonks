@@ -3,6 +3,8 @@
 namespace App\DTO;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use JsonSerializable;
 
 abstract class DTO implements Arrayable, JsonSerializable
@@ -14,26 +16,46 @@ abstract class DTO implements Arrayable, JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        $base = $this->toArray();
+
+        foreach ($base as $key => $value) {
+            if ($value instanceof DTO) {
+                $base[$key] = $value->jsonSerialize();
+            } elseif ($value instanceof Collection) {
+                $base[$key] = $value->map(function ($item) {
+                    return $item instanceof DTO ? $item->jsonSerialize() : $item;
+                })->toArray();
+            }
+        }
+
+        return $base;
     }
 
     public static function make(object $model): DTO
     {
         $dto = new static;
 
-        foreach (get_object_vars($dto) as $property => $value) {
-            if (property_exists($model, $property)) {
-                // if the property is an int on the model, but a float on the dto, convert cents to currency
-                if (is_int($model->$property) && is_float($dto->$property)) {
-                    $dto->$property = (float) $model->$property / 100;
+        $properties = get_class_vars($dto::class);
 
-                    continue;
-                }
-
-                $dto->$property = $model->$property;
+        foreach ($properties as $property => $defaultValue) {
+            if (!isset($model->$property) || $model->$property instanceof Model) {
+                continue;
             }
-        }
 
+            //if the property is an int on the dto but a float on the model, cast it to int
+            if (is_int($defaultValue) && is_float($model->$property)) {
+                $dto->$property = (int)$model->$property * 100;
+
+                continue;
+            }
+
+            if ($model->$property instanceof Collection) {
+                continue;
+            }
+
+            $dto->$property = $model->$property;
+
+        }
         return $dto;
     }
 }
