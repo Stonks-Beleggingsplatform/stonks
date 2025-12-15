@@ -10,11 +10,12 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Watchlists from './components/Watchlists';
 import WatchlistCreate from './components/WatchlistCreate';
+import WatchlistShow from './components/WatchlistShow';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 
 function Portfolio() {
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg: px-8 py-8">
             <h1 className="text-2xl font-bold mb-4">My Portfolio</h1>
             <p className="text-gray-600">This is a placeholder for the portfolio page.</p>
         </div>
@@ -28,17 +29,20 @@ function App() {
                 <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
                     <Navbar />
                     <Routes>
+                        {/* Public routes */}
                         <Route path="/" element={<Home />} />
-                        <Route path="/portfolio" element={<Portfolio />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
 
+                        {/* Protected routes */}
                         <Route element={<ProtectedLayout />}>
+                            <Route path="/portfolio" element={<Portfolio />} />
                             <Route path="/watchlists" element={<Watchlists />} />
-                            <Route path="/watchlist/create" element={<WatchlistCreate />} />
+                            <Route path="/watchlists/create" element={<WatchlistCreate />} />
+                            <Route path="/watchlists/:id" element={<WatchlistShow />} />
                         </Route>
 
-                        {/* Add a 404 for React here */}
+                        {/* 404 */}
                         <Route path="*" element={<div className="p-8 text-center"><h1>404 - Not Found</h1></div>} />
                     </Routes>
                 </div>

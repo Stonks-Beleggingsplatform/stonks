@@ -23,7 +23,8 @@ export type WatchlistDTO = {
 id: number;
 name: string;
 user: App.DTO.UserDTO;
-securities: Array<any>;
+securities: Array<any> | null;
+securities_count: number;
 };
 }
 declare namespace App.Enums {

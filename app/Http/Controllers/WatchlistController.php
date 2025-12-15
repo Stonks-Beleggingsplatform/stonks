@@ -29,7 +29,6 @@ class WatchlistController extends Controller
         );
     }
 
-
     public function create(Request $request): Response
     {
         $request->validate([
