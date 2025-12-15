@@ -16,7 +16,7 @@ class WatchlistController extends Controller
           ->get();
 
         return response(
-            WatchlistDTO::collection($watchlists),
+            WatchlistDTO::collection($watchlists, false),
             200
         );
     }
