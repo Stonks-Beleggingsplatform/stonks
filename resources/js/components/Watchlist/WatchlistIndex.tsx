@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../lib/axios';
+import api from '../../lib/axios';
 
 interface Watchlist {
     id: number;
