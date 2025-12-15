@@ -14,6 +14,12 @@ total_value: number;
 total_return: number;
 holdings: Array<any>;
 };
+export type SecurityDTO = {
+id: number;
+ticker: string;
+name: string;
+price: number;
+};
 export type UserDTO = {
 id: number;
 name: string;
