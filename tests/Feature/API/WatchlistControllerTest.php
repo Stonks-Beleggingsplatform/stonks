@@ -19,7 +19,7 @@ test('index', function () {
                     ->with(['user', 'securities'])
                     ->get()
             )
-                ->map(fn(WatchlistDTO $dto) => $dto->jsonSerialize())
+                ->map(fn (WatchlistDTO $dto) => $dto->jsonSerialize())
                 ->toArray()
         );
 });
