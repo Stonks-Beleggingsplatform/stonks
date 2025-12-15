@@ -32,7 +32,7 @@ test('show', function () {
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toEqual(
-            WatchlistDTO::make($watchlist->load(['user', 'securities']))
+            WatchlistDTO::make($watchlist->load(['user', 'securities']), true)
                 ->jsonSerialize()
         );
 });
