@@ -21,15 +21,13 @@ export const AuthProvider = ({ children }) => {
             // If successful, the user is authenticated
             setUser(response.data);
             setIsAuthenticated(true);
+            localStorage.setItem('isAuthenticated', 'true');
         } catch (error) {
             // If the request fails (e.g., 401 Unauthorized), the user is not logged in.
             if (error.response && error.response.status === 401) {
                 setUser(null);
                 setIsAuthenticated(false);
-                document.cookie = "logged_in=; path=/; max-age=0";
-            } else {
-                // Log other errors (CORS, network failure, etc.)
-                //console.error("Error fetching user:", error);
+                localStorage. removeItem('isAuthenticated');
             }
         } finally {
             setIsLoading(false);
@@ -38,11 +36,17 @@ export const AuthProvider = ({ children }) => {
 
     // Run the check when the component mounts
     useEffect(() => {
-        const loggedIn = document.cookie.split('; ').find(row => row.startsWith('logged_in='));
-        if (loggedIn) {
+        // Check localStorage first for instant UI feedback
+        const wasAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+        if (wasAuthenticated) {
+            // Set authenticated immediately for better UX
+            setIsAuthenticated(true);
+            // Then verify with server
             fetchUser();
         } else {
-            setIsLoading(false);
+            // Still check with server in case user has valid session
+            fetchUser();
         }
     }, []);
 
@@ -55,27 +59,33 @@ export const AuthProvider = ({ children }) => {
         login: async (credentials) => {
             await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/login', credentials);
-            document.cookie = "logged_in=true; path=/; max-age=31536000; SameSite=Lax";
+            localStorage.setItem('isAuthenticated', 'true');
             await fetchUser();
         },
         register: async (data) => {
-            await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
+            await api. get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/register', data);
-            document.cookie = "logged_in=true; path=/; max-age=31536000; SameSite=Lax";
+            localStorage.setItem('isAuthenticated', 'true');
             await fetchUser();
         },
         logout: async () => {
-            await api.post('/logout');
-            document.cookie = "logged_in=; path=/; max-age=0";
-            setUser(null);
-            setIsAuthenticated(false);
+            try {
+                await api.post('/logout');
+            } catch (error) {
+                // Even if logout fails, clear local state
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('isAuthenticated');
+                setUser(null);
+                setIsAuthenticated(false);
+            }
         }
     };
 
     return (
-        <AuthContext.Provider value={contextValue} >
+        <AuthContext.Provider value={contextValue}>
             {children}
-        </AuthContext.Provider >
+        </AuthContext.Provider>
     );
 };
 

@@ -5,9 +5,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 
+import { AuthProvider } from './context/AuthContext';
 import Register from './components/Register';
 import Login from './components/Login';
-import { AuthProvider } from './context/AuthContext';
+import Watchlists from './components/Watchlists';
+import WatchlistCreate from './components/WatchlistCreate';
+import ProtectedLayout from './components/ProtectedLayout.tsx';
 
 function Portfolio() {
     return (
@@ -29,6 +32,12 @@ function App() {
                         <Route path="/portfolio" element={<Portfolio />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
+
+                        <Route element={<ProtectedLayout />}>
+                            <Route path="/watchlists" element={<Watchlists />} />
+                            <Route path="/watchlist/create" element={<WatchlistCreate />} />
+                        </Route>
+
                         {/* Add a 404 for React here */}
                         <Route path="*" element={<div className="p-8 text-center"><h1>404 - Not Found</h1></div>} />
                     </Routes>
