@@ -26,8 +26,9 @@ class WatchlistDTO extends DTO
 
         $base->securities_count = $model->securities()->count();
 
-        // TODO:: Implement securities DTO
-        //        $base->securities = $model->securities->map(fn ($security) => SecurityDTO::fromModel($security))->toArray();
+        if ($securities) {
+            $base->securities = $model->securities->map(fn ($security) => SecurityDTO::make($security))->toArray();
+        }
 
         return $base;
     }

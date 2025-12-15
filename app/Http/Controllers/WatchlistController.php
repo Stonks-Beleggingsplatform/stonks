@@ -24,7 +24,7 @@ class WatchlistController extends Controller
     public function show(Watchlist $watchlist): Response
     {
        return response(
-            WatchlistDTO::make($watchlist->load(['user', 'securities'])),
+            WatchlistDTO::make($watchlist->load(['user', 'securities']), true),
             200
         );
     }

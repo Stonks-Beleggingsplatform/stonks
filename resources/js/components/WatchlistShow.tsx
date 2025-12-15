@@ -10,9 +10,9 @@ interface User {
 
 interface Security {
     id:  number;
-    symbol: string;
+    ticker: string;
     name: string;
-    // Add more fields as needed
+    price?: number;
 }
 
 interface Watchlist {
@@ -132,16 +132,13 @@ export default function WatchlistShow() {
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Symbol
+                                        Ticker
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Price
-                                    </th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Change
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions
@@ -153,17 +150,16 @@ export default function WatchlistShow() {
                                     <tr key={security.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {security. symbol}
+                                                {security.ticker}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="text-sm text-gray-900">{security.name}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="text-sm text-gray-900">-</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="text-sm text-gray-900">-</div>
+                                            <div className="text-sm text-gray-900">
+                                                {security.price !== undefined ? `$${security.price.toFixed(2)}` : 'N/A'}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <button
