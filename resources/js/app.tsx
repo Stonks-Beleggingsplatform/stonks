@@ -8,9 +8,9 @@ import Home from './components/Home';
 import { AuthProvider } from './context/AuthContext';
 import Register from './components/Register';
 import Login from './components/Login';
-import Watchlists from './components/Watchlists';
-import WatchlistCreate from './components/WatchlistCreate';
-import WatchlistShow from './components/WatchlistShow';
+import WatchlistIndex from './components/Watchlist/WatchlistIndex';
+import WatchlistCreate from './components/Watchlist/WatchlistCreate';
+import WatchlistShow from './components/Watchlist/WatchlistShow';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 
 function Portfolio() {
@@ -37,7 +37,7 @@ function App() {
                         {/* Protected routes */}
                         <Route element={<ProtectedLayout />}>
                             <Route path="/portfolio" element={<Portfolio />} />
-                            <Route path="/watchlists" element={<Watchlists />} />
+                            <Route path="/watchlists" element={<WatchlistIndex />} />
                             <Route path="/watchlists/create" element={<WatchlistCreate />} />
                             <Route path="/watchlists/:id" element={<WatchlistShow />} />
                         </Route>
