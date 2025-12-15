@@ -1,6 +1,8 @@
 <?php
 
 use App\DTO\WatchlistDTO;
+use App\Models\Watchlist;
+use Database\Factories\WatchlistFactory;
 
 test('index', function () {
     $this->user->watchlists()->createMany([
@@ -19,6 +21,19 @@ test('index', function () {
             )
                 ->map(fn(WatchlistDTO $dto) => $dto->jsonSerialize())
                 ->toArray()
+        );
+});
+
+test('show', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+
+
+    $response = $this->getJson(route('watchlist.show', ['watchlist' => $watchlist->id]));
+
+    expect($response->status())->toBe(200)
+        ->and($response->json())->toEqual(
+            WatchlistDTO::make($watchlist->load(['user', 'securities']))
+                ->jsonSerialize()
         );
 });
 
