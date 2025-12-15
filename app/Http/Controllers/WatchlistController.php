@@ -11,16 +11,15 @@ class WatchlistController extends Controller
 {
     public function index(): Response
     {
-      $watchlists = Watchlist::where('user_id', auth()->id())
-          ->with(['user', 'securities'])
-          ->get();
+        $watchlists = Watchlist::where('user_id', auth()->id())
+            ->with(['user', 'securities'])
+            ->get();
 
         return response(
             WatchlistDTO::collection($watchlists),
             200
         );
     }
-
 
     public function create(Request $request): Response
     {
