@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\WatchlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,5 +23,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/watchlist', 'index')->name('watchlist.index');
         Route::get('/watchlist/{watchlist}', 'show')->name('watchlist.show');
         Route::post('/watchlist/create', 'create')->name('watchlist.create');
+    });
+
+    Route::controller(SecurityController::class)->group(function () {
+        Route::get('/securities/search/{term}', 'index')->name('securities.search');
     });
 });

@@ -36,7 +36,7 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity }: AddSecur
     const searchSecurities = async (term: string) => {
         setIsLoading(true);
         try {
-            const response = await api.get(`/securities/${encodeURIComponent(term)}`);
+            const response = await api.get(`/securities/search/${encodeURIComponent(term)}`);
             setSecurities(response.data);
         } catch (error) {
             console.error('Error fetching securities:', error);
