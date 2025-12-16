@@ -3,7 +3,7 @@ import api from '../../lib/axios';
 import { Modal } from '../Modal';
 
 interface Security {
-    id:  number;
+    id: number;
     ticker: string;
     name: string;
     company?: string;
@@ -12,10 +12,11 @@ interface Security {
 interface AddSecurityModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelectSecurity: (security:  Security) => void;
+    onSelectSecurity: (security: Security) => void;
+    existingSecurityIds?: number[];
 }
 
-export function AddSecurityModal({ isOpen, onClose, onSelectSecurity }: AddSecurityModalProps) {
+export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSecurityIds = [] }: AddSecurityModalProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [securities, setSecurities] = useState<Security[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +38,10 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity }: AddSecur
         setIsLoading(true);
         try {
             const response = await api.get(`/securities/search/${encodeURIComponent(term)}`);
-            setSecurities(response.data);
+            const filteredSecurities = response.data.filter(
+                (security: Security) => !existingSecurityIds.includes(security.id)
+            );
+            setSecurities(filteredSecurities);
         } catch (error) {
             console.error('Error fetching securities:', error);
             setSecurities([]);
@@ -81,8 +85,8 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity }: AddSecur
                         type="text"
                         placeholder="Search by name, ticker, or company..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target. value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-black focus:border-transparent"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
                         autoFocus
                     />
                 </div>
@@ -116,7 +120,7 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity }: AddSecur
                                         </div>
                                         {security.company && security.company !== security.name && (
                                             <div className="text-xs text-gray-500">
-                                                {security. company}
+                                                {security.company}
                                             </div>
                                         )}
                                     </div>

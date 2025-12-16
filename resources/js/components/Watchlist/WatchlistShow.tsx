@@ -234,6 +234,7 @@ export default function WatchlistShow() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSelectSecurity={handleAddSecurity}
+                existingSecurityIds={watchlist?.securities?.map(s => s.id) || []}
             />
         </div>
     );

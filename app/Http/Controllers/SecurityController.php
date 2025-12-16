@@ -10,10 +10,12 @@ class SecurityController extends Controller
 {
     public function index(string $term): Response
     {
+        $lowerTerm = strtolower($term);
+
         $matchingSecurities =
             SecurityDTO::collection(
-                Security::where('ticker', 'LIKE', "%{$term}%")
-                    ->orWhere('name', 'LIKE', "%{$term}%")
+                Security::whereRaw('LOWER(ticker) LIKE ?', ["%{$lowerTerm}%"])
+                    ->orWhereRaw('LOWER(name) LIKE ?', ["%{$lowerTerm}%"])
                     ->get()
             );
 
