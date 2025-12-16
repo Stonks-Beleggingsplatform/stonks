@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
+import { AddSecurityModal } from './AddSecurityModal.tsx';
 
 interface User {
     id: number;
@@ -12,12 +13,12 @@ interface Security {
     id:  number;
     ticker: string;
     name: string;
-    price?: number;
+    price?:  number;
 }
 
 interface Watchlist {
     id: number;
-    name: string;
+    name:  string;
     description?: string;
     user:  User;
     securities: Security[] | null;
@@ -32,6 +33,7 @@ export default function WatchlistShow() {
     const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -56,6 +58,36 @@ export default function WatchlistShow() {
         }
     };
 
+    const handleAddSecurity = async (security: Security) => {
+        try {
+            // Voeg security toe aan watchlist via Laravel API
+            await api.post(`/watchlist/${id}/securities`, {
+                security_id: security.id
+            });
+
+            // Herlaad de watchlist om de nieuwe security te tonen
+            await fetchWatchlist();
+        } catch (err: any) {
+            console.error('Failed to add security:', err);
+            // Optioneel: toon error message aan gebruiker
+            alert(err.response?.data?. message || 'Failed to add security to watchlist');
+        }
+    };
+
+    const handleRemoveSecurity = async (securityId:  number) => {
+        if (! confirm('Are you sure you want to remove this security from the watchlist?')) {
+            return;
+        }
+
+        try {
+            await api. delete(`/watchlist/${id}/securities/${securityId}`);
+            await fetchWatchlist();
+        } catch (err: any) {
+            console.error('Failed to remove security:', err);
+            alert(err.response?.data?.message || 'Failed to remove security from watchlist');
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -68,7 +100,7 @@ export default function WatchlistShow() {
 
     if (error || !watchlist) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm: px-6 lg:px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <button
                     onClick={() => navigate('/watchlists')}
                     className="text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4 flex items-center gap-2"
@@ -115,17 +147,17 @@ export default function WatchlistShow() {
                                 Edit
                             </Link>
                             <button
-                                onClick={() => {/* TODO: Add stock modal */}}
+                                onClick={() => setIsModalOpen(true)}
                                 className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors"
                             >
-                                + Add Stock
+                                + Add Security
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Securities List */}
-                {watchlist.securities && watchlist.securities.length > 0 ?  (
+                {watchlist.securities && watchlist. securities.length > 0 ?  (
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -163,7 +195,7 @@ export default function WatchlistShow() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <button
-                                                onClick={() => {/* TODO: Remove stock */}}
+                                                onClick={() => handleRemoveSecurity(security.id)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 Remove
@@ -186,7 +218,7 @@ export default function WatchlistShow() {
                                 Start building your watchlist by adding stocks you want to track
                             </p>
                             <button
-                                onClick={() => {/* TODO: Add stock modal */}}
+                                onClick={() => setIsModalOpen(true)}
                                 className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                             >
                                 <span>+</span>
@@ -196,6 +228,13 @@ export default function WatchlistShow() {
                     </div>
                 )}
             </main>
+
+            {/* Modal */}
+            <AddSecurityModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSelectSecurity={handleAddSecurity}
+            />
         </div>
     );
 }
