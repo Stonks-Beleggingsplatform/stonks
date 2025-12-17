@@ -18,8 +18,6 @@ return new class extends Migration
             $table->foreignId('security_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
-
-            $table->unique(['watchlist_id', 'security_id']);
         });
     }
 

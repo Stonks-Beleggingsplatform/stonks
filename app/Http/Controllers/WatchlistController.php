@@ -91,4 +91,28 @@ class WatchlistController extends Controller
             200
         );
     }
+
+    public function removeSecurities(Request $request, Watchlist $watchlist): Response
+    {
+        $this->authorize('update', $watchlist);
+
+        $request->validate([
+            'securities' => ['required', 'array'],
+            'securities.*.ticker' => ['required', 'string', 'exists:securities,ticker'],
+        ]);
+
+        $tickers = collect($request->securities)->pluck('ticker')->toArray();
+
+        $securities = Security::query()
+            ->whereIn('ticker', $tickers)
+            ->pluck('id')
+            ->toArray();
+
+        $watchlist->securities()->detach($securities);
+
+        return response(
+            WatchlistDTO::make($watchlist->load('securities')),
+            200
+        );
+    }
 }

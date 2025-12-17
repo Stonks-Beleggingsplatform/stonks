@@ -18,7 +18,7 @@ interface Security {
 
 interface Watchlist {
     id: number;
-    name:  string;
+    name:   string;
     description?: string;
     user:  User;
     securities: Security[] | null;
@@ -45,7 +45,7 @@ export default function WatchlistShow() {
         try {
             const response = await api.get(`/watchlist/${id}`);
             setWatchlist(response.data);
-        } catch (err:  any) {
+        } catch (err:   any) {
             if (err.response?.status === 404) {
                 setError('Watchlist not found');
             } else if (err.response?.status === 403) {
@@ -58,33 +58,22 @@ export default function WatchlistShow() {
         }
     };
 
-    const handleAddSecurity = async (security: Security) => {
-        try {
-            // Voeg security toe aan watchlist via Laravel API
-            await api.post(`/watchlist/${id}/securities`, {
-                security_id: security.id
-            });
-
-            // Herlaad de watchlist om de nieuwe security te tonen
-            await fetchWatchlist();
-        } catch (err: any) {
-            console.error('Failed to add security:', err);
-            // Optioneel: toon error message aan gebruiker
-            alert(err.response?.data?. message || 'Failed to add security to watchlist');
-        }
-    };
-
-    const handleRemoveSecurity = async (securityId:  number) => {
-        if (! confirm('Are you sure you want to remove this security from the watchlist?')) {
+    const handleRemoveSecurity = async (ticker: string) => {
+        if (! confirm('Are you sure you want to remove this security from the watchlist? ')) {
             return;
         }
 
         try {
-            await api. delete(`/watchlist/${id}/securities/${securityId}`);
+            // PUT naar /watchlist/{id}/securities/remove met securities array
+            await api.put(`/watchlist/${id}/securities/remove`, {
+                securities: [{ ticker }]
+            });
+
+            // Herlaad de watchlist
             await fetchWatchlist();
         } catch (err: any) {
             console.error('Failed to remove security:', err);
-            alert(err.response?.data?.message || 'Failed to remove security from watchlist');
+            alert(err.response?.data?. message || 'Failed to remove security from watchlist');
         }
     };
 
@@ -100,7 +89,7 @@ export default function WatchlistShow() {
 
     if (error || !watchlist) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg: px-8 py-8">
                 <button
                     onClick={() => navigate('/watchlists')}
                     className="text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4 flex items-center gap-2"
@@ -117,7 +106,7 @@ export default function WatchlistShow() {
 
     return (
         <div>
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-5xl mx-auto px-4 sm: px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="mb-8">
                     <button
@@ -142,7 +131,7 @@ export default function WatchlistShow() {
                         <div className="flex gap-2">
                             <Link
                                 to={`/watchlists/${id}/edit`}
-                                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+                                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover: bg-gray-50 transition-colors"
                             >
                                 Edit
                             </Link>
@@ -195,7 +184,7 @@ export default function WatchlistShow() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <button
-                                                onClick={() => handleRemoveSecurity(security.id)}
+                                                onClick={() => handleRemoveSecurity(security.ticker)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 Remove

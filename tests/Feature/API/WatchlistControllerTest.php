@@ -141,3 +141,77 @@ test('add securities validation', function () {
     expect($response->status())->toBe(422)
         ->and($response->json('errors'))->toHaveKey('securities.0.ticker');
 });
+
+test('add securities policy', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+    $otherUser = User::factory()->create();
+    $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
+
+    $security = createTestableSecurity();
+
+    $data = [
+        'securities' => [
+            ['ticker' => $security->ticker],
+        ],
+    ];
+
+    $response = $this->putJson(route('watchlist.securities.add', ['watchlist' => $otherWatchlist->id]), $data);
+
+    expect($response->status())->toBe(403);
+});
+
+test('remove securities', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+
+    $security1 = createTestableSecurity();
+    $security2 = createTestableSecurity();
+
+    $watchlist->securities()->attach([$security1->id, $security2->id]);
+
+    $data = [
+        'securities' => [
+            ['ticker' => $security1->ticker],
+        ],
+    ];
+
+    $response = $this->putJson(route('watchlist.securities.remove', ['watchlist' => $watchlist->id]), $data);
+
+    expect($response->status())->toBe(200)
+        ->and($response->json())->toEqual(
+            WatchlistDTO::make($watchlist->fresh()->load('securities'))
+                ->jsonSerialize()
+        );
+});
+
+test('remove securities validation', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+
+    $data = [
+        'securities' => [
+            ['ticker' => 'INVALID'],
+        ],
+    ];
+
+    $response = $this->putJson(route('watchlist.securities.remove', ['watchlist' => $watchlist->id]), $data);
+
+    expect($response->status())->toBe(422)
+        ->and($response->json('errors'))->toHaveKey('securities.0.ticker');
+});
+
+test('remove securities policy', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+    $otherUser = User::factory()->create();
+    $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
+
+    $security = createTestableSecurity();
+
+    $data = [
+        'securities' => [
+            ['ticker' => $security->ticker],
+        ],
+    ];
+
+    $response = $this->putJson(route('watchlist.securities.remove', ['watchlist' => $otherWatchlist->id]), $data);
+
+    expect($response->status())->toBe(403);
+});
