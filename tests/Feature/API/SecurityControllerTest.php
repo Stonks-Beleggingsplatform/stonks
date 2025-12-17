@@ -9,7 +9,7 @@ beforeEach(function () {
     $this->security = Security::create([
         'ticker' => 'AAPL',
         'name' => 'Apple Inc.',
-        'price' => 150.00,
+        'price' => 15000, // Stored as integer in cents
         'exchange_id' => Exchange::factory()->create(['name' => 'NASDAQ'])->id,
         'securityable_type' => Stock::class,
         'securityable_id' => Stock::factory()->create()->id,
