@@ -13,7 +13,7 @@ class Fee extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'amount' => 'integer',
+        'amount' => 'decimal:4',
         'exchange_id' => 'integer',
         'transaction_id' => 'integer',
     ];
