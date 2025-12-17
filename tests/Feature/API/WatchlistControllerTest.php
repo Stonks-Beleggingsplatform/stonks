@@ -91,7 +91,6 @@ test('update validation', function () {
 });
 
 test('update policy', function () {
-    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
     $otherUser = User::factory()->create();
     $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
 
@@ -122,7 +121,7 @@ test('add securities', function () {
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toEqual(
-            WatchlistDTO::make($watchlist->fresh()->load('securities'))
+            WatchlistDTO::make($watchlist->fresh()->load('securities'), true)
                 ->jsonSerialize()
         );
 });
@@ -178,7 +177,7 @@ test('remove securities', function () {
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toEqual(
-            WatchlistDTO::make($watchlist->fresh()->load('securities'))
+            WatchlistDTO::make($watchlist->fresh()->load('securities'), true)
                 ->jsonSerialize()
         );
 });

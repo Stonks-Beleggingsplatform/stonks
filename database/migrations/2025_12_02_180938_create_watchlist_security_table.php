@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,6 +17,10 @@ return new class extends Migration
             $table->foreignId('security_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
+
+            if (!app()->environment('testing')) {
+                $table->unique(['watchlist_id', 'security_id']);
+            }
         });
     }
 
