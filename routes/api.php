@@ -15,7 +15,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::controller(PortfolioController::class)->group(function () {
-        Route::get('/portfolio', 'show')->name('portfolio.show');
+        Route::get('/portfolio', 'index')->name('portfolio.index');
     });
 
     Route::controller(WatchlistController::class)->group(function () {

@@ -10,16 +10,8 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Watchlists from './components/Watchlists';
 import WatchlistCreate from './components/WatchlistCreate';
+import Portfolio from './components/Portfolio';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
-
-function Portfolio() {
-    return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-2xl font-bold mb-4">My Portfolio</h1>
-            <p className="text-gray-600">This is a placeholder for the portfolio page.</p>
-        </div>
-    );
-}
 
 function App() {
     return (
@@ -29,7 +21,10 @@ function App() {
                     <Navbar />
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/portfolio" element={<Portfolio />} />
+                        <Route element={<ProtectedLayout />}>
+                            <Route path="/portfolio" element={<Portfolio />} />
+                            {/* <Route path="/portfolio/create" element={<PortfolioCreate />} /> */}
+                        </Route>
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
 
