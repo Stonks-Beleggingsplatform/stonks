@@ -202,16 +202,16 @@ export default function WatchlistShow() {
                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-3xl">📈</span>
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">No stocks yet</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">No securities yet</h3>
                             <p className="text-gray-600 mb-6">
-                                Start building your watchlist by adding stocks you want to track
+                                Start building your watchlist by adding securities you want to track
                             </p>
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                             >
                                 <span>+</span>
-                                <span>Add Your First Stock</span>
+                                <span>Add Your First Security</span>
                             </button>
                         </div>
                     </div>
