@@ -24,6 +24,8 @@ class WatchlistController extends Controller
 
     public function show(Watchlist $watchlist): Response
     {
+        $this->authorize('view', $watchlist);
+
         return response(
             WatchlistDTO::make($watchlist->load(['user', 'securities']), true),
             200
@@ -48,6 +50,8 @@ class WatchlistController extends Controller
 
     public function update(Request $request, Watchlist $watchlist): Response
     {
+        $this->authorize('update', $watchlist);
+
         $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
         ]);
@@ -66,6 +70,8 @@ class WatchlistController extends Controller
 
     public function addSecurities(Request $request, Watchlist $watchlist): Response
     {
+        $this->authorize('update', $watchlist);
+
         $request->validate([
             'securities' => ['required', 'array'],
             'securities.*.ticker' => ['required', 'string', 'exists:securities,ticker'],

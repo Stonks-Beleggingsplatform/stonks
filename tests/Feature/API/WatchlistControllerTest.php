@@ -3,6 +3,7 @@
 use App\DTO\WatchlistDTO;
 use App\Models\Security;
 use App\Models\Stock;
+use App\Models\User;
 use App\Models\Watchlist;
 use Database\Factories\WatchlistFactory;
 
@@ -76,7 +77,6 @@ test('update', function () {
         );
 });
 
-
 test('update validation', function () {
     $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
 
@@ -88,6 +88,21 @@ test('update validation', function () {
 
     expect($response->status())->toBe(422)
         ->and($response->json('errors'))->toHaveKey('name');
+});
+
+test('update policy', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+    $otherUser = User::factory()->create();
+    $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
+
+
+    $data = [
+        'name' => 'Updated Watchlist',
+    ];
+
+    $response = $this->putJson(route('watchlist.update', ['watchlist' => $otherWatchlist->id]), $data);
+
+    expect($response->status())->toBe(403);
 });
 
 test('add securities', function () {

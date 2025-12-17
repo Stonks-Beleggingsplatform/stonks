@@ -14,7 +14,7 @@ pest()->extend(Tests\TestCase::class)
 pest()->beforeEach(function () {
     $this->user = User::factory()->create();
 
-    Sanctum::actingAs($this->user, ['*']);
+    Sanctum::actingAs($this->user);
 })->in('Feature/API');
 
 function createTestableSecurity(): Securityable
