@@ -124,7 +124,7 @@ export default function WatchlistShow() {
                                 <p className="text-gray-600">{watchlist.description}</p>
                             )}
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                                <span>{watchlist.securities_count} stocks</span>
+                                <span>{watchlist.securities_count} securities</span>
                             </div>
                         </div>
 
