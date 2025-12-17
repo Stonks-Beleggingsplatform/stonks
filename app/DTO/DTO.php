@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JsonSerializable;
+use ReflectionClass;
 
 abstract class DTO implements Arrayable, JsonSerializable
 {
@@ -34,18 +35,11 @@ abstract class DTO implements Arrayable, JsonSerializable
     public static function make(object $model): DTO
     {
         $dto = new static;
-
+        $reflection = new ReflectionClass($dto);
         $properties = get_class_vars($dto::class);
 
         foreach ($properties as $property => $defaultValue) {
-            if (! isset($model->$property) || $model->$property instanceof Model) {
-                continue;
-            }
-
-            // if the property is an int on the dto but a float on the model, cast it to int
-            if (is_int($defaultValue) && is_float($model->$property)) {
-                $dto->$property = (int) $model->$property * 100;
-
+            if (!isset($model->$property) || $model->$property instanceof Model) {
                 continue;
             }
 
@@ -53,15 +47,24 @@ abstract class DTO implements Arrayable, JsonSerializable
                 continue;
             }
 
-            $dto->$property = $model->$property;
+            //If the property is typed as float and the model value is an integer, convert it to float by dividing by 100
+            $reflectionProperty = $reflection->getProperty($property);
+            $type = $reflectionProperty->getType();
 
+            if ($type && $type->getName() === 'float' && is_int($model->$property)) {
+                $dto->$property = $model->$property / 100;
+                continue;
+            }
+
+            $dto->$property = $model->$property;
         }
 
         return $dto;
     }
 
+
     public static function collection(Collection $collection): Collection
     {
-        return $collection->map(fn (Model $model) => static::make($model));
+        return $collection->map(fn(Model $model) => static::make($model));
     }
 }
