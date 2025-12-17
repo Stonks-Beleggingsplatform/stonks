@@ -87,7 +87,7 @@ class WatchlistController extends Controller
         $watchlist->securities()->syncWithoutDetaching($securities);
 
         return response(
-            WatchlistDTO::make($watchlist->load('securities')),
+            WatchlistDTO::make($watchlist->load('securities'), true),
             200
         );
     }
@@ -111,7 +111,7 @@ class WatchlistController extends Controller
         $watchlist->securities()->detach($securities);
 
         return response(
-            WatchlistDTO::make($watchlist->load('securities')),
+            WatchlistDTO::make($watchlist->load('securities'), true),
             200
         );
     }

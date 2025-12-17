@@ -35,6 +35,6 @@ class WatchlistDTO extends DTO
 
     public static function collection(Collection $collection, ?bool $securities = false): Collection
     {
-         return $collection->map(fn (Model $model) => static::make($model, $securities));
+        return $collection->map(fn (Model $model) => static::make($model, $securities));
     }
 }
