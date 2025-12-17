@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import api from '../../lib/axios';
-import { Modal } from '../Modal';
+import {Modal} from '../Modal';
 
 interface Security {
     id: number;
@@ -12,15 +12,24 @@ interface Security {
 interface AddSecurityModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelectSecurity: (security: Security) => void;
+    onSuccess: () => void;
+    watchlistId: number;
     existingSecurityIds?: number[];
 }
 
-export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSecurityIds = [] }: AddSecurityModalProps) {
+export function AddSecurityModal({
+                                     isOpen,
+                                     onClose,
+                                     onSuccess,
+                                     watchlistId,
+                                     existingSecurityIds = []
+                                 }: AddSecurityModalProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [securities, setSecurities] = useState<Security[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
     const [selectedSecurity, setSelectedSecurity] = useState<Security | null>(null);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
@@ -36,6 +45,7 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
 
     const searchSecurities = async (term: string) => {
         setIsLoading(true);
+        setError('');
         try {
             const response = await api.get(`/securities/search/${encodeURIComponent(term)}`);
             const filteredSecurities = response.data.filter(
@@ -44,6 +54,7 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
             setSecurities(filteredSecurities);
         } catch (error) {
             console.error('Error fetching securities:', error);
+            setError('Failed to search securities');
             setSecurities([]);
         } finally {
             setIsLoading(false);
@@ -54,10 +65,26 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
         setSelectedSecurity(security);
     };
 
-    const handleAdd = () => {
-        if (selectedSecurity) {
-            onSelectSecurity(selectedSecurity);
+    const handleAdd = async () => {
+        if (!selectedSecurity) return;
+
+        setIsAdding(true);
+        setError('');
+
+        try {
+            // PUT naar /watchlist/{id}/securities/add met securities array
+            await api.put(`/watchlist/${watchlistId}/securities/add`, {
+                securities: [
+                    {ticker: selectedSecurity.ticker}
+                ]
+            });
+            onSuccess();
             handleClose();
+        } catch (err: any) {
+            console.error('Failed to add security:', err);
+            setError(err.response?.data?.message || 'Failed to add security to watchlist');
+        } finally {
+            setIsAdding(false);
         }
     };
 
@@ -65,11 +92,19 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
         setSearchTerm('');
         setSecurities([]);
         setSelectedSecurity(null);
+        setError('');
         onClose();
     };
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title="Add Security">
+            {/* Error Message */}
+            {error && (
+                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {error}
+                </div>
+            )}
+
             {/* Search Input */}
             <div className="mb-4">
                 <div className="relative">
@@ -79,7 +114,8 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <input
                         type="text"
@@ -143,20 +179,21 @@ export function AddSecurityModal({ isOpen, onClose, onSelectSecurity, existingSe
             <div className="flex justify-end gap-2">
                 <button
                     onClick={handleClose}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+                    disabled={isAdding}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
                     Cancel
                 </button>
                 <button
                     onClick={handleAdd}
-                    disabled={!selectedSecurity}
+                    disabled={!selectedSecurity || isAdding}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        selectedSecurity
+                        selectedSecurity && !isAdding
                             ? 'bg-black text-white hover:bg-gray-800'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                 >
-                    Add Security
+                    {isAdding ? 'Adding.. .' : 'Add Security'}
                 </button>
             </div>
         </Modal>
