@@ -7,7 +7,7 @@ use App\Http\Controllers\WatchlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class,    'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -23,6 +23,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/watchlist', 'index')->name('watchlist.index');
         Route::get('/watchlist/{watchlist}', 'show')->name('watchlist.show');
         Route::post('/watchlist/create', 'create')->name('watchlist.create');
+        Route::put('/watchlist/{watchlist}/update', 'update')->name('watchlist.update');
+        Route::put('/watchlist/{watchlist}/securities/add', 'addSecurities')->name('watchlist.securities.add');
+        Route::put('/watchlist/{watchlist}/securities/remove', 'removeSecurities')->name('watchlist.securities.remove');
     });
 
     Route::controller(SecurityController::class)->group(function () {

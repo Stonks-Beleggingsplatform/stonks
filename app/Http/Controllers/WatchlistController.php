@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\WatchlistDTO;
+use App\Models\Security;
 use App\Models\Watchlist;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,7 +24,7 @@ class WatchlistController extends Controller
 
     public function show(Watchlist $watchlist): Response
     {
-       return response(
+        return response(
             WatchlistDTO::make($watchlist->load(['user', 'securities']), true),
             200
         );
@@ -42,6 +43,46 @@ class WatchlistController extends Controller
         return response(
             WatchlistDTO::make($watchlist),
             201
+        );
+    }
+
+    public function update(Request $request, Watchlist $watchlist): Response
+    {
+        $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+        ]);
+
+        if ($request->has('name')) {
+            $watchlist->name = $request->name;
+        }
+
+        $watchlist->save();
+
+        return response(
+            WatchlistDTO::make($watchlist),
+            200
+        );
+    }
+
+    public function addSecurities(Request $request, Watchlist $watchlist): Response
+    {
+        $request->validate([
+            'securities' => ['required', 'array'],
+            'securities.*.ticker' => ['required', 'string', 'exists:securities,ticker'],
+        ]);
+
+        $tickers = collect($request->securities)->pluck('ticker')->toArray();
+
+        $securities = Security::query()
+            ->whereIn('ticker', $tickers)
+            ->pluck('id')
+            ->toArray();
+
+        $watchlist->securities()->syncWithoutDetaching($securities);
+
+        return response(
+            WatchlistDTO::make($watchlist->load('securities')),
+            200
         );
     }
 }
