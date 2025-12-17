@@ -11,6 +11,7 @@ import Login from './components/Login';
 import Watchlists from './components/Watchlists';
 import WatchlistCreate from './components/WatchlistCreate';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
+import AdminFees from './components/AdminFees';
 
 function Portfolio() {
     return (
@@ -36,6 +37,7 @@ function App() {
                         <Route element={<ProtectedLayout />}>
                             <Route path="/watchlists" element={<Watchlists />} />
                             <Route path="/watchlist/create" element={<WatchlistCreate />} />
+                            <Route path="/admin/fees" element={<AdminFees />} />
                         </Route>
 
                         {/* Add a 404 for React here */}
