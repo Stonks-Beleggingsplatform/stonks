@@ -1,11 +1,8 @@
 <?php
 
 use App\DTO\WatchlistDTO;
-use App\Models\Security;
-use App\Models\Stock;
 use App\Models\User;
 use App\Models\Watchlist;
-use Database\Factories\WatchlistFactory;
 
 test('index', function () {
     $this->user->watchlists()->createMany([
@@ -22,7 +19,7 @@ test('index', function () {
                     ->with(['user', 'securities'])
                     ->get()
             )
-                ->map(fn (WatchlistDTO $dto) => $dto->jsonSerialize())
+                ->map(fn(WatchlistDTO $dto) => $dto->jsonSerialize())
                 ->toArray()
         );
 });
@@ -102,6 +99,32 @@ test('update policy', function () {
     $response = $this->putJson(route('watchlist.update', ['watchlist' => $otherWatchlist->id]), $data);
 
     expect($response->status())->toBe(403);
+});
+
+test('delete', function () {
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+    $watchlist->securities()->delete();
+
+    $response = $this->deleteJson(route('watchlist.delete', ['watchlist' => $watchlist->id]));
+
+    expect($response->status())->toBe(200)
+        ->and(Watchlist::find($watchlist->id))->toBeNull();
+});
+
+test('delete policy', function () {
+    $otherUser = User::factory()->create();
+    $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->deleteJson(route('watchlist.delete', ['watchlist' => $otherWatchlist->id]));
+
+    expect($response->status())->toBe(403);
+
+    $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
+
+    $response = $this->deleteJson(route('watchlist.delete', ['watchlist' => $watchlist->id]));
+
+    expect($response->status())->toBe(403)
+        ->and(Watchlist::find($watchlist->id))->not->toBeNull();
 });
 
 test('add securities', function () {

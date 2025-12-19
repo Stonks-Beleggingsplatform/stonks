@@ -24,6 +24,6 @@ class WatchlistPolicy
 
     public function delete(User $user, Watchlist $watchlist): bool
     {
-        return $this->usersOwnWatchlist($user, $watchlist);
+        return $this->usersOwnWatchlist($user, $watchlist) && $watchlist->securities()->count() === 0;
     }
 }
