@@ -5,6 +5,7 @@ namespace App\Models\Concerns;
 use App\Models\Security;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 abstract class Securityable extends Model
 {
@@ -19,19 +20,24 @@ abstract class Securityable extends Model
 
     public function getAttribute($key)
     {
-        $attribute = parent::getAttribute($key);
+        $parent = parent::getAttribute($key);
 
-        if ($attribute !== null) {
-            return $attribute;
+        if (! is_null($parent)) {
+            return $parent;
         }
 
-        // If the securityable does not have the attribute, check the related security model
-        $this->loadMissing('security');
-
-        if ($this->relationLoaded('security') && $this->security) {
-            return $this->security->getAttribute($key);
+        if ($this->relationLoaded($key)) {
+            return $this->getRelationValue($key);
         }
 
-        return null;
+        if (method_exists($this, $key)) {
+            $relation = $this->{$key}();
+
+            if ($relation instanceof Relation) {
+                return $this->getRelationValue($key);
+            }
+        }
+
+        return $parent;
     }
 }
