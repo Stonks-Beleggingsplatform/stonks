@@ -1,4 +1,17 @@
 declare namespace App.DTO {
+export type CompanyDTO = {
+name: string;
+sectors: Array<any>;
+employee_count: number;
+market_cap: number;
+email: string;
+phone: string;
+street: string;
+zip_code: string;
+city: string;
+country: string;
+about: string;
+};
 export type HoldingDTO = {
 id: number;
 ticker: string;

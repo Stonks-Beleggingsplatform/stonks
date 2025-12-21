@@ -2,8 +2,9 @@
 
 namespace App\DTO;
 
-use App\DTO\DTO;
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
+#[TypeScript]
 class CompanyDTO extends DTO
 {
     public string $name;
