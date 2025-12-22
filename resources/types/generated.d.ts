@@ -1,7 +1,3 @@
-import StockDTO = App.DTO.Securityable.StockDTO;
-import BondDTO = App.DTO.Securityable.BondDTO;
-import CryptoDTO = App.DTO.Securityable.CryptoDTO;
-
 declare namespace App.DTO {
 export type CompanyDTO = {
 name: string;
@@ -51,7 +47,6 @@ dto_type: string;
 nominal_value: number;
 coupon_rate: number;
 maturity_date: string;
-id: number;
 ticker: string;
 name: string;
 price: number;
@@ -59,7 +54,6 @@ price: number;
 export type CryptoDTO = {
 dto_type: string;
 type: App.Enums.CryptoType;
-id: number;
 ticker: string;
 name: string;
 price: number;
@@ -69,7 +63,6 @@ dto_type: string;
 pe_ratio: number;
 dividend_yield: number;
 company: App.DTO.CompanyDTO;
-id: number;
 ticker: string;
 name: string;
 price: number;
