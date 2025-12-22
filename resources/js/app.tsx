@@ -8,8 +8,9 @@ import Home from './components/Home';
 import { AuthProvider } from './context/AuthContext';
 import Register from './components/Register';
 import Login from './components/Login';
-import Watchlists from './components/Watchlists';
-import WatchlistCreate from './components/WatchlistCreate';
+import WatchlistIndex from './components/Watchlist/WatchlistIndex';
+import WatchlistCreate from './components/Watchlist/WatchlistCreate';
+import WatchlistShow from './components/Watchlist/WatchlistShow';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 
 function Portfolio() {
@@ -28,17 +29,20 @@ function App() {
                 <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
                     <Navbar />
                     <Routes>
+                        {/* Public routes */}
                         <Route path="/" element={<Home />} />
-                        <Route path="/portfolio" element={<Portfolio />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<Login />} />
 
+                        {/* Protected routes */}
                         <Route element={<ProtectedLayout />}>
-                            <Route path="/watchlists" element={<Watchlists />} />
-                            <Route path="/watchlist/create" element={<WatchlistCreate />} />
+                            <Route path="/portfolio" element={<Portfolio />} />
+                            <Route path="/watchlists" element={<WatchlistIndex />} />
+                            <Route path="/watchlists/create" element={<WatchlistCreate />} />
+                            <Route path="/watchlists/:id" element={<WatchlistShow />} />
                         </Route>
 
-                        {/* Add a 404 for React here */}
+                        {/* 404 */}
                         <Route path="*" element={<div className="p-8 text-center"><h1>404 - Not Found</h1></div>} />
                     </Routes>
                 </div>

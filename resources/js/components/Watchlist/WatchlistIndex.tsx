@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../lib/axios';
+import api from '../../lib/axios';
 
 interface Watchlist {
     id: number;
@@ -62,7 +62,7 @@ export default function WatchlistIndex() {
                         <p className="text-gray-600">Track your favorite stocks and monitor market trends</p>
                     </div>
                     <Link
-                        to="/watchlist/create"
+                        to="/watchlists/create"
                         className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                     >
                         Create Watchlist
@@ -83,7 +83,7 @@ export default function WatchlistIndex() {
                                     Create your first watchlist to start tracking stocks and building your investment strategy
                                 </p>
                                 <Link
-                                    to="/watchlist/create"
+                                    to="/watchlists/create"
                                     className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                                 >
                                     <span>+</span>
@@ -142,7 +142,7 @@ export default function WatchlistIndex() {
 
                         {/* Add New Card */}
                         <Link
-                            to="/watchlist/create"
+                            to="/watchlists/create"
                             className="mt-4 block bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 hover:bg-gray-100 transition-all"
                         >
                             <div className="text-gray-400 text-3xl mb-2">+</div>

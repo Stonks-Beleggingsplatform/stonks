@@ -27,6 +27,12 @@ total_value: number;
 total_return: number;
 holdings: Array<any>;
 };
+export type SecurityDTO = {
+id: number;
+ticker: string;
+name: string;
+price: number;
+};
 export type UserDTO = {
 id: number;
 name: string;
@@ -36,7 +42,8 @@ export type WatchlistDTO = {
 id: number;
 name: string;
 user: App.DTO.UserDTO;
-securities: Array<any>;
+securities: Array<any> | null;
+securities_count: number;
 };
 }
 declare namespace App.Enums {
