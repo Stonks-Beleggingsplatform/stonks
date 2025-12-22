@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Watchlist;
-use Illuminate\Auth\Access\Response;
 
 class WatchlistPolicy
 {
@@ -17,6 +16,7 @@ class WatchlistPolicy
     {
         return $this->usersOwnWatchlist($user, $watchlist);
     }
+
     public function update(User $user, Watchlist $watchlist): bool
     {
         return $this->usersOwnWatchlist($user, $watchlist);

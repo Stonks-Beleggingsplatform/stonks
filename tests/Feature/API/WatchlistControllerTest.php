@@ -27,7 +27,6 @@ test('index', function () {
 test('show', function () {
     $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
 
-
     $response = $this->getJson(route('watchlist.show', ['watchlist' => $watchlist->id]));
 
     expect($response->status())->toBe(200)
@@ -90,7 +89,6 @@ test('update validation', function () {
 test('update policy', function () {
     $otherUser = User::factory()->create();
     $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
-
 
     $data = [
         'name' => 'Updated Watchlist',
