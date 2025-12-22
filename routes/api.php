@@ -28,6 +28,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('/securities')->controller(SecurityController::class)->group(function () {
         Route::get('/search/{term}', 'index')->name('securities.search');
-        Route::get('/{security}', 'show')->name('securities.show');
+        Route::get('/{security:ticker}', 'show')->name('securities.show');
     });
 });

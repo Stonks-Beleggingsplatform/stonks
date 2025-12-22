@@ -46,6 +46,37 @@ securities: Array<any> | null;
 securities_count: number;
 };
 }
+declare namespace App.DTO.Securityable {
+export type BondDTO = {
+type: string;
+nominal_value: number;
+coupon_rate: number;
+maturity_date: string;
+id: number;
+ticker: string;
+name: string;
+price: number;
+};
+export type CryptoDTO = {
+type: string;
+coin_type: App.Enums.CryptoType;
+id: number;
+ticker: string;
+name: string;
+price: number;
+};
+export type SecurityableDTO = (StockDTO & { type: 'stock' }) | (BondDTO & { type: 'bond' }) | (CryptoDTO & { type: 'crypto' });
+export type StockDTO = {
+type: string;
+pe_ratio: number;
+dividend_yield: number;
+company: App.DTO.CompanyDTO;
+id: number;
+ticker: string;
+name: string;
+price: number;
+};
+}
 declare namespace App.Enums {
 export type CryptoType = 'coin' | 'stablecoin' | 'token' | 'nft' | 'other';
 export type OrderAction = 'buy' | 'sell';

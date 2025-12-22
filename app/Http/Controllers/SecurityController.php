@@ -25,4 +25,9 @@ class SecurityController extends Controller
 
         return response($matchingSecurities, 200);
     }
+
+    public function show(Security $security): Response
+    {
+        return response(SecurityableDTO::make($security), 200);
+    }
 }
