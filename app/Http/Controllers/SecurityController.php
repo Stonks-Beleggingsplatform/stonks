@@ -15,13 +15,13 @@ class SecurityController extends Controller
         $matchingSecurities =
             SecurityDTO::collection(
                 Security::where(function ($query) use ($lowerTerm) {
-                        $query->whereRaw('LOWER(ticker) LIKE ?', ["%{$lowerTerm}%"])
-                              ->orWhereRaw('LOWER(name) LIKE ?', ["%{$lowerTerm}%"]);
-                    })
+                    $query->whereRaw('LOWER(ticker) LIKE ?', ["%{$lowerTerm}%"])
+                        ->orWhereRaw('LOWER(name) LIKE ?', ["%{$lowerTerm}%"]);
+                })
                     ->get()
             );
 
-        //TODO: when no matches found, call external API to fetch security data
+        // TODO: when no matches found, call external API to fetch security data
 
         return response($matchingSecurities, 200);
     }

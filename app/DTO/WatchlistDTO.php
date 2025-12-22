@@ -16,6 +16,7 @@ class WatchlistDTO extends DTO
     public UserDTO $user;
 
     public ?array $securities;
+
     public int $securities_count = 0;
 
     public static function make(object $model, ?bool $securities = false): static

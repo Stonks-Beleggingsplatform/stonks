@@ -1,11 +1,8 @@
 <?php
 
 use App\DTO\WatchlistDTO;
-use App\Models\Security;
-use App\Models\Stock;
 use App\Models\User;
 use App\Models\Watchlist;
-use Database\Factories\WatchlistFactory;
 
 test('index', function () {
     $this->user->watchlists()->createMany([
@@ -29,7 +26,6 @@ test('index', function () {
 
 test('show', function () {
     $watchlist = Watchlist::factory()->create(['user_id' => $this->user->id]);
-
 
     $response = $this->getJson(route('watchlist.show', ['watchlist' => $watchlist->id]));
 
@@ -93,7 +89,6 @@ test('update validation', function () {
 test('update policy', function () {
     $otherUser = User::factory()->create();
     $otherWatchlist = Watchlist::factory()->create(['user_id' => $otherUser->id]);
-
 
     $data = [
         'name' => 'Updated Watchlist',
