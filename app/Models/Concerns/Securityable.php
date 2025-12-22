@@ -22,12 +22,8 @@ abstract class Securityable extends Model
     {
         $parent = parent::getAttribute($key);
 
-        if (! is_null($parent)) {
+        if (!is_null($parent)) {
             return $parent;
-        }
-
-        if ($this->relationLoaded($key)) {
-            return $this->getRelationValue($key);
         }
 
         if (method_exists($this, $key)) {
@@ -35,6 +31,14 @@ abstract class Securityable extends Model
 
             if ($relation instanceof Relation) {
                 return $this->getRelationValue($key);
+            }
+        }
+
+        if (isset($this->security)) {
+            $securityValue = $this->security->getAttribute($key);
+
+            if (!is_null($securityValue)) {
+                return $securityValue;
             }
         }
 
