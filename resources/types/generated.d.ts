@@ -1,3 +1,7 @@
+import StockDTO = App.DTO.Securityable.StockDTO;
+import BondDTO = App.DTO.Securityable.BondDTO;
+import CryptoDTO = App.DTO.Securityable.CryptoDTO;
+
 declare namespace App.DTO {
 export type CompanyDTO = {
 name: string;
