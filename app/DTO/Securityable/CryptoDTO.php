@@ -2,16 +2,17 @@
 
 namespace App\DTO\Securityable;
 
+use App\DTO\SecurityDTO;
 use App\Enums\CryptoType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class CryptoDTO extends SecurityableDTO
+class CryptoDTO extends SecurityDTO
 {
-    public string $type = 'crypto';
-    public CryptoType $coin_type;
+    public string $dto_type = 'crypto';
+    public CryptoType $type;
 
-    public static function make(object $model): SecurityableDTO
+    public static function make(object $model): SecurityDTO
     {
         $base = parent::make($model);
 

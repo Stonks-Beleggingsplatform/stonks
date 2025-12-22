@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Securityable\BondDTO;
+use App\DTO\Securityable\CryptoDTO;
+use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
 use App\Models\Security;
+use App\Models\Stock;
 use Illuminate\Http\Response;
+use App\Models\Bond;
+use App\Models\Crypto;
 
 class SecurityController extends Controller
 {
@@ -28,6 +34,13 @@ class SecurityController extends Controller
 
     public function show(Security $security): Response
     {
-        return response(SecurityableDTO::make($security), 200);
+        $DTO = match ($security->securityable_type) {
+            Stock::class => fn () => StockDTO::make($security->securityable),
+            Crypto::class => fn () => CryptoDTO::make($security->securityable),
+            Bond::class => fn() => BondDTO::make($security->securityable),
+            default => fn() => SecurityDTO::make($security),
+        };
+
+        return response($DTO(), 200);
     }
 }

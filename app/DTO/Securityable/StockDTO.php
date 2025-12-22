@@ -3,25 +3,29 @@
 namespace App\DTO\Securityable;
 
 use App\DTO\CompanyDTO;
+use App\DTO\SecurityDTO;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class StockDTO extends SecurityableDTO
+class StockDTO extends SecurityDTO
 {
-    public string $type = 'stock';
+    public string $dto_type = 'stock';
     public int $pe_ratio;
     public float $dividend_yield;
 
     public CompanyDTO $company;
 
-    public static function make(object $model): SecurityableDTO
+    public static function make(object $model): SecurityDTO
     {
         $base = parent::make($model);
 
-        $model->load('company');
+        $model->loadMissing('company');
 
-        $base->company = $model->company;
+        if ($model->company) {
+            $base->company = CompanyDTO::make($model->company);
+        }
 
         return $base;
     }
+
 }

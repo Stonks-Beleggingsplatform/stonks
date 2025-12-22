@@ -1,6 +1,9 @@
 <?php
 
+use App\DTO\Securityable\SecurityableDTO;
+use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
+use App\Models\Company;
 use App\Models\Exchange;
 use App\Models\Security;
 use App\Models\Stock;
@@ -14,10 +17,13 @@ beforeEach(function () {
         'securityable_type' => Stock::class,
         'securityable_id' => Stock::factory()->create()->id,
     ]);
+
+    $this->stock = Stock::find($this->security->securityable_id);
 });
 
 test('index searches securities by ticker', function () {
     $response = $this->getJson('/api/securities/search/AAPL');
+
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toHaveCount(1)
@@ -37,4 +43,15 @@ test('index returns empty array when no securities match', function () {
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toHaveCount(0);
+});
+
+test('show returns security details', function () {
+    $this->stock->update([
+        'company_id' => Company::factory()->create()->id,
+    ]);
+
+    $response = $this->getJson("/api/securities/{$this->security->ticker}");
+
+    expect($response->status())->toBe(200)
+        ->and($response->json())->toMatchArray(StockDTO::make($this->stock)->jsonSerialize());
 });

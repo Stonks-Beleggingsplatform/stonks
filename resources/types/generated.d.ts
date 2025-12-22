@@ -27,12 +27,7 @@ total_value: number;
 total_return: number;
 holdings: Array<any>;
 };
-export type SecurityDTO = {
-id: number;
-ticker: string;
-name: string;
-price: number;
-};
+export type SecurityDTO = (StockDTO & { dto_type: 'stock' }) | (BondDTO & { dto_type: 'bond' }) | (CryptoDTO & { dto_type: 'crypto' });
 export type UserDTO = {
 id: number;
 name: string;
@@ -48,7 +43,7 @@ securities_count: number;
 }
 declare namespace App.DTO.Securityable {
 export type BondDTO = {
-type: string;
+dto_type: string;
 nominal_value: number;
 coupon_rate: number;
 maturity_date: string;
@@ -58,16 +53,15 @@ name: string;
 price: number;
 };
 export type CryptoDTO = {
-type: string;
-coin_type: App.Enums.CryptoType;
+dto_type: string;
+type: App.Enums.CryptoType;
 id: number;
 ticker: string;
 name: string;
 price: number;
 };
-export type SecurityableDTO = (StockDTO & { type: 'stock' }) | (BondDTO & { type: 'bond' }) | (CryptoDTO & { type: 'crypto' });
 export type StockDTO = {
-type: string;
+dto_type: string;
 pe_ratio: number;
 dividend_yield: number;
 company: App.DTO.CompanyDTO;
