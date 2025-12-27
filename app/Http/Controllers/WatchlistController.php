@@ -68,6 +68,15 @@ class WatchlistController extends Controller
         );
     }
 
+    public function delete(Watchlist $watchlist): Response
+    {
+        $this->authorize('delete', $watchlist);
+
+        $watchlist->delete();
+
+        return response(null, 200);
+    }
+
     public function addSecurities(Request $request, Watchlist $watchlist): Response
     {
         $this->authorize('update', $watchlist);

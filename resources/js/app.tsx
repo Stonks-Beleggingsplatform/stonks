@@ -11,6 +11,7 @@ import Login from './components/Login';
 import SecurityShow from './components/Security/SecurityShow';
 import WatchlistIndex from './components/Watchlist/WatchlistIndex';
 import WatchlistCreate from './components/Watchlist/WatchlistCreate';
+import WatchlistEdit from './components/Watchlist/WatchlistEdit';
 import WatchlistShow from './components/Watchlist/WatchlistShow';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 
@@ -43,6 +44,7 @@ function App() {
                             <Route path="/watchlists" element={<WatchlistIndex />} />
                             <Route path="/watchlists/create" element={<WatchlistCreate />} />
                             <Route path="/watchlists/:id" element={<WatchlistShow />} />
+                            <Route path="/watchlists/:id/edit" element={<WatchlistEdit />} />
                         </Route>
 
                         {/* 404 */}

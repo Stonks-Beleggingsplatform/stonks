@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{watchlist}', 'show')->name('watchlist.show');
         Route::post('/create', 'create')->name('watchlist.create');
         Route::put('/{watchlist}/update', 'update')->name('watchlist.update');
+        Route::delete('/watchlist/{watchlist}/delete', 'delete')->name('watchlist.delete');
         Route::put('/{watchlist}/securities/add', 'addSecurities')->name('watchlist.securities.add');
         Route::put('/{watchlist}/securities/remove', 'removeSecurities')->name('watchlist.securities.remove');
     });
