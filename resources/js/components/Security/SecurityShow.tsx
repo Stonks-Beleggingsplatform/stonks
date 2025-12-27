@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
+import { AddToWatchlistModal } from './Modals/AddToWatchlistModal.tsx';
 
 // Base Security interface
 interface Exchange {
@@ -28,7 +29,7 @@ interface BaseSecurity {
     name: string;
     price: number;
     exchange?:  Exchange;
-    dto_type:  'stock' | 'crypto' | 'bond' | 'security';
+    dto_type: 'stock' | 'crypto' | 'bond' | 'security';
 }
 
 // Stock specific
@@ -36,13 +37,13 @@ interface Stock extends BaseSecurity {
     dto_type: 'stock';
     pe_ratio: number;
     dividend_yield: number;
-    company?: Company;
+    company?:  Company;
 }
 
 // Crypto specific
 interface Crypto extends BaseSecurity {
-    dto_type: 'crypto';
-    type: 'coin' | 'token' | 'nft';
+    dto_type:  'crypto';
+    type:  'coin' | 'token' | 'nft';
 }
 
 // Bond specific
@@ -56,11 +57,12 @@ interface Bond extends BaseSecurity {
 type Security = Stock | Crypto | Bond | BaseSecurity;
 
 export default function SecurityShow() {
-    const { ticker } = useParams<{ ticker: string }>();
+    const { ticker } = useParams<{ ticker:  string }>();
     const navigate = useNavigate();
     const [security, setSecurity] = useState<Security | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isWatchlistModalOpen, setIsWatchlistModalOpen] = useState(false);
 
     useEffect(() => {
         if (ticker) {
@@ -72,7 +74,7 @@ export default function SecurityShow() {
         try {
             const response = await api.get(`/securities/${ticker}`);
             setSecurity(response.data);
-        } catch (err: any) {
+        } catch (err:  any) {
             if (err.response?.status === 404) {
                 setError('Security not found');
             } else {
@@ -85,10 +87,10 @@ export default function SecurityShow() {
 
     const formatPrice = (price: number) => {
         return `$${price.toLocaleString('en-US', {
-            minimumFractionDigits:  2,
+            minimumFractionDigits: 2,
             maximumFractionDigits: 2
         })}`;
-    }
+    };
 
     const formatMarketCap = (marketCap: number) => {
         if (marketCap >= 1_000_000_000_000) {
@@ -104,7 +106,7 @@ export default function SecurityShow() {
     const renderSecurityDetails = () => {
         if (!security) return null;
 
-        switch (security. dto_type) {
+        switch (security.dto_type) {
             case 'stock':
                 return <StockDetails security={security as Stock} formatMarketCap={formatMarketCap} />;
             case 'crypto':
@@ -159,9 +161,9 @@ export default function SecurityShow() {
                     <div className="flex items-start justify-between">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-3xl font-bold">{security. ticker}</h1>
+                                <h1 className="text-3xl font-bold">{security.ticker}</h1>
                                 <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full uppercase">
-                                    {security.dto_type}
+                                    {security. dto_type}
                                 </span>
                             </div>
                             <p className="text-xl text-gray-600 mb-1">{security.name}</p>
@@ -171,9 +173,16 @@ export default function SecurityShow() {
                         </div>
 
                         <div className="text-right">
-                            <div className="text-3xl font-bold text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 mb-3">
                                 {formatPrice(security.price)}
                             </div>
+                            <button
+                                onClick={() => setIsWatchlistModalOpen(true)}
+                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors inline-flex items-center gap-2"
+                            >
+                                <span>+</span>
+                                <span>Add to Watchlist</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -181,9 +190,20 @@ export default function SecurityShow() {
                 {/* Security Type Specific Details */}
                 {renderSecurityDetails()}
             </main>
+
+            {/* Add to Watchlist Modal */}
+            {security && (
+                <AddToWatchlistModal
+                    isOpen={isWatchlistModalOpen}
+                    onClose={() => setIsWatchlistModalOpen(false)}
+                    securityTicker={security.ticker}
+                    securityName={security.name}
+                />
+            )}
         </div>
     );
 }
+
 // Stock Details Component
 function StockDetails({ security, formatMarketCap }: { security: Stock; formatMarketCap: (n: number) => string }) {
     return (
@@ -191,7 +211,7 @@ function StockDetails({ security, formatMarketCap }: { security: Stock; formatMa
             {/* Key Metrics */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Key Metrics</h2>
-                <div className="grid grid-cols-1 md: grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <span className="text-sm text-gray-500">P/E Ratio</span>
                         <p className="text-2xl font-bold text-gray-900">{security.pe_ratio.toFixed(2)}</p>
@@ -202,7 +222,7 @@ function StockDetails({ security, formatMarketCap }: { security: Stock; formatMa
                     </div>
                     {security.company && (
                         <div>
-                            <span className="text-sm text-grayfunc-500">Market Cap</span>
+                            <span className="text-sm text-gray-500">Market Cap</span>
                             <p className="text-2xl font-bold text-gray-900">{formatMarketCap(security.company.market_cap)}</p>
                         </div>
                     )}
@@ -228,7 +248,7 @@ function StockDetails({ security, formatMarketCap }: { security: Stock; formatMa
                             </div>
                             <div>
                                 <span className="text-sm text-gray-500">Employees</span>
-                                <p className="text-gray-900 font-medium">{security. company.employee_count. toLocaleString()}</p>
+                                <p className="text-gray-900 font-medium">{security.company.employee_count. toLocaleString()}</p>
                             </div>
                             {security.company.sectors && security.company.sectors.length > 0 && (
                                 <div className="md:col-span-2">
@@ -273,8 +293,8 @@ function StockDetails({ security, formatMarketCap }: { security: Stock; formatMa
                             <div className="md:col-span-2">
                                 <span className="text-sm text-gray-500">Address</span>
                                 <p className="text-gray-900 font-medium">
-                                    {security.company. street}<br />
-                                    {security.company.zip_code} {security.company. city}<br />
+                                    {security.company.street}<br />
+                                    {security.company.zip_code} {security.company.city}<br />
                                     {security.company.country}
                                 </p>
                             </div>
