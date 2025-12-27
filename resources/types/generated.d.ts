@@ -1,4 +1,17 @@
 declare namespace App.DTO {
+export type CompanyDTO = {
+name: string;
+sectors: Array<any>;
+employee_count: number;
+market_cap: number;
+email: string;
+phone: string;
+street: string;
+zip_code: string;
+city: string;
+country: string;
+about: string;
+};
 export type HoldingDTO = {
 id: number;
 ticker: string;
@@ -38,5 +51,6 @@ export type CryptoType = 'coin' | 'stablecoin' | 'token' | 'nft' | 'other';
 export type OrderAction = 'buy' | 'sell';
 export type OrderStatus = 'pending' | 'completed' | 'canceled';
 export type OrderType = 'market' | 'limit';
+export type Sector = 'technology' | 'finance' | 'healthcare' | 'retail' | 'manufacturing' | 'energy' | 'transportation' | 'real_estate';
 export type TransactionType = 'deposit' | 'withdrawal' | 'buy' | 'sell' | 'dividend';
 }
