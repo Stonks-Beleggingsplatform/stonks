@@ -6,14 +6,14 @@ import { AddSecurityModal } from './AddSecurityModal.tsx';
 interface User {
     id: number;
     name: string;
-    email: string;
+    email:  string;
 }
 
 interface Security {
     id:  number;
     ticker: string;
     name: string;
-    price?:  number;
+    price?:   number;
 }
 
 interface Watchlist {
@@ -46,7 +46,7 @@ export default function WatchlistShow() {
             const response = await api.get(`/watchlist/${id}`);
             setWatchlist(response.data);
         } catch (err:   any) {
-            if (err.response?.status === 404) {
+            if (err. response?.status === 404) {
                 setError('Watchlist not found');
             } else if (err.response?.status === 403) {
                 setError('You do not have permission to view this watchlist');
@@ -58,28 +58,34 @@ export default function WatchlistShow() {
         }
     };
 
-    const handleRemoveSecurity = async (ticker: string) => {
-        if (! confirm('Are you sure you want to remove this security from the watchlist?')) {
+    const handleRemoveSecurity = async (e: React.MouseEvent, ticker: string) => {
+        e.stopPropagation();
+
+        if (! confirm('Are you sure you want to remove this security from the watchlist? ')) {
             return;
         }
 
         try {
-            // PUT naar /watchlist/{id}/securities/remove met securities array
             await api.put(`/watchlist/${id}/securities/remove`, {
                 securities: [{ ticker }]
             });
-
-            // Herlaad de watchlist
             await fetchWatchlist();
         } catch (err: any) {
             console.error('Failed to remove security:', err);
-            alert(err.response?.data?.message || 'Failed to remove security from watchlist');
+            alert(err. response?.data?.message || 'Failed to remove security from watchlist');
         }
+    };
+
+    const formatPrice = (price:  number) => {
+        return `$${price.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
     };
 
     if (isLoading) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg: px-8 py-8">
                 <div className="flex items-center justify-center py-12">
                     <div className="text-gray-600">Loading watchlist...</div>
                 </div>
@@ -89,7 +95,7 @@ export default function WatchlistShow() {
 
     if (error || !watchlist) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm: px-6 lg:px-8 py-8">
                 <button
                     onClick={() => navigate('/watchlists')}
                     className="text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4 flex items-center gap-2"
@@ -120,7 +126,7 @@ export default function WatchlistShow() {
                     <div className="flex items-start justify-between">
                         <div>
                             <h1 className="text-2xl font-bold mb-2">{watchlist.name}</h1>
-                            {watchlist.description && (
+                            {watchlist. description && (
                                 <p className="text-gray-600">{watchlist.description}</p>
                             )}
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
@@ -137,7 +143,7 @@ export default function WatchlistShow() {
                             </Link>
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors"
                             >
                                 + Add Security
                             </button>
@@ -168,24 +174,38 @@ export default function WatchlistShow() {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                 {watchlist.securities.map((security) => (
-                                    <tr key={security.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr
+                                        key={security. id}
+                                        onClick={() => navigate(`/securities/${security.ticker}`)}
+                                        className="group cursor-pointer transition-all duration-150 hover:bg-blue-50 hover:shadow-sm active:bg-blue-100"
+                                    >
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
+                                            <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-2">
                                                 {security.ticker}
+                                                <svg
+                                                    className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900">{security.name}</div>
+                                            <div className="text-sm text-gray-900 group-hover:text-gray-700 transition-colors">
+                                                {security.name}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="text-sm text-gray-900">
-                                                {security.price !== undefined ? `$${security.price.toFixed(2)}` : 'N/A'}
+                                            <div className="text-sm text-gray-900 group-hover:text-gray-700 transition-colors">
+                                                {security.price !== undefined ? formatPrice(security.price) : 'N/A'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <button
-                                                onClick={() => handleRemoveSecurity(security.ticker)}
-                                                className="text-red-600 hover:text-red-900"
+                                                onClick={(e) => handleRemoveSecurity(e, security. ticker)}
+                                                className="text-red-600 hover: text-red-900 hover:underline transition-colors"
                                             >
                                                 Remove
                                             </button>

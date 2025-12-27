@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use BackedEnum;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -26,6 +27,8 @@ abstract class DTO implements Arrayable, JsonSerializable
                 $base[$key] = $value->map(function ($item) {
                     return $item instanceof DTO ? $item->jsonSerialize() : $item;
                 })->toArray();
+            } elseif ($value instanceof BackedEnum) {
+                $base[$key] = $value->value;
             }
         }
 
@@ -39,7 +42,7 @@ abstract class DTO implements Arrayable, JsonSerializable
         $properties = get_class_vars($dto::class);
 
         foreach ($properties as $property => $defaultValue) {
-            if (! isset($model->$property) || $model->$property instanceof Model) {
+            if (!isset($model->$property) || $model->$property instanceof Model) {
                 continue;
             }
 
@@ -65,6 +68,6 @@ abstract class DTO implements Arrayable, JsonSerializable
 
     public static function collection(Collection $collection): Collection
     {
-        return $collection->map(fn (Model $model) => static::make($model));
+        return $collection->map(fn(Model $model) => static::make($model));
     }
 }

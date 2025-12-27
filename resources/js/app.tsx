@@ -8,6 +8,7 @@ import Home from './components/Home';
 import { AuthProvider } from './context/AuthContext';
 import Register from './components/Register';
 import Login from './components/Login';
+import SecurityShow from './components/Security/SecurityShow';
 import WatchlistIndex from './components/Watchlist/WatchlistIndex';
 import WatchlistCreate from './components/Watchlist/WatchlistCreate';
 import WatchlistEdit from './components/Watchlist/WatchlistEdit';
@@ -38,6 +39,8 @@ function App() {
                         {/* Protected routes */}
                         <Route element={<ProtectedLayout />}>
                             <Route path="/portfolio" element={<Portfolio />} />
+                            <Route path="/securities/:ticker" element={<SecurityShow />} />
+
                             <Route path="/watchlists" element={<WatchlistIndex />} />
                             <Route path="/watchlists/create" element={<WatchlistCreate />} />
                             <Route path="/watchlists/:id" element={<WatchlistShow />} />
