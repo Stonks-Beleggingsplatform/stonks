@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
 import { AddToWatchlistModal } from './Modals/AddToWatchlistModal.tsx';
 
-type Security = App.DTO. Securityable. StockDTO | App.DTO. Securityable.CryptoDTO | App.DTO. Securityable.BondDTO | App.DTO.SecurityDTO;
+type Security = App.DTO.Securityable.StockDTO | App.DTO.Securityable.CryptoDTO | App. DTO.Securityable. BondDTO | App.DTO.SecurityDTO;
 
 export default function SecurityShow() {
-    const { ticker } = useParams<{ ticker:  string }>();
+    const { ticker } = useParams<{ ticker:   string }>();
     const navigate = useNavigate();
     const [security, setSecurity] = useState<Security | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function SecurityShow() {
             if (err.response?.status === 404) {
                 setError('Security not found');
             } else {
-                setError(err.response?.data?.message || 'Failed to load security');
+                setError(err. response?.data?.message || 'Failed to load security');
             }
         } finally {
             setIsLoading(false);
@@ -59,9 +59,9 @@ export default function SecurityShow() {
 
         switch (dtoType) {
             case 'stock':
-                return <StockDetails security={security as App.DTO.Securityable.StockDTO} formatMarketCap={formatMarketCap} />;
+                return <StockDetails security={security as App.DTO. Securityable.StockDTO} formatMarketCap={formatMarketCap} />;
             case 'crypto':
-                return <CryptoDetails security={security as App. DTO.Securityable. CryptoDTO} />;
+                return <CryptoDetails security={security as App.DTO.Securityable.CryptoDTO} />;
             case 'bond':
                 return <BondDetails security={security as App.DTO.Securityable.BondDTO} />;
             default:
@@ -115,7 +115,7 @@ export default function SecurityShow() {
                     <div className="flex items-start justify-between">
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-3xl font-bold">{security.ticker}</h1>
+                                <h1 className="text-3xl font-bold">{security. ticker}</h1>
                                 {dtoType && (
                                     <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full uppercase">
                                         {dtoType}
@@ -124,7 +124,7 @@ export default function SecurityShow() {
                             </div>
                             <p className="text-xl text-gray-600 mb-1">{security.name}</p>
                             {exchange && (
-                                <p className="text-sm text-gray-500">{exchange.name}</p>
+                                <p className="text-sm text-gray-500">{exchange. name}</p>
                             )}
                         </div>
 
@@ -134,7 +134,7 @@ export default function SecurityShow() {
                             </div>
                             <button
                                 onClick={() => setIsWatchlistModalOpen(true)}
-                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors inline-flex items-center gap-2"
+                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
                             >
                                 <span>+</span>
                                 <span>Add to Watchlist</span>
@@ -161,7 +161,7 @@ export default function SecurityShow() {
 }
 
 // Stock Details Component
-function StockDetails({ security, formatMarketCap }: { security: App. DTO.Securityable.StockDTO; formatMarketCap: (n: number) => string }) {
+function StockDetails({ security, formatMarketCap }: { security: App.DTO. Securityable.StockDTO; formatMarketCap: (n: number) => string }) {
     return (
         <div className="space-y-6">
             {/* Key Metrics */}
@@ -200,7 +200,7 @@ function StockDetails({ security, formatMarketCap }: { security: App. DTO.Securi
                         <div className="grid grid-cols-1 md: grid-cols-2 gap-6">
                             <div>
                                 <span className="text-sm text-gray-500">Company Name</span>
-                                <p className="text-gray-900 font-medium">{security.company.name}</p>
+                                <p className="text-gray-900 font-medium">{security. company.name}</p>
                             </div>
                             <div>
                                 <span className="text-sm text-gray-500">Employees</span>
@@ -234,23 +234,23 @@ function StockDetails({ security, formatMarketCap }: { security: App. DTO.Securi
                                     href={`mailto:${security.company.email}`}
                                     className="text-gray-900 font-medium hover:text-blue-600 transition-colors block"
                                 >
-                                    {security. company.email}
+                                    {security.company.email}
                                 </a>
                             </div>
                             <div>
                                 <span className="text-sm text-gray-500">Phone</span>
                                 <a
-                                    href={`tel:${security.company.phone}`}
+                                    href={`tel:${security.company.phone. replace(/\./g, '')}`}
                                     className="text-gray-900 font-medium hover:text-blue-600 transition-colors block"
                                 >
-                                    {security.company.phone}
+                                    {security.company.phone. replace(/\./g, '')}
                                 </a>
                             </div>
-                            <div className="md: col-span-2">
+                            <div className="md:col-span-2">
                                 <span className="text-sm text-gray-500">Address</span>
                                 <p className="text-gray-900 font-medium">
                                     {security.company.street}<br />
-                                    {security.company.zip_code} {security. company.city}<br />
+                                    {security.company.zip_code} {security.company. city}<br />
                                     {security.company.country}
                                 </p>
                             </div>
@@ -263,7 +263,7 @@ function StockDetails({ security, formatMarketCap }: { security: App. DTO.Securi
 }
 
 // Crypto Details Component
-function CryptoDetails({ security }: { security: App. DTO.Securityable.CryptoDTO }) {
+function CryptoDetails({ security }: { security: App.DTO.Securityable.CryptoDTO }) {
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4">Crypto Information</h2>
