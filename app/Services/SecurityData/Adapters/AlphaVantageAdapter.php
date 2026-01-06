@@ -97,7 +97,9 @@ class AlphaVantageAdapter implements SecurityDataAdapter
 
     public function getHistoricalData(Security $security): array
     {
-        $endpoint = "{$this->baseUrl}?function=TIME_SERIES_DAILY&symbol={$security->ticker}.{$security->exchange->code}&outputsize=compact&apikey={$this->apiKey}";
+        $exchangeCode = $security->exchange ? $security->exchange->code : null;
+        $symbol = $security->ticker . ($exchangeCode ? '.' . $exchangeCode : '');
+        $endpoint = "{$this->baseUrl}?function=TIME_SERIES_DAILY&symbol={$symbol}&outputsize=compact&apikey={$this->apiKey}";
 
         $data = Http::get($endpoint)->json();
 
