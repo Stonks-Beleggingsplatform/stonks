@@ -6,15 +6,5 @@ use Illuminate\Support\Facades\Route;
 
 // This ensures requests like /dashboard, /users, /settings don't return 404
 // Instead, they return the React app, and React Router looks at the URL to decide what to show.
-
-//Temp route for testing the SecurityDataService
-Route::get('/test/{ticker}', function ($ticker) {
-    $service = new SecurityDataService();
-
-    $security = Security::query()->where('ticker', $ticker)->first();
-
-    return 'Details for ' . $security->ticker . ': ' . json_encode($service->getHistoricalData($security));
-});
-
 Route::view('/{any?}', 'app')->where('any', '.*');
 
