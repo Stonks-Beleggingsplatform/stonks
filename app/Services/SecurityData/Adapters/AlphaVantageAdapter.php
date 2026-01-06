@@ -3,12 +3,10 @@
 namespace App\Services\SecurityData\Adapters;
 
 use App\DTO\CompanyDTO;
-use App\DTO\Securityable\BondDTO;
-use App\DTO\Securityable\CryptoDTO;
 use App\DTO\Securityable\StockDTO;
-use App\DTO\SecurityDTO;
 use App\Enums\Sector;
 use App\Services\SecurityData\SecurityDataAdapter;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class AlphaVantageAdapter implements SecurityDataAdapter
@@ -30,13 +28,12 @@ class AlphaVantageAdapter implements SecurityDataAdapter
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-            throw new \Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
         }
 
         return $data['Global Quote']['05. price'];
     }
 
-    //TODO: Check if this is correct, API limit reached for testing
     public function getSecurityDetails(string $ticker): ?StockDTO
     {
         $ticker = rawurlencode($ticker);
@@ -46,7 +43,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-           throw new \Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
         }
 
         //AlphaVantage does not provide bond or crypto data, so we only handle stocks here
@@ -55,7 +52,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
             'name' => $data['Name'] ?? null,
             'price' => $this->getPrice($ticker),
             'pe_ratio' => $data['PERatio'] ?? null,
-            'dividend_yield' => $data['DividendYield'] == 'None' ? 0.0 :  $data['DividendYield'] ?? null,
+            'dividend_yield' => $data['DividendYield'] == 'None' ? 0.0 : $data['DividendYield'] ?? null,
             'company' => CompanyDTO::fromArray([
                 'name' => $data['Name'] ?? null,
                 'sectors' => Sector::tryFrom($data['Sector']),
@@ -68,7 +65,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
                 'city' => '', // AlphaVantage does not provide city
                 'country' => '', // AlphaVantage does not provide country
                 'about' => $data['Description'] ?? null,
-        ]),
+            ]),
         ]);
     }
 
