@@ -58,7 +58,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
             'dividend_yield' => $data['DividendYield'] == 'None' ? 0.0 : $data['DividendYield'] ?? null,
             'company' => CompanyDTO::fromArray([
                 'name' => $data['Name'] ?? null,
-                'sectors' => Sector::tryFrom($data['Sector']),
+                'sectors' => ($sectorEnum = Sector::tryFrom($data['Sector'] ?? '')) ? [$sectorEnum] : [],
                 'employee_count' => 0, // AlphaVantage does not provide employee count
                 'market_cap' => $data['MarketCapitalization'] ?? null,
                 'email' => '', // AlphaVantage does not provide email
