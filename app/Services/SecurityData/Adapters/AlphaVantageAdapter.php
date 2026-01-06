@@ -3,9 +3,11 @@
 namespace App\Services\SecurityData\Adapters;
 
 use App\DTO\CompanyDTO;
+use App\DTO\HistoricalPriceDTO;
 use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
 use App\Enums\Sector;
+use App\Models\Security;
 use App\Services\SecurityData\SecurityDataAdapter;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -93,8 +95,30 @@ class AlphaVantageAdapter implements SecurityDataAdapter
             ->toArray();
     }
 
-    public function getHistoricalData(string $ticker, string $from, string $to): array
+    public function getHistoricalData(Security $security): array
     {
-        // TODO: Implement getHistoricalData() method.
+        $endpoint = "{$this->baseUrl}?function=TIME_SERIES_DAILY&symbol={$security->ticker}.{$security->exchange->code}&outputsize=compact&apikey={$this->apiKey}";
+
+        $data = Http::get($endpoint)->json();
+
+        if (empty($data) || isset($data['Information'])) {
+            throw new Exception("No data found for ticker: {$security->ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+        }
+
+        $timeSeries = $data['Time Series (Daily)'] ?? [];
+
+        return collect($timeSeries)
+            ->map(function ($dayData, $date) {
+                HistoricalPriceDTO::fromArray([
+                    'date' => $date,
+                    'open' => $dayData['1. open'] ?? null,
+                    'high' => $dayData['2. high'] ?? null,
+                    'low' => $dayData['3. low'] ?? null,
+                    'close' => $dayData['4. close'] ?? null,
+                    'volume' => $dayData['5. volume'] ?? null,
+                ]);
+            })
+            ->values()
+            ->toArray();
     }
 }

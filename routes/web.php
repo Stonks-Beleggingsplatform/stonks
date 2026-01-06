@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Security;
 use App\Services\SecurityData\SecurityDataService;
 use Illuminate\Support\Facades\Route;
 
@@ -7,10 +8,12 @@ use Illuminate\Support\Facades\Route;
 // Instead, they return the React app, and React Router looks at the URL to decide what to show.
 
 //Temp route for testing the SecurityDataService
-Route::get('/test/{ticker}', function (string $ticker) {
+Route::get('/test/{ticker}', function ($ticker) {
     $service = new SecurityDataService();
 
-    return 'Details for ' . $ticker . ': ' . json_encode($service->search($ticker));
+    $security = Security::query()->where('ticker', $ticker)->first();
+
+    return 'Details for ' . $security->ticker . ': ' . json_encode($service->getHistoricalData($security));
 });
 
 Route::view('/{any?}', 'app')->where('any', '.*');

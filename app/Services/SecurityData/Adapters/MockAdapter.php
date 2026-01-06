@@ -2,10 +2,12 @@
 
 namespace App\Services\SecurityData\Adapters;
 
+use App\DTO\HistoricalPriceDTO;
 use App\DTO\Securityable\BondDTO;
 use App\DTO\Securityable\CryptoDTO;
 use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
+use App\Models\Security;
 use App\Services\SecurityData\SecurityDataAdapter;
 
 class MockAdapter implements SecurityDataAdapter
@@ -35,9 +37,23 @@ class MockAdapter implements SecurityDataAdapter
         return $results;
     }
 
-    public function getHistoricalData(string $ticker, string $from, string $to): array
+    public function getHistoricalData(Security $security): array
     {
-        //TODO: Implement mock historical data
-        return [];
+        $data = [];
+        $startDate = now()->subMonths(6);
+        $endDate = now();
+
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $data[] = HistoricalPriceDTO::fromArray([
+                'date' => $date->toDateString(),
+                'open' => fake()->randomFloat(2, 10, 500),
+                'high' => fake()->randomFloat(2, 10, 500),
+                'low' => fake()->randomFloat(2, 10, 500),
+                'close' => fake()->randomFloat(2, 10, 500),
+                'volume' => fake()->numberBetween(1000, 1000000),
+            ]);
+        }
+
+        return $data;
     }
 }

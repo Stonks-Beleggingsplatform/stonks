@@ -1,5 +1,7 @@
 <?php
 
+use App\DTO\HistoricalPriceDTO;
+use App\Models\Security;
 use App\Services\SecurityData\Adapters\MockAdapter;
 use App\Services\SecurityData\SecurityDataService;
 
@@ -30,5 +32,12 @@ it('can search securities', function () {
 });
 
 it('can get historical data', function () {
-   $this->markTestIncomplete('This test has not been implemented yet.');
+    $security = new Security();
+    $security->ticker = 'AAPL';
+
+    $historicalData = $this->service->getHistoricalData($security);
+
+    expect($historicalData)->toBeArray()
+        ->and(count($historicalData))->toBeGreaterThan(0)
+        ->and($historicalData)->each->toBeInstanceOf(HistoricalPriceDTO::class);
 });

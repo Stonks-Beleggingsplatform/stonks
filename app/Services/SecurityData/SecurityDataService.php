@@ -3,6 +3,7 @@
 namespace App\Services\SecurityData;
 
 use App\DTO\SecurityDTO;
+use App\Models\Security;
 use App\Services\SecurityData\Adapters\AlphaVantageAdapter;
 
 class SecurityDataService
@@ -29,8 +30,8 @@ class SecurityDataService
         return $this->adapter->search($term);
     }
 
-    public function getHistoricalData(string $ticker, string $from, string $to): array
+    public function getHistoricalData(Security $security): array
     {
-        return $this->adapter->getHistoricalData($ticker, $from, $to);
+        return $this->adapter->getHistoricalData($security);
     }
 }

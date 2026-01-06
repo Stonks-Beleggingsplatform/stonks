@@ -11,6 +11,7 @@ class ExchangeFactory extends Factory
     {
         return [
             'name' => $this->faker->company().' Exchange',
+            'code' => strtoupper($this->faker->unique()->lexify('???')),
             'currency_id' => Currency::factory()->create(),
         ];
     }
