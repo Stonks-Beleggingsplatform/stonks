@@ -18,16 +18,22 @@ class FeeController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Get all exchanges with their "default" fee (where transaction_id is null)
-        $exchanges = Exchange::with(['fees' => function ($query) {
+        // Get all exchanges with their "default" fees (where transaction_id is null)
+        $exchanges = Exchange::with(['currency', 'fees' => function ($query) {
             $query->whereNull('transaction_id');
         }])->get();
 
         return response()->json($exchanges->map(function ($exchange) {
+            $fees = $exchange->fees->keyBy('type');
+            
             return [
                 'id' => $exchange->id,
                 'name' => $exchange->name,
-                'fee_amount' => (float) ($exchange->fees->first()?->amount ?? 0),
+                'description' => $exchange->description ?? '',
+                'currency' => $exchange->currency->name ?? 'N/A',
+                'transaction_fee' => (float) ($fees->get('transaction')?->amount ?? 0),
+                'maintenance_fee' => (float) ($fees->get('maintenance')?->amount ?? 0),
+                'order_fee' => (float) ($fees->get('order')?->amount ?? 0),
             ];
         }));
     }
@@ -44,17 +50,51 @@ class FeeController extends Controller
         $request->validate([
             'fees' => 'required|array',
             'fees.*.exchange_id' => 'required|exists:exchanges,id',
-            'fees.*.amount' => 'required|numeric|min:0',
+            'fees.*.description' => 'nullable|string',
+            'fees.*.transaction_fee' => 'required|numeric|min:0',
+            'fees.*.maintenance_fee' => 'required|numeric|min:0',
+            'fees.*.order_fee' => 'required|numeric|min:0',
         ]);
 
         foreach ($request->fees as $feeData) {
+            // Update Exchange Description
+            Exchange::where('id', $feeData['exchange_id'])->update([
+                'description' => $feeData['description'] ?? '',
+            ]);
+
+            // Update Transaction Fee
             Fee::updateOrCreate(
                 [
                     'exchange_id' => $feeData['exchange_id'],
-                    'transaction_id' => null, // Default fee setting
+                    'transaction_id' => null,
+                    'type' => 'transaction',
                 ],
                 [
-                    'amount' => $feeData['amount'],
+                    'amount' => $feeData['transaction_fee'],
+                ]
+            );
+
+            // Update Maintenance Fee
+            Fee::updateOrCreate(
+                [
+                    'exchange_id' => $feeData['exchange_id'],
+                    'transaction_id' => null,
+                    'type' => 'maintenance',
+                ],
+                [
+                    'amount' => $feeData['maintenance_fee'],
+                ]
+            );
+
+            // Update Order Fee
+            Fee::updateOrCreate(
+                [
+                    'exchange_id' => $feeData['exchange_id'],
+                    'transaction_id' => null,
+                    'type' => 'order',
+                ],
+                [
+                    'amount' => $feeData['order_fee'],
                 ]
             );
         }

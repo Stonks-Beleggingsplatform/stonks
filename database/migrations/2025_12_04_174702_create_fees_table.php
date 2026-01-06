@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exchange_id')->constrained()->onDelete('cascade');
             $table->foreignId('transaction_id')->nullable()->constrained()->onDelete('cascade');
-            
+
             // Ensure only one fee setting per exchange (when transaction_id is null)
             $table->unique(['exchange_id', 'transaction_id']);
 
-            $table->decimal('amount', 10, 4);
+            $table->integer('amount');
 
             $table->timestamps();
         });

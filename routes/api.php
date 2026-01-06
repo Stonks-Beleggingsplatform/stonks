@@ -23,7 +23,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/watchlist/create', 'create')->name('watchlist.create');
     });
 
-    // Admin Routes
-    Route::get('/admin/fees', [App\Http\Controllers\FeeController::class, 'index']);
-    Route::post('/admin/fees', [App\Http\Controllers\FeeController::class, 'store']);
+    Route::prefix('admin')->group(function () {
+        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
+        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
+    });
 });

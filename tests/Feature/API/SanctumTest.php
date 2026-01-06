@@ -6,3 +6,4 @@ test('sanctum authentication works', function () {
     expect($result->status())->toBe(200)
         ->and($result->json())->toEqual(auth()->user()->attributesToArray());
 });
+``
