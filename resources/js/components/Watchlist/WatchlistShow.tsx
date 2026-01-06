@@ -3,34 +3,10 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
 import { AddSecurityModal } from './AddSecurityModal.tsx';
 
-interface User {
-    id: number;
-    name: string;
-    email:  string;
-}
-
-interface Security {
-    id:  number;
-    ticker: string;
-    name: string;
-    price?:   number;
-}
-
-interface Watchlist {
-    id: number;
-    name:   string;
-    description?: string;
-    user:  User;
-    securities: Security[] | null;
-    securities_count: number;
-    created_at: string;
-    updated_at: string;
-}
-
 export default function WatchlistShow() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
+    const [watchlist, setWatchlist] = useState<App.DTO.WatchlistDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +21,7 @@ export default function WatchlistShow() {
         try {
             const response = await api.get(`/watchlist/${id}`);
             setWatchlist(response.data);
-        } catch (err:   any) {
+        } catch (err: any) {
             if (err. response?.status === 404) {
                 setError('Watchlist not found');
             } else if (err.response?.status === 403) {
@@ -58,10 +34,8 @@ export default function WatchlistShow() {
         }
     };
 
-    const handleRemoveSecurity = async (e: React.MouseEvent, ticker: string) => {
-        e.stopPropagation();
-
-        if (! confirm('Are you sure you want to remove this security from the watchlist? ')) {
+    const handleRemoveSecurity = async (ticker: string) => {
+        if (!confirm('Are you sure you want to remove this security from the watchlist?')) {
             return;
         }
 
@@ -69,6 +43,7 @@ export default function WatchlistShow() {
             await api.put(`/watchlist/${id}/securities/remove`, {
                 securities: [{ ticker }]
             });
+
             await fetchWatchlist();
         } catch (err: any) {
             console.error('Failed to remove security:', err);
@@ -76,16 +51,9 @@ export default function WatchlistShow() {
         }
     };
 
-    const formatPrice = (price:  number) => {
-        return `$${price.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
-    };
-
     if (isLoading) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg: px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex items-center justify-center py-12">
                     <div className="text-gray-600">Loading watchlist...</div>
                 </div>
@@ -95,10 +63,10 @@ export default function WatchlistShow() {
 
     if (error || !watchlist) {
         return (
-            <div className="max-w-5xl mx-auto px-4 sm: px-6 lg:px-8 py-8">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <button
                     onClick={() => navigate('/watchlists')}
-                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4 flex items-center gap-2"
+                    className="text-sm text-gray-600 hover: text-gray-900 transition-colors mb-4 flex items-center gap-2"
                 >
                     <span>←</span>
                     <span>Back to Watchlists</span>
@@ -126,9 +94,6 @@ export default function WatchlistShow() {
                     <div className="flex items-start justify-between">
                         <div>
                             <h1 className="text-2xl font-bold mb-2">{watchlist.name}</h1>
-                            {watchlist. description && (
-                                <p className="text-gray-600">{watchlist.description}</p>
-                            )}
                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                                 <span>{watchlist.securities_count} securities</span>
                             </div>
@@ -137,7 +102,7 @@ export default function WatchlistShow() {
                         <div className="flex gap-2">
                             <Link
                                 to={`/watchlists/${id}/edit`}
-                                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover: bg-gray-50 transition-colors"
+                                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
                             >
                                 Edit
                             </Link>
@@ -152,7 +117,7 @@ export default function WatchlistShow() {
                 </div>
 
                 {/* Securities List */}
-                {watchlist.securities && watchlist. securities.length > 0 ?  (
+                {watchlist.securities && watchlist.securities. length > 0 ? (
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -173,39 +138,25 @@ export default function WatchlistShow() {
                                 </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                {watchlist.securities.map((security) => (
-                                    <tr
-                                        key={security. id}
-                                        onClick={() => navigate(`/securities/${security.ticker}`)}
-                                        className="group cursor-pointer transition-all duration-150 hover:bg-blue-50 hover:shadow-sm active:bg-blue-100"
-                                    >
+                                {watchlist.securities.map((security:  App.DTO.SecurityDTO) => (
+                                    <tr key={security.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                                            <div className="text-sm font-medium text-gray-900">
                                                 {security.ticker}
-                                                <svg
-                                                    className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                </svg>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900 group-hover:text-gray-700 transition-colors">
-                                                {security.name}
-                                            </div>
+                                            <div className="text-sm text-gray-900">{security.name}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="text-sm text-gray-900 group-hover:text-gray-700 transition-colors">
-                                                {security.price !== undefined ? formatPrice(security.price) : 'N/A'}
+                                            <div className="text-sm text-gray-900">
+                                                ${security.price.toFixed(2)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <button
-                                                onClick={(e) => handleRemoveSecurity(e, security. ticker)}
-                                                className="text-red-600 hover: text-red-900 hover:underline transition-colors"
+                                                onClick={() => handleRemoveSecurity(security.ticker)}
+                                                className="text-red-600 hover:text-red-900"
                                             >
                                                 Remove
                                             </button>
@@ -244,7 +195,7 @@ export default function WatchlistShow() {
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={fetchWatchlist}
                 watchlistId={Number(id)}
-                existingSecurityIds={watchlist?.securities?.map(s => s.id) || []}
+                existingSecurityIds={watchlist?.securities?.map((s: App.DTO.SecurityDTO) => s.id) || []}
             />
         </div>
     );
