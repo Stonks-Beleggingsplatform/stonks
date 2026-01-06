@@ -111,7 +111,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
 
         return collect($timeSeries)
             ->map(function ($dayData, $date) {
-                HistoricalPriceDTO::fromArray([
+               return HistoricalPriceDTO::fromArray([
                     'date' => $date,
                     'open' => $dayData['1. open'] ?? null,
                     'high' => $dayData['2. high'] ?? null,
