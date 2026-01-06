@@ -2,13 +2,6 @@ import React, { useEffect, useState } from 'react';
 import api from '../../../lib/axios';
 import { Modal } from '../../Modal.tsx';
 
-interface Watchlist {
-    id: number;
-    name:  string;
-    description?:  string;
-    securities_count:  number;
-}
-
 interface AddToWatchlistModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -21,8 +14,8 @@ export function AddToWatchlistModal({
                                         onClose,
                                         securityTicker,
                                         securityName
-                                    }: AddToWatchlistModalProps) {
-    const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+                                    }:  AddToWatchlistModalProps) {
+    const [watchlists, setWatchlists] = useState<App.DTO.WatchlistDTO[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedWatchlistIds, setSelectedWatchlistIds] = useState<Set<number>>(new Set());
     const [initialWatchlistIds, setInitialWatchlistIds] = useState<Set<number>>(new Set());
@@ -37,8 +30,8 @@ export function AddToWatchlistModal({
 
     const fetchWatchlists = async () => {
         try {
-            const response = await api. get('/watchlist');
-            const allWatchlists = response. data;
+            const response = await api.get('/watchlist');
+            const allWatchlists:  App.DTO.WatchlistDTO[] = response.data;
             setWatchlists(allWatchlists);
 
             // Check which watchlists already contain this security
@@ -47,9 +40,9 @@ export function AddToWatchlistModal({
             for (const watchlist of allWatchlists) {
                 try {
                     const detailResponse = await api.get(`/watchlist/${watchlist.id}`);
-                    const securities = detailResponse.data.securities || [];
+                    const securities: App.DTO.SecurityDTO[] = detailResponse.data.securities || [];
 
-                    if (securities. some((s:  any) => s.ticker === securityTicker)) {
+                    if (securities.some((s: App.DTO.SecurityDTO) => s.ticker === securityTicker)) {
                         watchlistsWithSecurity.add(watchlist.id);
                     }
                 } catch (err) {
@@ -87,8 +80,8 @@ export function AddToWatchlistModal({
 
             // Add to watchlists
             for (const watchlistId of toAdd) {
-                await api.put(`/watchlist/${watchlistId}/securities/add`, {
-                    securities: [{ ticker: securityTicker }]
+                await api. put(`/watchlist/${watchlistId}/securities/add`, {
+                    securities: [{ ticker:  securityTicker }]
                 });
             }
 
@@ -103,9 +96,9 @@ export function AddToWatchlistModal({
                 alert('Watchlists updated successfully! ');
             }
             onClose();
-        } catch (err:   any) {
-            console. error('Failed to update watchlists:', err);
-            alert(err.response?.data?. message || 'Failed to update watchlists');
+        } catch (err:  any) {
+            console.error('Failed to update watchlists:', err);
+            alert(err. response?.data?.message || 'Failed to update watchlists');
         } finally {
             setIsSubmitting(false);
         }
@@ -174,12 +167,7 @@ export function AddToWatchlistModal({
 
                                     {/* Watchlist Info */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="font-medium text-gray-900">{watchlist. name}</div>
-                                        {watchlist.description && (
-                                            <div className="text-sm text-gray-500 mt-1 truncate">
-                                                {watchlist.description}
-                                            </div>
-                                        )}
+                                        <div className="font-medium text-gray-900">{watchlist.name}</div>
                                         <div className="text-xs text-gray-400 mt-1">
                                             {watchlist.securities_count} securities
                                         </div>
