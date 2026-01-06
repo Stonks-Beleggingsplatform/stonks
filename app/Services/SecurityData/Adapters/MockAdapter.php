@@ -26,11 +26,12 @@ class MockAdapter implements SecurityDataAdapter
     public function search(string $term): array
     {
         $results = [];
-        $count = fake()->numberBetween(1, 5);
 
-        for ($i = 0; $i < $count; $i++) {
-            $results[] = $this->getSecurityDetails($term . fake()->bothify('???###'));
+        for ($i = 0; $i < 5; $i++) {
+            $ticker = strtoupper(substr($term, 0, 3)) . fake()->randomNumber(3);
+            $results[] = $this->getSecurityDetails($ticker);
         }
+
         return $results;
     }
 

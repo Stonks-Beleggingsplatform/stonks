@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/test/{ticker}', function (string $ticker) {
     $service = new SecurityDataService();
 
-    return 'Details for ' . $ticker . ': ' . json_encode($service->getSecurityDetails($ticker));
+    return 'Details for ' . $ticker . ': ' . json_encode($service->search($ticker));
 });
 
 Route::view('/{any?}', 'app')->where('any', '.*');

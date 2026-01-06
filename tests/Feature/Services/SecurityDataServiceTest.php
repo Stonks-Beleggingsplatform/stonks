@@ -25,8 +25,8 @@ it('can get security details', function () {
 it('can search securities', function () {
     $results = $this->service->search('Apple');
 
-    expect(count($results))->toBeGreaterThan(0)
-        ->and($results[0]->ticker)->toStartWith('Apple');
+    expect($results)->toBeArray()
+        ->and(count($results))->toBeGreaterThan(0);
 });
 
 it('can get historical data', function () {

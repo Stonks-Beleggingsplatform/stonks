@@ -4,6 +4,7 @@ namespace App\Services\SecurityData\Adapters;
 
 use App\DTO\CompanyDTO;
 use App\DTO\Securityable\StockDTO;
+use App\DTO\SecurityDTO;
 use App\Enums\Sector;
 use App\Services\SecurityData\SecurityDataAdapter;
 use Exception;
@@ -71,7 +72,25 @@ class AlphaVantageAdapter implements SecurityDataAdapter
 
     public function search(string $term): array
     {
-        // TODO: Implement search() method.
+        $term = rawurlencode($term);
+
+        $endpoint = "{$this->baseUrl}?function=SYMBOL_SEARCH&keywords={$term}&apikey={$this->apiKey}";
+
+        $data = Http::get($endpoint)->json();
+
+        if (empty($data) || isset($data['Information'])) {
+            throw new Exception("No data found for search term: {$term}. Message: " . ($data['Information'] ?? 'Unknown error'));
+        }
+
+        return collect($data['bestMatches'] ?? [])
+            ->map(function ($security) {
+                return SecurityDTO::fromArray([
+                    'ticker' => $security['1. symbol'] ?? null,
+                    'name' => $security['2. name'] ?? null,
+                    'price' => 0, //Price is not relevant in search results and would require an additional API call
+                ]);
+            })
+            ->toArray();
     }
 
     public function getHistoricalData(string $ticker, string $from, string $to): array
