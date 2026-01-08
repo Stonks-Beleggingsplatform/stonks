@@ -1,35 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../lib/axios';
-import { Modal } from '../../components/Modal';
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
-
-interface Security {
-    id: number;
-    ticker: string;
-    name: string;
-    price?:  number;
-}
-
-interface Watchlist {
-    id: number;
-    name: string;
-    user:  User;
-    securities: Security[] | null;
-    securities_count: number;
-    created_at: string;
-    updated_at: string;
-}
+import { Modal } from '../Modal';
 
 export default function WatchlistEdit() {
-    const { id } = useParams<{ id:  string }>();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [watchlist, setWatchlist] = useState<Watchlist | null>(null);
+    const [watchlist, setWatchlist] = useState<App.DTO.WatchlistDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -48,9 +25,9 @@ export default function WatchlistEdit() {
     const fetchWatchlist = async () => {
         try {
             const response = await api.get(`/watchlist/${id}`);
-            setWatchlist(response. data);
-            setName(response.data.name);
-        } catch (err:  any) {
+            setWatchlist(response.data);
+            setName(response. data.name);
+        } catch (err: any) {
             if (err.response?.status === 404) {
                 setError('Watchlist not found');
             } else if (err.response?.status === 403) {
@@ -118,7 +95,7 @@ export default function WatchlistEdit() {
 
     if (error && !watchlist) {
         return (
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg: px-8 py-8">
                 <button
                     onClick={() => navigate('/watchlists')}
                     className="text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4 flex items-center gap-2"
@@ -135,7 +112,7 @@ export default function WatchlistEdit() {
 
     return (
         <div>
-            <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-3xl mx-auto px-4 sm: px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="mb-8">
                     <button
@@ -220,7 +197,7 @@ export default function WatchlistEdit() {
             >
                 <div className="space-y-4">
                     <p className="text-gray-600">
-                        Are you sure you want to delete <strong>{watchlist?.name}</strong>?
+                        Are you sure you want to delete <strong>{watchlist?. name}</strong>?
                         This action cannot be undone.
                     </p>
 
