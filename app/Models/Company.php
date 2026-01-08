@@ -20,9 +20,9 @@ class Company extends Model
             'sectors' => AsEnumCollection::of(Sector::class),
         ];
     }
+
     public function stocks(): HasMany
     {
         return $this->hasMany(Stock::class);
     }
 }
-
