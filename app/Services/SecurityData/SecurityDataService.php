@@ -5,6 +5,7 @@ namespace App\Services\SecurityData;
 use App\DTO\SecurityDTO;
 use App\Models\Security;
 use App\Services\SecurityData\Adapters\AlphaVantageAdapter;
+use App\Services\SecurityData\Adapters\MockAdapter;
 
 class SecurityDataService
 {
@@ -12,7 +13,9 @@ class SecurityDataService
 
     public function __construct(?SecurityDataAdapter $adapter = null)
     {
-        $this->adapter = $adapter ?? new AlphaVantageAdapter();
+        $this->adapter = $adapter ?? config('app.env') === 'testing'
+            ? new MockAdapter()
+            : new AlphaVantageAdapter();
     }
 
     public function getPrice(string $ticker): ?float
