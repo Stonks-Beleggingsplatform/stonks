@@ -24,12 +24,13 @@ export default function Navbar() {
                         <Link to="/" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors">Dashboard</Link>
                         <Link to="/portfolio" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Portfolio</Link>
                         <Link to="/watchlists" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Watchlists</Link>
+                        <Link to="/transactions" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Transactions</Link>
                         <Link to="/markets" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Markets</Link>
                     </nav>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {user ? (
+                    {user ?  (
                         <>
                             <span className="text-sm font-medium text-gray-600 hidden sm:block">
                                 Hello, {user.name}
@@ -37,7 +38,7 @@ export default function Navbar() {
                             <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                                 Logout
                             </button>
-                            <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                            <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors">
                                 Deposit
                             </button>
                         </>
@@ -46,7 +47,7 @@ export default function Navbar() {
                             <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                                 Login
                             </Link>
-                            <Link to="/register" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                            <Link to="/register" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover: bg-gray-800 transition-colors">
                                 Register
                             </Link>
                         </div>

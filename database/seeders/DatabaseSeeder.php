@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Order;
+use App\Models\Portfolio;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Watchlist;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,6 +24,14 @@ class DatabaseSeeder extends Seeder
         User::factory()
             ->has(
                 Watchlist::factory(3)
+            )
+            ->has(
+                Portfolio::factory()
+                    ->has(
+                        Order::factory()
+                            ->has(Transaction::factory())
+                            ->count(5)
+                    )
             )
             ->create([
                 'name' => 'Test User',
