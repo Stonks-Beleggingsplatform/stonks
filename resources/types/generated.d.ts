@@ -28,6 +28,13 @@ total_return: number;
 holdings: Array<any>;
 };
 export type SecurityDTO = (StockDTO & { dto_type: 'stock' }) | (BondDTO & { dto_type: 'bond' }) | (CryptoDTO & { dto_type: 'crypto' });
+export type TransactionDTO = {
+type: App.Enums.TransactionType;
+amount: number;
+price: number;
+exchange_rate: number;
+created_at: string;
+};
 export type UserDTO = {
 id: number;
 name: string;
