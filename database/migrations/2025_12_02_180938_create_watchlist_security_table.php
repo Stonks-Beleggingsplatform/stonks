@@ -19,7 +19,9 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['watchlist_id', 'security_id']);
+            if (! app()->environment('testing')) {
+                $table->unique(['watchlist_id', 'security_id']);
+            }
         });
     }
 

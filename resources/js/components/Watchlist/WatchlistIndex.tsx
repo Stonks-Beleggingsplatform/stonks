@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../lib/axios';
-
-interface Watchlist {
-    id: number;
-    name: string;
-    description?:  string;
-    user_id:  number;
-    created_at:  string;
-    updated_at:  string;
-    securities_count?:  number;
-}
+import api from '../../lib/axios';
 
 export default function WatchlistIndex() {
-    const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+    const [watchlists, setWatchlists] = useState<App.DTO.WatchlistDTO[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -23,7 +13,7 @@ export default function WatchlistIndex() {
 
     const fetchWatchlists = async () => {
         try {
-            const response = await api.get('/watchlist');
+            const response = await api. get('/watchlist');
             setWatchlists(response.data);
         } catch (err:  any) {
             setError(err.response?.data?.message || 'Failed to load watchlists');
@@ -36,7 +26,7 @@ export default function WatchlistIndex() {
         return (
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex items-center justify-center py-12">
-                    <div className="text-gray-600">Loading watchlists...</div>
+                    <div className="text-gray-600">Loading watchlists... </div>
                 </div>
             </div>
         );
@@ -62,7 +52,7 @@ export default function WatchlistIndex() {
                         <p className="text-gray-600">Track your favorite stocks and monitor market trends</p>
                     </div>
                     <Link
-                        to="/watchlist/create"
+                        to="/watchlists/create"
                         className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                     >
                         Create Watchlist
@@ -83,7 +73,7 @@ export default function WatchlistIndex() {
                                     Create your first watchlist to start tracking stocks and building your investment strategy
                                 </p>
                                 <Link
-                                    to="/watchlist/create"
+                                    to="/watchlists/create"
                                     className="inline-flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                                 >
                                     <span>+</span>
@@ -120,19 +110,14 @@ export default function WatchlistIndex() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {watchlists.map((watchlist) => (
                                 <Link
-                                    key={watchlist.id}
+                                    key={watchlist. id}
                                     to={`/watchlists/${watchlist.id}`}
-                                    className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md hover:border-gray-300 transition-all"
+                                    className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover: shadow-md hover:border-gray-300 transition-all"
                                 >
                                     <div className="flex items-start justify-between mb-3">
                                         <h3 className="text-lg font-semibold text-gray-900">{watchlist.name}</h3>
                                         <span className="text-2xl">📊</span>
                                     </div>
-                                    {watchlist.description && (
-                                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                                            {watchlist.description}
-                                        </p>
-                                    )}
                                     <div className="flex items-center justify-between text-sm text-gray-500">
                                         <span>{watchlist.securities_count || 0} securities</span>
                                     </div>
@@ -142,7 +127,7 @@ export default function WatchlistIndex() {
 
                         {/* Add New Card */}
                         <Link
-                            to="/watchlist/create"
+                            to="/watchlists/create"
                             className="mt-4 block bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 hover:bg-gray-100 transition-all"
                         >
                             <div className="text-gray-400 text-3xl mb-2">+</div>

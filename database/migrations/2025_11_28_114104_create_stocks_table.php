@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->integer('pe_ratio')->nullable();
             $table->integer('dividend_yield')->nullable();
+            $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });
     }
