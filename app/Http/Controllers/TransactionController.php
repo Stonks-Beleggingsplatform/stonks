@@ -9,10 +9,10 @@ class TransactionController extends Controller
 {
     public function index()
     {
+        $orders = auth()->user()->portfolio->orders()->whereHas('transactions')->get();
+
         return TransactionDTO::collection(
-            Transaction::where('portfolio_id', auth()->user()->portfolio->id)
-                ->with(['order', 'security'])
-                ->get(),
+            Transaction::whereIn('order_id', $orders->pluck('id'))->get()
         );
     }
 }
