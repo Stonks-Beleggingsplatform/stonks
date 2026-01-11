@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Securityable\FeeDTO;
 use App\Models\Exchange;
 use App\Models\Fee;
 use Illuminate\Http\Request;
@@ -23,19 +24,7 @@ class FeeController extends Controller
             $query->whereNull('transaction_id');
         }])->get();
 
-        return response()->json($exchanges->map(function ($exchange) {
-            $fees = $exchange->fees->keyBy('type');
-            
-            return [
-                'id' => $exchange->id,
-                'name' => $exchange->name,
-                'description' => $exchange->description ?? '',
-                'currency' => $exchange->currency->name ?? 'N/A',
-                'transaction_fee' => (float) ($fees->get('transaction')?->amount ?? 0),
-                'maintenance_fee' => (float) ($fees->get('maintenance')?->amount ?? 0),
-                'order_fee' => (float) ($fees->get('order')?->amount ?? 0),
-            ];
-        }));
+        return response()->json(FeeDTO::collection($exchanges));
     }
 
     /**
@@ -70,10 +59,10 @@ class FeeController extends Controller
                     'type' => 'transaction',
                 ],
                 [
-                    'amount' => $feeData['transaction_fee'],
+                    'amount' => (int) ($feeData['transaction_fee'] * 100),
                 ]
             );
-
+ 
             // Update Maintenance Fee
             Fee::updateOrCreate(
                 [
@@ -82,10 +71,10 @@ class FeeController extends Controller
                     'type' => 'maintenance',
                 ],
                 [
-                    'amount' => $feeData['maintenance_fee'],
+                    'amount' => (int) ($feeData['maintenance_fee'] * 100),
                 ]
             );
-
+ 
             // Update Order Fee
             Fee::updateOrCreate(
                 [
@@ -94,10 +83,11 @@ class FeeController extends Controller
                     'type' => 'order',
                 ],
                 [
-                    'amount' => $feeData['order_fee'],
+                    'amount' => (int) ($feeData['order_fee'] * 100),
                 ]
             );
         }
+
 
         return response()->json([
             'message' => 'Fees updated successfully',

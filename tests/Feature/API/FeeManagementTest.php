@@ -43,7 +43,7 @@ class FeeManagementTest extends TestCase
         Fee::factory()->create([
             'exchange_id' => $this->exchange->id,
             'type' => 'transaction',
-            'amount' => 1,
+            'amount' => 150, // 1.5%
             'transaction_id' => null,
         ]);
 
@@ -53,7 +53,7 @@ class FeeManagementTest extends TestCase
             ->assertJsonFragment([
                 'id' => $this->exchange->id,
                 'name' => 'Test Exchange',
-                'transaction_fee' => 1.0,
+                'transaction_fee' => 1.5,
             ]);
     }
 
@@ -78,9 +78,9 @@ class FeeManagementTest extends TestCase
                 [
                     'exchange_id' => $this->exchange->id,
                     'description' => 'Updated Description',
-                    'transaction_fee' => 2,
-                    'maintenance_fee' => 1,
-                    'order_fee' => 3,
+                    'transaction_fee' => 2.5,
+                    'maintenance_fee' => 0.5,
+                    'order_fee' => 1.25,
                 ],
             ],
         ];
@@ -98,22 +98,21 @@ class FeeManagementTest extends TestCase
         $this->assertDatabaseHas('fees', [
             'exchange_id' => $this->exchange->id,
             'type' => 'transaction',
-            'amount' => 2,
+            'amount' => 250,
             'transaction_id' => null,
         ]);
-
 
         $this->assertDatabaseHas('fees', [
             'exchange_id' => $this->exchange->id,
             'type' => 'maintenance',
-            'amount' => 1,
+            'amount' => 50,
             'transaction_id' => null,
         ]);
 
         $this->assertDatabaseHas('fees', [
             'exchange_id' => $this->exchange->id,
             'type' => 'order',
-            'amount' => 3,
+            'amount' => 125,
             'transaction_id' => null,
         ]);
     }
@@ -207,7 +206,7 @@ class FeeManagementTest extends TestCase
         $this->assertDatabaseHas('exchanges', ['id' => $this->exchange->id, 'description' => 'Desc 1']);
         $this->assertDatabaseHas('exchanges', ['id' => $exchange2->id, 'description' => 'Desc 2']);
 
-        $this->assertDatabaseHas('fees', ['exchange_id' => $this->exchange->id, 'type' => 'transaction', 'amount' => 1]);
-        $this->assertDatabaseHas('fees', ['exchange_id' => $exchange2->id, 'type' => 'transaction', 'amount' => 2]);
+        $this->assertDatabaseHas('fees', ['exchange_id' => $this->exchange->id, 'type' => 'transaction', 'amount' => 100]);
+        $this->assertDatabaseHas('fees', ['exchange_id' => $exchange2->id, 'type' => 'transaction', 'amount' => 200]);
     }
 }
