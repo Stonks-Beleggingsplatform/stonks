@@ -1,16 +1,15 @@
 <?php
 
 use App\DTO\Securityable\BondDTO;
-use App\DTO\Securityable\SecurityableDTO;
+use App\DTO\Securityable\CryptoDTO;
 use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
 use App\Models\Bond;
 use App\Models\Company;
+use App\Models\Crypto;
 use App\Models\Exchange;
 use App\Models\Security;
 use App\Models\Stock;
-use App\DTO\Securityable\CryptoDTO;
-use App\Models\Crypto;
 
 beforeEach(function () {
     $this->security = Security::create([
@@ -27,7 +26,6 @@ beforeEach(function () {
 
 test('index searches securities by ticker', function () {
     $response = $this->getJson('/api/securities/search/AAPL');
-
 
     expect($response->status())->toBe(200)
         ->and($response->json())->toHaveCount(1)

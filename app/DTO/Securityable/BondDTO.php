@@ -9,8 +9,11 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class BondDTO extends SecurityDTO
 {
     public string $dto_type = 'bond';
+
     public int $nominal_value;
+
     public float $coupon_rate;
+
     public string $maturity_date;
 
     public static function mock(?string $identifier = null): static

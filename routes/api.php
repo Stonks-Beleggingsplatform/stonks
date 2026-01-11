@@ -11,7 +11,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', fn() => auth()->user());
+    Route::get('/user', fn () => auth()->user());
 
     Route::prefix('/portfolio')->controller(PortfolioController::class)->group(function () {
         Route::get('/', 'show')->name('portfolio.show');

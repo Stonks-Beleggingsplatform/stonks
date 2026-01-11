@@ -2,19 +2,12 @@ import React, {useEffect, useState} from 'react';
 import api from '../../lib/axios';
 import {Modal} from '../Modal';
 
-interface Security {
-    id: number;
-    ticker: string;
-    name: string;
-    company?: string;
-}
-
 interface AddSecurityModalProps {
     isOpen: boolean;
-    onClose: () => void;
+    onClose:  () => void;
     onSuccess: () => void;
     watchlistId: number;
-    existingSecurityIds?: number[];
+    existingSecurityTickers?: string[];
 }
 
 export function AddSecurityModal({
@@ -22,18 +15,18 @@ export function AddSecurityModal({
                                      onClose,
                                      onSuccess,
                                      watchlistId,
-                                     existingSecurityIds = []
+                                     existingSecurityTickers = []
                                  }: AddSecurityModalProps) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [securities, setSecurities] = useState<Security[]>([]);
+    const [securities, setSecurities] = useState<App.DTO.SecurityDTO[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
-    const [selectedSecurity, setSelectedSecurity] = useState<Security | null>(null);
+    const [selectedSecurity, setSelectedSecurity] = useState<App. DTO.SecurityDTO | null>(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
-            if (searchTerm.trim().length > 0) {
+            if (searchTerm. trim().length > 0) {
                 searchSecurities(searchTerm);
             } else {
                 setSecurities([]);
@@ -48,8 +41,8 @@ export function AddSecurityModal({
         setError('');
         try {
             const response = await api.get(`/securities/search/${encodeURIComponent(term)}`);
-            const filteredSecurities = response.data.filter(
-                (security: Security) => !existingSecurityIds.includes(security.id)
+            const filteredSecurities = response. data.filter(
+                (security: App.DTO.SecurityDTO) => !existingSecurityTickers.includes(security.ticker)
             );
             setSecurities(filteredSecurities);
         } catch (error) {
@@ -61,7 +54,7 @@ export function AddSecurityModal({
         }
     };
 
-    const handleSelect = (security: Security) => {
+    const handleSelect = (security: App.DTO.SecurityDTO) => {
         setSelectedSecurity(security);
     };
 
@@ -72,7 +65,6 @@ export function AddSecurityModal({
         setError('');
 
         try {
-            // PUT naar /watchlist/{id}/securities/add met securities array
             await api.put(`/watchlist/${watchlistId}/securities/add`, {
                 securities: [
                     {ticker: selectedSecurity.ticker}
@@ -121,8 +113,8 @@ export function AddSecurityModal({
                         type="text"
                         placeholder="Search by name, ticker, or company..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                        onChange={(e) => setSearchTerm(e.target. value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-black focus:border-transparent"
                         autoFocus
                     />
                 </div>
@@ -138,10 +130,10 @@ export function AddSecurityModal({
                     <div className="divide-y divide-gray-200">
                         {securities.map((security) => (
                             <button
-                                key={security.id}
+                                key={security.ticker}
                                 onClick={() => handleSelect(security)}
                                 className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
-                                    selectedSecurity?.id === security.id
+                                    selectedSecurity?.ticker === security.ticker
                                         ? 'bg-blue-50 border-l-4 border-blue-500'
                                         : ''
                                 }`}
@@ -154,11 +146,6 @@ export function AddSecurityModal({
                                         <div className="text-sm text-gray-600">
                                             {security.name}
                                         </div>
-                                        {security.company && security.company !== security.name && (
-                                            <div className="text-xs text-gray-500">
-                                                {security.company}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </button>
@@ -186,14 +173,14 @@ export function AddSecurityModal({
                 </button>
                 <button
                     onClick={handleAdd}
-                    disabled={!selectedSecurity || isAdding}
+                    disabled={! selectedSecurity || isAdding}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                         selectedSecurity && !isAdding
                             ? 'bg-black text-white hover:bg-gray-800'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                 >
-                    {isAdding ? 'Adding.. .' : 'Add Security'}
+                    {isAdding ? 'Adding...' : 'Add Security'}
                 </button>
             </div>
         </Modal>

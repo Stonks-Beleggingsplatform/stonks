@@ -55,7 +55,7 @@ abstract class DTO implements Arrayable, JsonSerializable
         $properties = get_class_vars($dto::class);
 
         foreach ($properties as $property => $defaultValue) {
-            if (!isset($model->$property) || $model->$property instanceof Model) {
+            if (! isset($model->$property) || $model->$property instanceof Model) {
                 continue;
             }
 
@@ -81,6 +81,6 @@ abstract class DTO implements Arrayable, JsonSerializable
 
     public static function collection(Collection $collection): Collection
     {
-        return $collection->map(fn(Model $model) => static::make($model));
+        return $collection->map(fn (Model $model) => static::make($model));
     }
 }

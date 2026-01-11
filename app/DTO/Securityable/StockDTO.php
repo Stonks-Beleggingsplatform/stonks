@@ -10,7 +10,9 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class StockDTO extends SecurityDTO
 {
     public string $dto_type = 'stock';
+
     public int $pe_ratio;
+
     public float $dividend_yield;
 
     public CompanyDTO $company;

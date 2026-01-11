@@ -10,6 +10,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class CryptoDTO extends SecurityDTO
 {
     public string $dto_type = 'crypto';
+
     public CryptoType $type;
 
     public static function mock(?string $identifier = null): static
