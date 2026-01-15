@@ -10,6 +10,7 @@ use App\Models\Bond;
 use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
+use App\Services\SecurityData\SecurityDataService;
 use Illuminate\Http\Response;
 
 class SecurityController extends Controller
@@ -27,7 +28,9 @@ class SecurityController extends Controller
                     ->get()
             );
 
-        // TODO: when no matches found, call external API to fetch security data
+        if (count($matchingSecurities) === 0) {
+            $matchingSecurities = (new SecurityDataService)->search($term);
+        }
 
         return response($matchingSecurities, 200);
     }
