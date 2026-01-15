@@ -24,7 +24,7 @@ class FeeDTO extends DTO
 
     public static function make(object $model): self
     {
-        $dto = new self();
+        $dto = new self;
         $dto->id = $model->id;
         $dto->name = $model->name;
         $dto->description = $model->description ?? '';

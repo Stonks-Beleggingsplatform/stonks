@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('fees', function (Blueprint $table) {
             $table->string('type')->default('transaction')->after('transaction_id');
-            
+
             // Re-evaluate the unique constraint to include type
             $table->dropUnique(['exchange_id', 'transaction_id']);
             $table->unique(['exchange_id', 'transaction_id', 'type']);

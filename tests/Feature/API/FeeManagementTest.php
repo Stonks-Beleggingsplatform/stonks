@@ -15,7 +15,9 @@ class FeeManagementTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $user;
+
     protected Exchange $exchange;
 
     protected function setUp(): void

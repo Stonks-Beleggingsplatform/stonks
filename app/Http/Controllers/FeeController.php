@@ -6,7 +6,6 @@ use App\DTO\Securityable\FeeDTO;
 use App\Models\Exchange;
 use App\Models\Fee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class FeeController extends Controller
 {
@@ -15,7 +14,7 @@ class FeeController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -32,7 +31,7 @@ class FeeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -62,7 +61,7 @@ class FeeController extends Controller
                     'amount' => (int) ($feeData['transaction_fee'] * 100),
                 ]
             );
- 
+
             // Update Maintenance Fee
             Fee::updateOrCreate(
                 [
@@ -74,7 +73,7 @@ class FeeController extends Controller
                     'amount' => (int) ($feeData['maintenance_fee'] * 100),
                 ]
             );
- 
+
             // Update Order Fee
             Fee::updateOrCreate(
                 [
@@ -87,7 +86,6 @@ class FeeController extends Controller
                 ]
             );
         }
-
 
         return response()->json([
             'message' => 'Fees updated successfully',
