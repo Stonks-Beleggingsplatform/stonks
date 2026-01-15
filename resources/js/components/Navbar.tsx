@@ -1,8 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+interface User {
+    name: string;
+    email: string;
+    role?: string;
+}
+
+interface AuthContextType {
+    user: User | null;
+    logout: () => void;
+}
+
 export default function Navbar() {
-    const { user, logout } = useAuth();
+    const { user, logout } = useAuth() as unknown as AuthContextType;
     const location = useLocation(); // the current slug or location of the page
 
     const handleLogout = () => {
@@ -26,6 +37,9 @@ export default function Navbar() {
                         <Link to="/watchlists" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Watchlists</Link>
                         <Link to="/transactions" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Transactions</Link>
                         <Link to="/markets" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Markets</Link>
+                        {user?.role === 'admin' && (
+                            <Link to="/admin/fees" className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors">Admin Fees</Link>
+                        )}
                     </nav>
                 </div>
 

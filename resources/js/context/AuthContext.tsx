@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
             if (error.response && error.response.status === 401) {
                 setUser(null);
                 setIsAuthenticated(false);
-                localStorage. removeItem('isAuthenticated');
+                localStorage.removeItem('isAuthenticated');
             }
         } finally {
             setIsLoading(false);
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             await fetchUser();
         },
         register: async (data) => {
-            await api. get('/sanctum/csrf-cookie', { baseURL: '/' });
+            await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/register', data);
             localStorage.setItem('isAuthenticated', 'true');
             await fetchUser();

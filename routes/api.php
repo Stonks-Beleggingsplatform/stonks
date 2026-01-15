@@ -36,4 +36,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('/transactions')->controller(TransactionController::class)->group(function () {
         Route::get('/', 'index')->name('transactions.index');
     });
+  
+    Route::prefix('admin')->group(function () {
+        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
+        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
+    });
 });
