@@ -4,6 +4,17 @@ import { useState, useEffect } from 'react';
 import api from '../lib/axios';
 import { Modal } from './Modal';
 
+interface User {
+    name: string;
+    email: string;
+    role?: string;
+}
+
+interface AuthContextType {
+    user: User | null;
+    logout: () => void;
+}
+
 export default function Navbar() {
     const { user, logout } = useAuth();
     const location = useLocation();

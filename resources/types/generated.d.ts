@@ -83,4 +83,5 @@ export type OrderStatus = 'pending' | 'completed' | 'canceled';
 export type OrderType = 'market' | 'limit';
 export type Sector = 'technology' | 'finance' | 'healthcare' | 'retail' | 'manufacturing' | 'energy' | 'transportation' | 'real_estate';
 export type TransactionType = 'deposit' | 'withdrawal' | 'buy' | 'sell' | 'dividend';
+export type UserRole = 'admin' | 'user';
 }
