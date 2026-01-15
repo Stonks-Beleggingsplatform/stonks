@@ -11,7 +11,7 @@ class PortfolioDTO extends DTO
 {
     public int $id;
 
-    public float $cash;
+    public int $cash;
 
     public float $total_value;
 

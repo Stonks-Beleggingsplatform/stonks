@@ -25,8 +25,8 @@ class Security extends Model
             ->withTimestamps();
     }
 
-    public function company(): BelongsTo
+    public function exchange(): BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Exchange::class);
     }
 }

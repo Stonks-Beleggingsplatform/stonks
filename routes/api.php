@@ -4,6 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\WatchlistController;
+use App\Http\Controllers\Api\OrderController;
+
+
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,5 +33,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('/securities')->controller(SecurityController::class)->group(function () {
         Route::get('/search/{term}', 'index')->name('securities.search');
         Route::get('/{security:ticker}', 'show')->name('securities.show');
+    });
+
+    Route::get('/securities/{ticker}', [SecurityController::class, 'show']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/orders', [OrderController::class, 'store']);
     });
 });

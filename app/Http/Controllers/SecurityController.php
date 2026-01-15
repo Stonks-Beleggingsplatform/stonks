@@ -11,6 +11,7 @@ use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
 use Illuminate\Http\Response;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class SecurityController extends Controller
 {
@@ -36,7 +37,7 @@ class SecurityController extends Controller
     {
         $security = Security::query()
             ->where('ticker', strtoupper($ticker))
-            ->with('securityable')
+            ->with(['securityable', 'exchange.currency'])
             ->firstOrFail();
 
         $DTO = match ($security->securityable_type) {
@@ -46,6 +47,30 @@ class SecurityController extends Controller
             default => SecurityDTO::make($security),
         };
 
-        return response($DTO, 200);
+        $securityablePayload = $DTO instanceof JsonResource
+            ? $DTO->toArray(request())
+            : $DTO;
+
+        return response([
+            'id' => $security->id,
+            'ticker' => $security->ticker,
+            'name' => $security->name,
+            'price' => $security->price,
+            'exchange' => $security->relationLoaded('exchange') ? [
+                'id' => $security->exchange?->id,
+                'name' => $security->exchange?->name,
+                'currency' => $security->exchange?->currency ? [
+                    'id' => $security->exchange->currency->id,
+                    'name' => $security->exchange->currency->name,
+                ] : null,
+            ] : null,
+            'securityable' => array_merge(
+                is_array($securityablePayload) ? $securityablePayload : (array) $securityablePayload,
+                [
+                    'dto_type' => strtolower(class_basename($security->securityable_type)),
+                    'price' => $security->price,
+                ]
+            ),
+        ], 200);
     }
 }
