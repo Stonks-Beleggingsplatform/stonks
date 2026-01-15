@@ -28,17 +28,19 @@ class OrderController extends Controller
         $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
         $security = Security::findOrFail($data['security_id']);
 
-        $price = $data['type'] === 'limit'
+        $priceEuro = $data['type'] === 'limit'
             ? $data['limit_price']
             : $security->price;
 
-        if (!$price || $price <= 0) {
+        if (!$priceEuro || $priceEuro <= 0) {
             abort(422, 'Invalid price');
         }
 
-        $subtotal = $data['quantity'] * $price;
-        $fee = (int) round($subtotal * 0.002); // 0.2%
-        $totalRequired = $subtotal + $fee;
+        $price = (int) round($priceEuro * 100); // price in cents
+
+        $subtotal = $data['quantity'] * $price; // cents
+        $fee = (int) round($subtotal * 0.002); // cents
+        $totalRequired = $subtotal + $fee; // cents
 
         if ($portfolio->cash < $totalRequired) {
             abort(422, 'Insufficient cash');
@@ -52,7 +54,7 @@ class OrderController extends Controller
             'portfolio_id' => $portfolio->id,
             'security_id' => $security->id,
             'quantity' => $data['quantity'],
-            'price' => $price,
+            'price' => $price, // cents
             'type' => $data['type'],
             'action' => 'buy',
             'status' => 'pending',
@@ -71,8 +73,8 @@ class OrderController extends Controller
                 'portfolio_id' => $portfolio->id,
                 'security_id' => $security->id,
                 'quantity' => $data['quantity'],
-                'purchase_price' => $price,
-                'avg_price' => $price,
+                'purchase_price' => $price, // cents
+                'avg_price' => $price, // cents
                 'gain_loss' => 0,
             ]);
         } else {
@@ -80,22 +82,18 @@ class OrderController extends Controller
             $newQty = $oldQty + (int) $data['quantity'];
 
             $oldAvg = (float) ($holding->avg_price ?? $price);
-            $newAvg = (($oldQty * $oldAvg) + ($data['quantity'] * $price)) / max(1, $newQty);
+            $newAvg = (int) round((($oldQty * $oldAvg) + ($data['quantity'] * $price)) / max(1, $newQty));
 
             $holding->quantity = $newQty;
             $holding->avg_price = $newAvg;
             $holding->save();
         }
 
-        $subtotal = $data['quantity'] * $price;
-        $fee = (int) round($subtotal * 0.002);
-        $totalRequired = $subtotal + $fee;
-
         \App\Models\Transaction::create([
             'order_id' => $order->id,
             'type' => 'buy',
-            'amount' => $totalRequired,
-            'price' => $price,
+            'amount' => $totalRequired, // cents
+            'price' => $price, // cents
             'exchange_rate' => null,
         ]);
 
@@ -104,7 +102,7 @@ class OrderController extends Controller
             'order' => [
               'id' => $order->id,
               'status' => $order->status,
-              'executed_price' => $price,
+              'executed_price' => $price / 100,
               'executed_at' => now()->toDateTimeString(),
             ],
           ], 201);
