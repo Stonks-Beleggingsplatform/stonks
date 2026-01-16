@@ -49,31 +49,32 @@ const StockShow = () => {
 		fetchStock()
 	}, [ticker])
 
-	useEffect(() => {
-		const fetchPortfolio = async () => {
-			if (!user) {
-				setCash(null)
-				setCurrency('EUR')
-				return
-			}
-
-			setIsLoadingPortfolio(true)
-
-			try {
-				const res = await axios.get('/portfolio')
-				const dto = res.data
-				setCash(Number(dto.cash ?? 0))
-
-				// Support multiple DTO shapes
-				setCurrency(dto.currency?.name ?? dto.currency_name ?? 'EUR')
-			} catch (e) {
-				setCash(null)
-				setCurrency('EUR')
-			} finally {
-				setIsLoadingPortfolio(false)
-			}
+	// Refactored: fetchPortfolio as standalone function, for reuse after orders
+	const fetchPortfolio = async () => {
+		if (!user) {
+			setCash(null)
+			setCurrency('EUR')
+			return
 		}
 
+		setIsLoadingPortfolio(true)
+
+		try {
+			const res = await axios.get('/portfolio')
+			const dto = res.data
+			setCash(Number(dto.cash ?? 0))
+
+			// Support multiple DTO shapes
+			setCurrency(dto.currency?.name ?? dto.currency_name ?? 'EUR')
+		} catch (e) {
+			setCash(null)
+			setCurrency('EUR')
+		} finally {
+			setIsLoadingPortfolio(false)
+		}
+	}
+
+	useEffect(() => {
 		fetchPortfolio()
 	}, [user])
 
@@ -124,6 +125,11 @@ const StockShow = () => {
 				type: orderType,
 				limit_price: orderType === 'limit' ? limitPrice : null,
 			})
+
+			if (cash !== null) {
+				setCash((prev) => (prev === null ? prev : Math.max(0, prev - totalRequired)))
+			}
+			await fetchPortfolio()
 
 			setSuccess(`Executed. Order #${res.data.order.id} at ${res.data.order.executed_price}`)
 			setShowSummary(false)

@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Portfolio;
 use App\Models\Security;
+use App\Models\Holding;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Enums\OrderType;
 
 class OrderController extends Controller
 {
@@ -20,7 +23,7 @@ class OrderController extends Controller
         'security_id' => ['required', 'exists:securities,id'],
         'quantity' => ['required', 'integer', 'min:1'],
         'action' => ['required', Rule::in(['buy'])],
-        'type' => ['required', Rule::in(['market', 'limit'])],
+        'type' => ['required', Rule::in(array_column(OrderType::cases(), 'value'))],
         'limit_price' => ['nullable', 'numeric', 'min:0'],
     ]);
 
@@ -28,7 +31,7 @@ class OrderController extends Controller
         $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
         $security = Security::findOrFail($data['security_id']);
 
-        $priceEuro = $data['type'] === 'limit'
+        $priceEuro = $data['type'] === OrderType::LIMIT->value
             ? $data['limit_price']
             : $security->price;
 
@@ -36,11 +39,11 @@ class OrderController extends Controller
             abort(422, 'Invalid price');
         }
 
-        $price = (int) round($priceEuro * 100); // price in cents
+        $price = (int) round($priceEuro * 100);
 
-        $subtotal = $data['quantity'] * $price; // cents
-        $fee = (int) round($subtotal * 0.002); // cents
-        $totalRequired = $subtotal + $fee; // cents
+        $subtotal = $data['quantity'] * $price;
+        $fee = (int) round($subtotal * 0.002);
+        $totalRequired = $subtotal + $fee;
 
         if ($portfolio->cash < $totalRequired) {
             abort(422, 'Insufficient cash');
@@ -63,18 +66,18 @@ class OrderController extends Controller
         $order->status = 'completed';
         $order->save();
 
-        $holding = \App\Models\Holding::query()
+        $holding = Holding::query()
             ->where('portfolio_id', $portfolio->id)
             ->where('security_id', $security->id)
             ->first();
 
         if (!$holding) {
-            $holding = \App\Models\Holding::create([
+            $holding = Holding::create([
                 'portfolio_id' => $portfolio->id,
                 'security_id' => $security->id,
                 'quantity' => $data['quantity'],
-                'purchase_price' => $price, // cents
-                'avg_price' => $price, // cents
+                'purchase_price' => $price,
+                'avg_price' => $price,
                 'gain_loss' => 0,
             ]);
         } else {
@@ -89,11 +92,11 @@ class OrderController extends Controller
             $holding->save();
         }
 
-        \App\Models\Transaction::create([
+        Transaction::create([
             'order_id' => $order->id,
             'type' => 'buy',
-            'amount' => $totalRequired, // cents
-            'price' => $price, // cents
+            'amount' => $totalRequired,
+            'price' => $price,
             'exchange_rate' => null,
         ]);
 
