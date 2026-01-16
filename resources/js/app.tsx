@@ -16,6 +16,7 @@ import { useAuth } from './context/AuthContext';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 import AdminFees from './components/AdminFees';
 import Dashboard from './components/Dashboard';
+import Deposit from './components/Deposit';
 
 function Portfolio() {
     return (
@@ -59,6 +60,7 @@ function AppRoutes() {
                 {/* Protected routes */}
                 <Route element={<ProtectedLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/deposit" element={<Deposit />} />
                     <Route path="/portfolio" element={<Portfolio />} />
                     <Route path="/securities/:ticker" element={<SecurityShow />} />
 

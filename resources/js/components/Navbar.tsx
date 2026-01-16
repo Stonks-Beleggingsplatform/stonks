@@ -1,10 +1,11 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface User {
     name: string;
     email: string;
     role?: string;
+    balance?: number;
 }
 
 interface AuthContextType {
@@ -14,7 +15,6 @@ interface AuthContextType {
 
 export default function Navbar() {
     const { user, logout } = useAuth() as unknown as AuthContextType;
-    const location = useLocation(); // the current slug or location of the page
 
     const handleLogout = () => {
         logout();
@@ -51,9 +51,15 @@ export default function Navbar() {
                             <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                                 Logout
                             </button>
-                            <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                            <Link to="/deposit" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                                 Deposit
-                            </button>
+                            </Link>
+                            <div className="hidden lg:flex flex-col items-end">
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Balance</span>
+                                <span className="text-sm font-bold text-green-600">
+                                    ${(user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                </span>
+                            </div>
                         </>
                     ) : (
                         <div className="flex items-center gap-4">
