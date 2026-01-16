@@ -33,6 +33,13 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        // Create a default portfolio for the user
+        $usd = \App\Models\Currency::firstOrCreate(['name' => 'USD']);
+        $user->portfolio()->create([
+            'currency_id' => $usd->id,
+            'cash' => 0,
+        ]);
+
         // login the user right after
         Auth::login($user);
         $request->session()->regenerate();

@@ -106,7 +106,7 @@ export default function Register() {
 
         try {
             await register(formData);
-            navigate('/');
+            navigate('/dashboard');
         } catch (error: any) {
             if (error.response && error.response.status === 422) {
                 setErrors(error.response.data.errors);

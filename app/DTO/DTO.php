@@ -60,6 +60,17 @@ abstract class DTO implements Arrayable, JsonSerializable
                 continue;
             }
 
+            if ($model->$property instanceof BackedEnum) {
+                $type = $reflectionProperty->getType();
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
+                    $dto->$property = $model->$property->value;
+                } else {
+                    $dto->$property = $model->$property;
+                }
+
+                continue;
+            }
+
             $dto->$property = $model->$property;
         }
 

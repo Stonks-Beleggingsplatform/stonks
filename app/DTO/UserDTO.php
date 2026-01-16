@@ -12,4 +12,6 @@ class UserDTO extends DTO
     public string $name;
 
     public string $email;
+    public float $balance;
+    public string $role;
 }
