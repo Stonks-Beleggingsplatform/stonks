@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../lib/axios';
+import api from '../../lib/axios';
 
 export default function WatchlistCreate() {
     const navigate = useNavigate();
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [isPublic, setIsPublic] = useState(false);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -18,8 +16,6 @@ export default function WatchlistCreate() {
         try {
             const response = await api.post('/watchlist/create', {
                 name,
-                description,
-                is_public:  isPublic,
             });
 
             // Redirect to the watchlist detail page or back to watchlists overview
@@ -78,21 +74,6 @@ export default function WatchlistCreate() {
                             />
                         </div>
 
-                        {/* Description Field */}
-                        <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                                Description (Optional)
-                            </label>
-                            <textarea
-                                id="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target. value)}
-                                rows={4}
-                                placeholder="Add a description to help you remember what this watchlist is for..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus: ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
-                            />
-                        </div>
-
                         {/* Action Buttons */}
                         <div className="flex items-center gap-4 pt-4">
                             <button
@@ -119,7 +100,6 @@ export default function WatchlistCreate() {
                     <h3 className="text-sm font-semibold text-gray-900 mb-2">💡 Tips for creating watchlists</h3>
                     <ul className="text-sm text-gray-600 space-y-1">
                         <li>• Give your watchlist a clear, descriptive name</li>
-                        <li>• Use descriptions to document your investment strategy or criteria</li>
                         <li>• Create separate watchlists for different investment themes or time horizons</li>
                     </ul>
                 </div>
