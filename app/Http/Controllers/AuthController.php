@@ -14,14 +14,30 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'required|string|email:rfc,dns|max:255|unique:users',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                \Illuminate\Validation\Rules\Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+            ],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+        ]);
+
+        // Create a default portfolio for the user
+        $usd = \App\Models\Currency::firstOrCreate(['name' => 'USD']);
+        $user->portfolio()->create([
+            'currency_id' => $usd->id,
+            'cash' => 0,
         ]);
 
         // login the user right after
@@ -56,5 +72,14 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return response()->noContent();
+    }
+
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email:rfc,dns|max:255|unique:users',
+        ]);
+
+        return response()->json(['message' => 'Email is available']);
     }
 }

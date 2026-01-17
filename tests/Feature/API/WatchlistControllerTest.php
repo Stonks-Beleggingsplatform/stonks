@@ -17,7 +17,8 @@ test('index', function () {
             WatchlistDTO::collection(
                 $this->user->watchlists()
                     ->with(['user', 'securities'])
-                    ->get()
+                    ->get(),
+                true
             )
                 ->map(fn (WatchlistDTO $dto) => $dto->jsonSerialize())
                 ->toArray()

@@ -13,7 +13,7 @@ class PortfolioFactory extends Factory
         return [
             'user_id' => User::factory(),
             'currency_id' => Currency::factory(),
-            'cash' => $this->faker->numberBetween(0, 10000),
+            'cash' => $this->faker->numberBetween(100, 100000), // cents
             'total_value' => $this->faker->numberBetween(0, 100000),
             'total_return' => $this->faker->numberBetween(-5000, 20000),
         ];

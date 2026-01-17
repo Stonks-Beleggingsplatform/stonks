@@ -32,6 +32,7 @@ export type UserDTO = {
 id: number;
 name: string;
 email: string;
+balance: number;
 };
 export type WatchlistDTO = {
 id: number;
@@ -57,6 +58,15 @@ type: App.Enums.CryptoType;
 ticker: string;
 name: string;
 price: number;
+};
+export type FeeDTO = {
+id: number;
+name: string;
+description: string;
+currency: string;
+transaction_fee: number;
+maintenance_fee: number;
+order_fee: number;
 };
 export type StockDTO = {
 dto_type: string;
