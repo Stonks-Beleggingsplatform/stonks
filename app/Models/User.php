@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -39,5 +40,10 @@ class User extends Authenticatable
     public function watchlists(): HasMany
     {
         return $this->hasMany(Watchlist::class);
+    }
+
+    public function portfolio(): HasOne
+    {
+        return $this->hasOne(Portfolio::class);
     }
 }
