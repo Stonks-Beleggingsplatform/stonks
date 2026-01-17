@@ -22,7 +22,6 @@ export default function PortfolioIndex() {
     const fetchPortfolio = async () => {
         try {
             const response = await api.get('/portfolio');
-            console.log(response.data)
             setPortfolio(response.data);
         } catch (err:  any) {
             setError(err.response?.data?.message || 'Failed to load portfolio');
