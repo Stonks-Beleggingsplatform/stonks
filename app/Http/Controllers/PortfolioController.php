@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\DTO\PortfolioDTO;
 use App\Models\Portfolio;
+use Illuminate\Http\Response;
 
 class PortfolioController extends Controller
-{
-    public function show(): PortfolioDTO
+{  
+    public function index(): Response
     {
-        return PortfolioDTO::make(
-            Portfolio::where('user_id', auth()->id())->firstOrFail()
+        $portfolio = Portfolio::where('user_id', auth()->id())
+            ->with(['user', 'holdings', 'orders'])
+            ->get();
+
+        return response(
+            PortfolioDTO::collection($portfolio),
+            200
         );
     }
 }
