@@ -10,11 +10,12 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
+    balance: number;
     logout: () => void;
 }
 
 export default function Navbar() {
-    const { user, logout } = useAuth() as unknown as AuthContextType;
+    const { user, balance, logout } = useAuth() as unknown as AuthContextType;
 
     const handleLogout = () => {
         logout();
@@ -57,7 +58,7 @@ export default function Navbar() {
                             <div className="hidden lg:flex flex-col items-end">
                                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Balance</span>
                                 <span className="text-sm font-bold text-green-600">
-                                    ${(user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                    ${(balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                 </span>
                             </div>
                         </>

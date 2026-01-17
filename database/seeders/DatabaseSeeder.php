@@ -30,14 +30,13 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Admin User',
                 'password' => bcrypt('password'),
                 'role' => \App\Enums\UserRole::Admin,
-                'balance' => 10000, // $10,000.00
             ]
         );
 
         if (!$admin->portfolio) {
             $admin->portfolio()->create([
                 'currency_id' => $usd->id,
-                'cash' => 0,
+                'cash' => 10000, // $10,000.00
             ]);
         }
 
@@ -48,14 +47,13 @@ class DatabaseSeeder extends Seeder
                 'name' => 'John Customer',
                 'password' => bcrypt('password'),
                 'role' => \App\Enums\UserRole::User,
-                'balance' => 5000, // $5,000.00
             ]
         );
 
         if (!$user->portfolio) {
             $user->portfolio()->create([
                 'currency_id' => $usd->id,
-                'cash' => 0,
+                'cash' => 5000, // $5,000.00
             ]);
         }
     }

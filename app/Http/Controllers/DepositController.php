@@ -13,7 +13,7 @@ class DepositController extends Controller
     public function getBalance()
     {
         return response()->json([
-            'balance' => Auth::user()->balance ?? 0.00,
+            'balance' => Auth::user()->portfolio?->cash ?? 0.00,
         ]);
     }
 
@@ -27,12 +27,18 @@ class DepositController extends Controller
         ]);
 
         $user = Auth::user();
-        $user->balance += $validated['amount'];
-        $user->save();
+        $portfolio = $user->portfolio;
+        
+        if (!$portfolio) {
+             return response()->json(['message' => 'User has no portfolio'], 404);
+        }
+
+        $portfolio->cash += $validated['amount'];
+        $portfolio->save();
 
         return response()->json([
             'message' => 'Deposit simulated successfully',
-            'balance' => $user->balance,
+            'balance' => $portfolio->cash,
         ]);
     }
 

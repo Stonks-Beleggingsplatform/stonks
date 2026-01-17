@@ -5,9 +5,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 test('a user cannot register with a duplicate email', function () {
-    // We already have a user from the global beforeEach if this was in API, 
-    // but if we are in tests/Feature it defaults to Tests\TestCase rules.
-    // Let's create a user manually to be sure.
     User::factory()->create([
         'email' => 'duplicate@example.com'
     ]);

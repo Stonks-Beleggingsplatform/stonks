@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
 
 export default function Deposit() {
-    const { user, fetchUser } = useAuth();
+    const { balance, fetchBalance } = useAuth();
     const [amount, setAmount] = useState('50');
     const [iban, setIban] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +18,10 @@ export default function Deposit() {
     const isValidIban = dutchIbanRegex.test(iban.replace(/\s/g, '').toUpperCase());
 
     const presets = ['10', '50', '100', '500'];
+
+    useEffect(() => {
+        fetchBalance();
+    }, []);
 
     const handleDeposit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,7 +41,7 @@ export default function Deposit() {
                     iban: iban.replace(/\s/g, '').toUpperCase()
                 });
                 setMessage({ type: 'success', text: `Successfully deposited $${amount} from ${iban} (Simulated)` });
-                await fetchUser();
+                await fetchBalance();
                 setTimeout(() => navigate('/dashboard'), 2000);
             } else {
                 const response = await api.post('/deposit/session', {
@@ -70,7 +74,7 @@ export default function Deposit() {
                     {/* Header with Balance */}
                     <div className="bg-black p-8 text-white">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">Current Balance</p>
-                        <p className="text-4xl font-black">${(user?.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                        <p className="text-4xl font-black">${(balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                     </div>
 
                     <form onSubmit={handleDeposit} className="p-8 space-y-6">

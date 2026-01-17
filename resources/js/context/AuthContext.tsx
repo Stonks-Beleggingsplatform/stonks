@@ -10,6 +10,8 @@ interface AuthContextType {
     fetchUser: () => Promise<void>;
     login: (credentials: any) => Promise<void>;
     register: (data: any) => Promise<void>;
+    balance: number;
+    fetchBalance: () => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -19,6 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // 2. Create the Provider Component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
+    const [balance, setBalance] = useState<number>(0);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -32,6 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(response.data);
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
+            await fetchBalance();
         } catch (error: any) {
             // If the request fails (e.g., 401 Unauthorized), the user is not logged in.
             if (error.response && error.response.status === 401) {
@@ -41,6 +45,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const fetchBalance = async () => {
+        try {
+            const response = await api.get('/balance');
+            setBalance(response.data.balance);
+        } catch (error) {
+            console.error("Error fetching balance:", error);
         }
     };
 
@@ -63,9 +76,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Context value, including state and login/logout handlers
     const contextValue: AuthContextType = {
         user,
+        balance,
         isAuthenticated,
         isLoading,
         fetchUser,
+        fetchBalance,
         login: async (credentials: any) => {
             await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/login', credentials);
