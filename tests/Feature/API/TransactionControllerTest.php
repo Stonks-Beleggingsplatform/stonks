@@ -4,7 +4,6 @@ use App\DTO\TransactionDTO;
 use App\Models\Order;
 use App\Models\Portfolio;
 use App\Models\Transaction;
-use App\Models\User;
 
 beforeEach(function () {
     $this->portfolio = Portfolio::factory()
