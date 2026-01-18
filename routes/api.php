@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
 
     Route::prefix('/portfolio')->controller(PortfolioController::class)->group(function () {
-        Route::get('/', 'show')->name('portfolio.show');
+        Route::get('/', 'index')->name('portfolio.index');
     });
 
     Route::prefix('/watchlist')->controller(WatchlistController::class)->group(function () {
