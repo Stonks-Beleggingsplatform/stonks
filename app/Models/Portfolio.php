@@ -13,6 +13,9 @@ class Portfolio extends Model
 
     protected $guarded = ['id'];
 
+    // Temporary cash property until a migration adds a cash column to the portfolios table
+    public int $cash = 100000;
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -27,4 +30,28 @@ class Portfolio extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function getCashAttribute(): float
+    {
+        return $this->attributes['cash'] / 100;
+    }
+
+    /**
+     * Get the total value of the portfolio.
+     */
+    public function getTotalValueAttribute(): float
+    {
+        $totalValue = $this->holdings->sum(fn (Holding $holding) => $holding->quantity * $holding->security->price);
+
+        return $totalValue / 100;
+    }
+
+    /**
+     * Get the total return of the portfolio.
+     */
+    public function getTotalReturnAttribute(): float
+    {
+        return $this->holdings->sum('gain_loss') / 100;
+    }
 }
+

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class RegularUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        $user = User::firstOrCreate(
             ['email' => 'user@example.com'],
             [
                 'name' => 'Regular User',
@@ -21,5 +22,11 @@ class RegularUserSeeder extends Seeder
                 'role' => 'user',
             ]
         );
+
+        if (!$user->portfolio) {
+            Portfolio::factory()->create([
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }
