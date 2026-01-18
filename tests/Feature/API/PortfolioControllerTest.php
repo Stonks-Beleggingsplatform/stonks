@@ -3,18 +3,24 @@
 use App\DTO\PortfolioDTO;
 use App\Models\Portfolio;
 
-beforeEach(function () {
-    $this->portfolio = Portfolio::factory()->create([
+test('index', function () {
+    Portfolio::factory()->create([
         'user_id' => $this->user->id,
         'cash' => 50000,
     ]);
 
-    $this->user->refresh();
-});
+    $response = $this->getJson(route('portfolio.index'));
 
-test('show', function () {
-    $response = $this->getJson(route('portfolio.show'));
+    $portfolioDTO = PortfolioDTO::collection(
+        Portfolio::where('user_id', $this->user->id)
+            ->with(['user', 'holdings', 'orders'])
+            ->get()
+    );
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toEqual(PortfolioDTO::make($this->portfolio)->toArray());
+        ->and($response->json())->toEqual(
+            $portfolioDTO
+                ->map(fn (PortfolioDTO $dto) => $dto->jsonSerialize())
+                ->toArray()
+        );
 });
