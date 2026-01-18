@@ -7,7 +7,7 @@ use App\Models\Portfolio;
 use Illuminate\Http\Response;
 
 class PortfolioController extends Controller
-{  
+{
     public function index(): Response
     {
         $portfolio = Portfolio::where('user_id', auth()->id())
