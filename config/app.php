@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -123,4 +123,12 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+     * ----------------------------------------------------------
+     * | API Keys for External Services
+     * ----------------------------------------------------------
+     */
+    'alphavantage_api' => [
+        'key' => env('ALPHAVANTAGE_API_KEY', 'demo'),
+    ],
 ];

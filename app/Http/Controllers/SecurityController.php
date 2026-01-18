@@ -10,6 +10,7 @@ use App\Models\Bond;
 use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
+use App\Services\SecurityData\SecurityDataService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
@@ -28,7 +29,9 @@ class SecurityController extends Controller
                     ->get()
             );
 
-        // TODO: when no matches found, call external API to fetch security data
+        if (count($matchingSecurities) === 0) {
+            $matchingSecurities = (new SecurityDataService)->search($term);
+        }
 
         return response($matchingSecurities, 200);
     }
@@ -55,7 +58,7 @@ class SecurityController extends Controller
             'id' => $security->id,
             'ticker' => $security->ticker,
             'name' => $security->name,
-            'price' => $security->price,
+            'price' => $security->price / 100,
             'exchange' => $security->relationLoaded('exchange') ? [
                 'id' => $security->exchange?->id,
                 'name' => $security->exchange?->name,
@@ -68,7 +71,7 @@ class SecurityController extends Controller
                 is_array($securityablePayload) ? $securityablePayload : (array) $securityablePayload,
                 [
                     'dto_type' => strtolower(class_basename($security->securityable_type)),
-                    'price' => $security->price,
+                    'price' => $security->price / 100,
                 ]
             ),
         ], 200);

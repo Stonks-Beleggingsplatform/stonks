@@ -16,6 +16,19 @@ abstract class DTO implements Arrayable, JsonSerializable
         return get_object_vars($this);
     }
 
+    public static function fromArray(array $attributes): static
+    {
+        $dto = new static;
+
+        foreach ($attributes as $key => $value) {
+            if (property_exists($dto, $key)) {
+                $dto->$key = $value;
+            }
+        }
+
+        return $dto;
+    }
+
     public function jsonSerialize(): array
     {
         $base = $this->toArray();

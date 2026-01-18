@@ -12,6 +12,14 @@ city: string;
 country: string;
 about: string;
 };
+export type HistoricalPriceDTO = {
+date: string;
+open: number;
+high: number;
+low: number;
+close: number;
+volume: number;
+};
 export type HoldingDTO = {
 id: number;
 ticker: string;

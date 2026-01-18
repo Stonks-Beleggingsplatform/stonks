@@ -29,4 +29,13 @@ class StockDTO extends SecurityDTO
 
         return $base;
     }
+
+    public static function mock(?string $identifier = null): static
+    {
+        $dto = parent::mock($identifier);
+        $dto->pe_ratio = fake()->numberBetween(5, 30);
+        $dto->dividend_yield = fake()->randomFloat(2, 0, 5);
+        $dto->company = CompanyDTO::mock();
+        return $dto;
+    }
 }
