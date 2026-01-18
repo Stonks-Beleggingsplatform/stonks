@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Http;
 class AlphaVantageAdapter implements SecurityDataAdapter
 {
     private string $apiKey;
+
     private string $baseUrl = 'https://www.alphavantage.co/query';
 
     public function __construct()
@@ -31,7 +32,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-            throw new Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for ticker: {$ticker}. Message: ".($data['Information'] ?? 'Unknown error'));
         }
 
         return $data['Global Quote']['05. price'];
@@ -46,10 +47,10 @@ class AlphaVantageAdapter implements SecurityDataAdapter
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-            throw new Exception("No data found for ticker: {$ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for ticker: {$ticker}. Message: ".($data['Information'] ?? 'Unknown error'));
         }
 
-        //AlphaVantage does not provide bond or crypto data, so we only handle stocks here
+        // AlphaVantage does not provide bond or crypto data, so we only handle stocks here
         return StockDTO::fromArray([
             'ticker' => $data['Symbol'] ?? null,
             'name' => $data['Name'] ?? null,
@@ -81,7 +82,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-            throw new Exception("No data found for search term: {$term}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for search term: {$term}. Message: ".($data['Information'] ?? 'Unknown error'));
         }
 
         return collect($data['bestMatches'] ?? [])
@@ -89,7 +90,7 @@ class AlphaVantageAdapter implements SecurityDataAdapter
                 return SecurityDTO::fromArray([
                     'ticker' => $security['1. symbol'] ?? null,
                     'name' => $security['2. name'] ?? null,
-                    'price' => 0, //Price is not relevant in search results and would require an additional API call
+                    'price' => 0, // Price is not relevant in search results and would require an additional API call
                 ]);
             })
             ->toArray();
@@ -98,20 +99,20 @@ class AlphaVantageAdapter implements SecurityDataAdapter
     public function getHistoricalData(Security $security): array
     {
         $exchangeCode = $security->exchange ? $security->exchange->code : null;
-        $symbol = $security->ticker . ($exchangeCode ? '.' . $exchangeCode : '');
+        $symbol = $security->ticker.($exchangeCode ? '.'.$exchangeCode : '');
         $endpoint = "{$this->baseUrl}?function=TIME_SERIES_DAILY&symbol={$symbol}&outputsize=compact&apikey={$this->apiKey}";
 
         $data = Http::get($endpoint)->json();
 
         if (empty($data) || isset($data['Information'])) {
-            throw new Exception("No data found for ticker: {$security->ticker}. Message: " . ($data['Information'] ?? 'Unknown error'));
+            throw new Exception("No data found for ticker: {$security->ticker}. Message: ".($data['Information'] ?? 'Unknown error'));
         }
 
         $timeSeries = $data['Time Series (Daily)'] ?? [];
 
         return collect($timeSeries)
             ->map(function ($dayData, $date) {
-               return HistoricalPriceDTO::fromArray([
+                return HistoricalPriceDTO::fromArray([
                     'date' => $date,
                     'open' => $dayData['1. open'] ?? null,
                     'high' => $dayData['2. high'] ?? null,

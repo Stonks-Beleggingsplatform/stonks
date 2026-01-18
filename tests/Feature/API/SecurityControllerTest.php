@@ -8,7 +8,6 @@ use App\Models\Bond;
 use App\Models\Company;
 use App\Models\Crypto;
 use App\Models\Exchange;
-use App\Models\Security;
 use App\Models\Stock;
 
 beforeEach(function () {

@@ -22,6 +22,7 @@ class BondDTO extends SecurityDTO
         $dto->nominal_value = fake()->numberBetween(1000, 10000);
         $dto->coupon_rate = fake()->randomFloat(2, 1, 10);
         $dto->maturity_date = fake()->date('Y-m-d', '+30 years');
+
         return $dto;
     }
 }

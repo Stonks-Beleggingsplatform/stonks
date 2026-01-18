@@ -16,10 +16,11 @@ class SecurityDTO extends DTO implements Mockable
 
     public static function mock(?string $identifier = null): static
     {
-        $dto = new static();
+        $dto = new static;
         $dto->ticker = $identifier ?? strtoupper(fake()->lexify('???'));
         $dto->name = fake()->company();
         $dto->price = fake()->randomFloat(2, 10, 1000);
+
         return $dto;
     }
 }

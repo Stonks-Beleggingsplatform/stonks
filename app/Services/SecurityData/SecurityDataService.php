@@ -14,8 +14,8 @@ class SecurityDataService
     public function __construct(?SecurityDataAdapter $adapter = null)
     {
         $this->adapter = $adapter ?? config('app.env') === 'testing'
-            ? new MockAdapter()
-            : new AlphaVantageAdapter();
+            ? new MockAdapter
+            : new AlphaVantageAdapter;
     }
 
     public function getPrice(string $ticker): ?float
