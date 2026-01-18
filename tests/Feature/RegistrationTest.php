@@ -1,12 +1,11 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 test('a user cannot register with a duplicate email', function () {
     User::factory()->create([
-        'email' => 'duplicate@example.com'
+        'email' => 'duplicate@example.com',
     ]);
 
     $response = $this->postJson('/api/register', [
@@ -17,7 +16,7 @@ test('a user cannot register with a duplicate email', function () {
     ]);
 
     $response->assertStatus(422)
-             ->assertJsonValidationErrors(['email']);
+        ->assertJsonValidationErrors(['email']);
 });
 
 test('a user cannot register with a non-conform password', function ($password) {
@@ -29,7 +28,7 @@ test('a user cannot register with a non-conform password', function ($password) 
     ]);
 
     $response->assertStatus(422)
-             ->assertJsonValidationErrors(['password']);
+        ->assertJsonValidationErrors(['password']);
 })->with([
     'short',             // Too short
     'alllowercase1!',    // No uppercase
@@ -47,10 +46,10 @@ test('a user can register successfully with valid data', function () {
     ]);
 
     $response->assertStatus(201)
-             ->assertJsonPath('email', 'jane.registration.test@gmail.com');
+        ->assertJsonPath('email', 'jane.registration.test@gmail.com');
 
     $this->assertDatabaseHas('users', [
-        'email' => 'jane.registration.test@gmail.com'
+        'email' => 'jane.registration.test@gmail.com',
     ]);
 
     expect(Auth::check())->toBeTrue();

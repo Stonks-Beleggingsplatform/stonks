@@ -1,8 +1,5 @@
 <?php
 
-use App\DTO\Securityable\BondDTO;
-use App\DTO\Securityable\CryptoDTO;
-use App\DTO\Securityable\StockDTO;
 use App\DTO\SecurityDTO;
 use App\Models\Bond;
 use App\Models\Company;

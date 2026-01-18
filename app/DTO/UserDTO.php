@@ -3,7 +3,6 @@
 namespace App\DTO;
 
 use App\Enums\UserRole;
-
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
@@ -14,5 +13,6 @@ class UserDTO extends DTO
     public string $name;
 
     public string $email;
+
     public UserRole $role;
 }

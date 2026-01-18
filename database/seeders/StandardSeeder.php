@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bond;
+use App\Models\Crypto;
 use App\Models\Currency;
 use App\Models\Exchange;
 use App\Models\Stock;
-use App\Models\Bond;
-use App\Models\Crypto;
 use Illuminate\Database\Seeder;
 
 class StandardSeeder extends Seeder
