@@ -12,6 +12,14 @@ city: string;
 country: string;
 about: string;
 };
+export type HistoricalPriceDTO = {
+date: string;
+open: number;
+high: number;
+low: number;
+close: number;
+volume: number;
+};
 export type HoldingDTO = {
 id: number;
 ticker: string;
@@ -39,6 +47,7 @@ export type UserDTO = {
 id: number;
 name: string;
 email: string;
+balance: number;
 };
 export type WatchlistDTO = {
 id: number;
@@ -64,6 +73,15 @@ type: App.Enums.CryptoType;
 ticker: string;
 name: string;
 price: number;
+};
+export type FeeDTO = {
+id: number;
+name: string;
+description: string;
+currency: string;
+transaction_fee: number;
+maintenance_fee: number;
+order_fee: number;
 };
 export type StockDTO = {
 dto_type: string;

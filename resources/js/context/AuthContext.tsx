@@ -3,12 +3,25 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../lib/axios';
 
+interface AuthContextType {
+    user: any;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    fetchUser: () => Promise<void>;
+    login: (credentials: any) => Promise<void>;
+    register: (data: any) => Promise<void>;
+    balance: number;
+    fetchBalance: () => Promise<void>;
+    logout: () => Promise<void>;
+}
+
 // 1. Create the Context
-const AuthContext = createContext();
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 2. Create the Provider Component
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
+    const [balance, setBalance] = useState<number>(0);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -22,7 +35,8 @@ export const AuthProvider = ({ children }) => {
             setUser(response.data);
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
-        } catch (error) {
+            await fetchBalance();
+        } catch (error: any) {
             // If the request fails (e.g., 401 Unauthorized), the user is not logged in.
             if (error.response && error.response.status === 401) {
                 setUser(null);
@@ -31,6 +45,15 @@ export const AuthProvider = ({ children }) => {
             }
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const fetchBalance = async () => {
+        try {
+            const response = await api.get('/balance');
+            setBalance(response.data.balance);
+        } catch (error) {
+            console.error("Error fetching balance:", error);
         }
     };
 
@@ -51,18 +74,20 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Context value, including state and login/logout handlers
-    const contextValue = {
+    const contextValue: AuthContextType = {
         user,
+        balance,
         isAuthenticated,
         isLoading,
         fetchUser,
-        login: async (credentials) => {
+        fetchBalance,
+        login: async (credentials: any) => {
             await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/login', credentials);
             localStorage.setItem('isAuthenticated', 'true');
             await fetchUser();
         },
-        register: async (data) => {
+        register: async (data: any) => {
             await api.get('/sanctum/csrf-cookie', { baseURL: '/' });
             await api.post('/register', data);
             localStorage.setItem('isAuthenticated', 'true');
@@ -71,7 +96,7 @@ export const AuthProvider = ({ children }) => {
         logout: async () => {
             try {
                 await api.post('/logout');
-            } catch (error) {
+            } catch (error: any) {
                 // Even if logout fails, clear local state
                 console.error('Logout error:', error);
             } finally {
@@ -91,5 +116,11 @@ export const AuthProvider = ({ children }) => {
 
 // 3. Create a Custom Hook for Easy Access
 export const useAuth = () => {
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };
+
+export default AuthContext;
