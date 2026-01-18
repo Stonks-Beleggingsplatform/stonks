@@ -29,4 +29,11 @@ class Security extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function exchange(): BelongsTo
+    {
+        return $this->belongsTo(Exchange::class);
+    }
+
+    
 }
