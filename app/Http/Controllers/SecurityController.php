@@ -58,7 +58,7 @@ class SecurityController extends Controller
             'id' => $security->id,
             'ticker' => $security->ticker,
             'name' => $security->name,
-            'price' => $security->price,
+            'price' => $security->price / 100,
             'exchange' => $security->relationLoaded('exchange') ? [
                 'id' => $security->exchange?->id,
                 'name' => $security->exchange?->name,
@@ -71,7 +71,7 @@ class SecurityController extends Controller
                 is_array($securityablePayload) ? $securityablePayload : (array) $securityablePayload,
                 [
                     'dto_type' => strtolower(class_basename($security->securityable_type)),
-                    'price' => $security->price,
+                    'price' => $security->price / 100,
                 ]
             ),
         ], 200);

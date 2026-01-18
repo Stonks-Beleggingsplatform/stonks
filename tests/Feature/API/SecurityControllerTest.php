@@ -12,16 +12,14 @@ use App\Models\Security;
 use App\Models\Stock;
 
 beforeEach(function () {
-    $this->security = Security::create([
+    $this->stock = Stock::factory()->create();
+    $this->security = $this->stock->security;
+    $this->security->update([
         'ticker' => 'AAPL',
         'name' => 'Apple Inc.',
-        'price' => 15000, // Stored as integer in cents
+        'price' => 15000,
         'exchange_id' => Exchange::factory()->create(['name' => 'NASDAQ'])->id,
-        'securityable_type' => Stock::class,
-        'securityable_id' => Stock::factory()->create()->id,
     ]);
-
-    $this->stock = Stock::find($this->security->securityable_id);
 });
 
 test('index searches securities by ticker', function () {
@@ -55,43 +53,39 @@ test('show returns stock details', function () {
     $response = $this->getJson("/api/securities/{$this->security->ticker}");
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toMatchArray(StockDTO::make($this->stock)->jsonSerialize());
+        ->and($response->json()['securityable'])->toMatchArray(StockDTO::make($this->stock)->jsonSerialize());
 });
 
 test('show returns bond details', function () {
-    $bondSecurity = Security::create([
+    $bond = Bond::factory()->create();
+    $bondSecurity = $bond->security;
+    $bondSecurity->update([
         'ticker' => 'GOVT2025',
         'name' => 'Government Bond 2025',
         'price' => 100000,
         'exchange_id' => Exchange::factory()->create(['name' => 'NYSE'])->id,
-        'securityable_type' => Bond::class,
-        'securityable_id' => Bond::factory()->create()->id,
     ]);
-
-    $bond = Bond::find($bondSecurity->securityable_id);
 
     $response = $this->getJson("/api/securities/{$bondSecurity->ticker}");
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toMatchArray(BondDTO::make($bond)->jsonSerialize());
+        ->and($response->json()['securityable'])->toMatchArray(BondDTO::make($bond)->jsonSerialize());
 });
 
 test('show returns crypto details', function () {
-    $cryptoSecurity = Security::create([
+    $crypto = Crypto::factory()->create();
+    $cryptoSecurity = $crypto->security;
+    $cryptoSecurity->update([
         'ticker' => 'BTC',
         'name' => 'Bitcoin',
         'price' => 5000000,
         'exchange_id' => Exchange::factory()->create(['name' => 'CryptoExchange'])->id,
-        'securityable_type' => Crypto::class,
-        'securityable_id' => Crypto::factory()->create()->id,
     ]);
-
-    $crypto = Crypto::find($cryptoSecurity->securityable_id);
 
     $response = $this->getJson("/api/securities/{$cryptoSecurity->ticker}");
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toMatchArray(CryptoDTO::make($crypto)->jsonSerialize());
+        ->and($response->json()['securityable'])->toMatchArray(CryptoDTO::make($crypto)->jsonSerialize());
 });
 
 test('show returns 404 for non-existent security', function () {
