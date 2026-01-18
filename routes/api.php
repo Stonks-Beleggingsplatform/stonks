@@ -1,13 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FeeController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\WatchlistController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\FeeController;
-
-
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);

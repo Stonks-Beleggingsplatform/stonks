@@ -34,6 +34,4 @@ class Security extends Model
     {
         return $this->belongsTo(Exchange::class);
     }
-
-    
 }

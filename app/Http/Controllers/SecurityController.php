@@ -10,8 +10,8 @@ use App\Models\Bond;
 use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
-use Illuminate\Http\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 
 class SecurityController extends Controller
 {
