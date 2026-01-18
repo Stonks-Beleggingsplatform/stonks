@@ -5,6 +5,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\WatchlistController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\FeeController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', fn () => auth()->user());
+    Route::post('/orders', [OrderController::class, 'store']);
 
     Route::prefix('/portfolio')->controller(PortfolioController::class)->group(function () {
         Route::get('/', 'show')->name('portfolio.show');
@@ -37,17 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/securities/{ticker}', [SecurityController::class, 'show']);
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/orders', [OrderController::class, 'store']);
-    });
-
     Route::prefix('admin')->group(function () {
-        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
-        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
-    });
-
-    Route::prefix('admin')->group(function () {
-        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
-        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
+        Route::get('/fees', [FeeController::class, 'index']);
+        Route::post('/fees', [FeeController::class, 'store']);
     });
 });
