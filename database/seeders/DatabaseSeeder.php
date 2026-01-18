@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Watchlist;
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,25 +48,10 @@ class DatabaseSeeder extends Seeder
             ['email' => 'user@example.com'],
             [
                 'name' => 'Regular User',
-        User::factory()
-            ->has(
-                Watchlist::factory(3)
-            )
-            ->has(
-                Portfolio::factory()
-                    ->has(
-                        Order::factory()
-                            ->has(Transaction::factory())
-                            ->count(5)
-                    )
-            )
-            ->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
                 'password' => bcrypt('password'),
                 'role' => \App\Enums\UserRole::User,
             ]
-        );
+            );
 
         if (!$user->portfolio) {
             $user->portfolio()->create([
