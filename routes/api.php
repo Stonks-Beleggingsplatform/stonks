@@ -45,4 +45,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
         Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
     });
+
+    Route::prefix('admin')->group(function () {
+        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
+        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
+    });
 });
