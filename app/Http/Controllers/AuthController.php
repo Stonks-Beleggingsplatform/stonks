@@ -47,7 +47,7 @@ class AuthController extends Controller
         return response()->json($user, 201);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -65,7 +65,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();
@@ -74,7 +74,7 @@ class AuthController extends Controller
         return response()->noContent();
     }
 
-    public function checkEmail(Request $request)
+    public function checkEmail(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|string|email:rfc,dns|max:255|unique:users',

@@ -10,7 +10,7 @@ class DepositController extends Controller
     /**
      * Get the current user's balance.
      */
-    public function getBalance()
+    public function getBalance(): JsonResponse
     {
         return response()->json([
             'balance' => Auth::user()->portfolio?->cash ?? 0.00,
@@ -20,7 +20,7 @@ class DepositController extends Controller
     /**
      * Simulate a deposit (for demo/mock purposes).
      */
-    public function simulate(Request $request)
+    public function simulate(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
@@ -45,7 +45,7 @@ class DepositController extends Controller
     /**
      * Create a real Stripe Checkout Session.
      */
-    public function createSession(Request $request)
+    public function createSession(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
