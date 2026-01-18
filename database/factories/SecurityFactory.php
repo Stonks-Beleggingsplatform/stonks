@@ -31,10 +31,10 @@ abstract class SecurityFactory extends Factory
                 $ticker = $this->faker->randomElement(array_keys($cryptos));
                 $name = $cryptos[$ticker];
                 // Avoid ticker unique constraint issues if running multiple times
-                $ticker = $this->faker->unique()->regexify($ticker . '[0-9]?');
+                $ticker = $this->faker->unique()->regexify($ticker.'[0-9]?');
             } elseif ($securityable instanceof \App\Models\Bond) {
-                $name = $this->faker->country() . ' ' . $this->faker->numberBetween(2025, 2045) . ' Bond';
-                $ticker = strtoupper($this->faker->unique()->lexify('???')) . 'B';
+                $name = $this->faker->country().' '.$this->faker->numberBetween(2025, 2045).' Bond';
+                $ticker = strtoupper($this->faker->unique()->lexify('???')).'B';
             }
 
             $securityable->security()->create([

@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        if (!$admin->portfolio) {
+        if (! $admin->portfolio) {
             $admin->portfolio()->create([
                 'currency_id' => $usd->id,
                 'cash' => 10000000, // $100,000.00
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             ]
             );
 
-        if (!$user->portfolio) {
+        if (! $user->portfolio) {
             $user->portfolio()->create([
                 'currency_id' => $usd->id,
                 'cash' => 10000000, // $100,000.00
