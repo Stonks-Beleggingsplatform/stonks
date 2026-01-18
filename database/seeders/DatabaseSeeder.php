@@ -17,9 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // Seed standard data (Currencies, Exchanges) first
         $this->call([
-            RegularUserSeeder::class,
             StandardSeeder::class,
-            AdminUserSeeder::class,
         ]);
 
         $usd = \App\Models\Currency::where('name', 'USD')->first();
@@ -37,15 +35,15 @@ class DatabaseSeeder extends Seeder
         if (!$admin->portfolio) {
             $admin->portfolio()->create([
                 'currency_id' => $usd->id,
-                'cash' => 10000, // $10,000.00
+                'cash' => 10000000, // $100,000.00
             ]);
         }
 
-        // Ensure Standard Customer
+        // Ensure Regular User
         $user = User::updateOrCreate(
             ['email' => 'user@example.com'],
             [
-                'name' => 'John Customer',
+                'name' => 'Regular User',
                 'password' => bcrypt('password'),
                 'role' => \App\Enums\UserRole::User,
             ]
@@ -54,7 +52,7 @@ class DatabaseSeeder extends Seeder
         if (!$user->portfolio) {
             $user->portfolio()->create([
                 'currency_id' => $usd->id,
-                'cash' => 5000, // $5,000.00
+                'cash' => 10000000, // $100,000.00
             ]);
         }
     }

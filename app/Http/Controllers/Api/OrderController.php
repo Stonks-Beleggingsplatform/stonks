@@ -31,15 +31,13 @@ class OrderController extends Controller
             $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
             $security = Security::findOrFail($data['security_id']);
 
-            $priceEuro = $data['type'] === OrderType::LIMIT->value
-                ? $data['limit_price']
-                : $security->price;
+            $price = $data['type'] === OrderType::LIMIT->value
+                ? (int) round($data['limit_price'] * 100)
+                : (int) $security->price;
 
-            if (! $priceEuro || $priceEuro <= 0) {
+            if (! $price || $price <= 0) {
                 abort(422, 'Invalid price');
             }
-
-            $price = (int) round($priceEuro * 100);
 
             $subtotal = $data['quantity'] * $price;
             $fee = (int) round($subtotal * 0.002);
@@ -51,6 +49,7 @@ class OrderController extends Controller
 
             // CASH ER AF
             $portfolio->cash -= $totalRequired;
+            $portfolio->total_value += $subtotal;
             $portfolio->save();
 
             $order = Order::create([

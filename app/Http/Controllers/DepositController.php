@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 
 class DepositController extends Controller
 {
@@ -28,7 +30,7 @@ class DepositController extends Controller
 
         $user = Auth::user();
         $portfolio = $user->portfolio;
-        
+
         if (!$portfolio) {
              return response()->json(['message' => 'User has no portfolio'], 404);
         }
@@ -52,7 +54,7 @@ class DepositController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         // Ensure user is a Stripe customer
         $user->createOrGetStripeCustomer();
 

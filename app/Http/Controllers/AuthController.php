@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+
 
 class AuthController extends Controller
 {
@@ -65,7 +68,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request): Response
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();

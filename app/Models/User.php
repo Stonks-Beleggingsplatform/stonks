@@ -49,9 +49,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Watchlist::class);
     }
-
-    public function portfolio(): HasOne
-    {
-        return $this->hasOne(Portfolio::class);
-    }
 }
