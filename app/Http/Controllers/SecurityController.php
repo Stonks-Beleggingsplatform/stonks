@@ -54,26 +54,23 @@ class SecurityController extends Controller
             ? $DTO->toArray(request())
             : $DTO;
 
-        return response([
-            'id' => $security->id,
-            'ticker' => $security->ticker,
-            'name' => $security->name,
-            'price' => $security->price / 100,
-            'exchange' => $security->relationLoaded('exchange') ? [
-                'id' => $security->exchange?->id,
-                'name' => $security->exchange?->name,
-                'currency' => $security->exchange?->currency ? [
-                    'id' => $security->exchange->currency->id,
-                    'name' => $security->exchange->currency->name,
+        return response(array_merge(
+            is_array($securityablePayload) ? $securityablePayload : (array) $securityablePayload,
+            [
+                'id' => $security->id,
+                'ticker' => $security->ticker,
+                'name' => $security->name,
+                'price' => $security->price / 100,
+                'exchange' => $security->relationLoaded('exchange') ? [
+                    'id' => $security->exchange?->id,
+                    'name' => $security->exchange?->name,
+                    'currency' => $security->exchange?->currency ? [
+                        'id' => $security->exchange->currency->id,
+                        'name' => $security->exchange->currency->name,
+                    ] : null,
                 ] : null,
-            ] : null,
-            'securityable' => array_merge(
-                is_array($securityablePayload) ? $securityablePayload : (array) $securityablePayload,
-                [
-                    'dto_type' => strtolower(class_basename($security->securityable_type)),
-                    'price' => $security->price / 100,
-                ]
-            ),
-        ], 200);
+                'dto_type' => strtolower(class_basename($security->securityable_type)),
+            ]
+        ), 200);
     }
 }

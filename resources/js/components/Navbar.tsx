@@ -8,20 +8,22 @@ interface User {
     name: string;
     email: string;
     role?: string;
+    balance?: number;
 }
 
 interface AuthContextType {
     user: User | null;
+    balance: number;
     logout: () => void;
 }
 
 export default function Navbar() {
-    const { user, logout } = useAuth();
-    const location = useLocation();
+    const { user, balance, logout } = useAuth() as unknown as AuthContextType;
+    useLocation();
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState<App. DTO.SecurityDTO[]>([]);
+    const [searchResults, setSearchResults] = useState<App.DTO.SecurityDTO[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,7 +33,7 @@ export default function Navbar() {
 
     // Debounced search
     useEffect(() => {
-        if (! searchTerm. trim()) {
+        if (!searchTerm.trim()) {
             setSearchResults([]);
             return;
         }
@@ -56,11 +58,6 @@ export default function Navbar() {
         }
     };
 
-    const handleResultClick = (ticker: string) => {
-        setSearchTerm('');
-        setIsModalOpen(false);
-        navigate(`/securities/${ticker}`);
-    };
 
     const handleModalClose = () => {
         setIsModalOpen(false);
@@ -91,8 +88,11 @@ export default function Navbar() {
                             <Link to="/" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors">Dashboard</Link>
                             <Link to="/portfolio" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Portfolio</Link>
                             <Link to="/watchlists" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Watchlists</Link>
-                            <Link to="/transactions" className="text-sm font-medium text-gray-500 hover: text-gray-900 transition-colors">Transactions</Link>
-                            <Link to="/markets" className="text-sm font-medium text-gray-500 hover: text-gray-900 transition-colors">Markets</Link>
+                            {user?.role === 'admin' && (
+                                <Link to="/admin/fees" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Fees</Link>
+                            )}
+                            <Link to="/transactions" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Transactions</Link>
+                            <Link to="/markets" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Markets</Link>
                         </nav>
                     </div>
 
@@ -121,9 +121,15 @@ export default function Navbar() {
                                 <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                                     Logout
                                 </button>
-                                <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                <Link to="/deposit" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
                                     Deposit
-                                </button>
+                                </Link>
+                                <div className="hidden lg:flex flex-col items-end">
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Balance</span>
+                                    <span className="text-sm font-bold text-green-600">
+                                        ${(balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                    </span>
+                                </div>
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
@@ -170,47 +176,56 @@ export default function Navbar() {
 
                 {/* Search Results */}
                 <div className="max-h-96 overflow-y-auto">
-                    {isSearching ?  (
+                    {isSearching ? (
                         <div className="py-12 text-center text-gray-500">
                             <div className="animate-spin h-8 w-8 border-3 border-gray-300 border-t-black rounded-full mx-auto mb-3"></div>
                             <p className="text-sm">Searching... </p>
                         </div>
                     ) : searchResults.length > 0 ? (
                         <div className="space-y-2">
-                            {searchResults. map((security, index) => (
-                                <button
+                            {searchResults.map((security, index) => (
+                                <div
                                     key={index}
-                                    onClick={() => handleResultClick(security.ticker)}
-                                    className="w-full p-4 hover:bg-gray-50 transition-colors rounded-lg text-left flex items-center justify-between group border border-gray-200"
+                                    className="w-full p-4 hover:bg-gray-50 transition-colors rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-gray-200 shadow-sm"
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-2">
+                                        <div className="flex items-center gap-2 mb-1">
                                             <span className="font-bold text-gray-900 text-base">
-                                                {security. ticker}
+                                                {security.ticker}
                                             </span>
-                                            <span className="text-sm text-gray-400">•</span>
-                                            <span className="text-sm text-gray-600 truncate">
-                                                {security. name}
+                                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase rounded-md border border-gray-200">
+                                                {security.ticker.length > 4 ? 'Crypto' : 'Stock'}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <div>
-                                                <div className="text-xs text-gray-500 mb-1">Price</div>
-                                                <div className="text-lg font-semibold text-gray-900">
-                                                    {formatPrice(security.price)}
-                                                </div>
-                                            </div>
+                                        <p className="text-sm text-gray-500 truncate mb-2">
+                                            {security.name}
+                                        </p>
+                                        <div className="text-lg font-bold text-black font-mono">
+                                            {formatPrice(security.price)}
                                         </div>
                                     </div>
-                                    <svg
-                                        className="w-5 h-5 text-gray-400 group-hover: text-gray-600 transition-colors flex-shrink-0"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => {
+                                                handleModalClose();
+                                                navigate(`/securities/${security.ticker}`);
+                                            }}
+                                            className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all active:scale-95"
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                handleModalClose();
+                                                navigate(`/stocks/${security.ticker}`);
+                                            }}
+                                            className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold text-white bg-black rounded-lg hover:bg-gray-800 transition-all shadow-md active:scale-95"
+                                        >
+                                            Trade
+                                        </button>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     ) : searchTerm ? (
