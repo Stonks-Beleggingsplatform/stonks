@@ -15,6 +15,7 @@ import WatchlistCreate from './components/Watchlist/WatchlistCreate';
 import WatchlistEdit from './components/Watchlist/WatchlistEdit';
 import WatchlistShow from './components/Watchlist/WatchlistShow';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
+import AdminFees from './components/AdminFees';
 
 function Portfolio() {
     return (
@@ -47,6 +48,8 @@ function App() {
                             <Route path="/watchlists/create" element={<WatchlistCreate />} />
                             <Route path="/watchlists/:id" element={<WatchlistShow />} />
                             <Route path="/watchlists/:id/edit" element={<WatchlistEdit />} />
+                          
+                            <Route path="/admin/fees" element={<AdminFees />} />
                         </Route>
 
                         {/* 404 */}
