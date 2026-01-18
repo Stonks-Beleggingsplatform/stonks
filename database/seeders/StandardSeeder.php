@@ -19,9 +19,9 @@ class StandardSeeder extends Seeder
         $gbp = Currency::firstOrCreate(['name' => 'GBP']);
 
         // Seed Exchanges
-        Exchange::firstOrCreate(['name' => 'NASDAQ'], ['currency_id' => $usd->id]);
-        Exchange::firstOrCreate(['name' => 'NYSE'], ['currency_id' => $usd->id]);
-        Exchange::firstOrCreate(['name' => 'LSE'], ['currency_id' => $gbp->id]);
-        Exchange::firstOrCreate(['name' => 'Euronext'], ['currency_id' => $eur->id]);
+        Exchange::firstOrCreate(['name' => 'NASDAQ'], ['code' => 'NSDQ', 'currency_id' => $usd->id]);
+        Exchange::firstOrCreate(['name' => 'NYSE'], ['code' => 'NYSE', 'currency_id' => $usd->id]);
+        Exchange::firstOrCreate(['name' => 'LSE'], ['code' => 'LSE', 'currency_id' => $gbp->id]);
+        Exchange::firstOrCreate(['name' => 'Euronext'], ['code' => 'EURX', 'currency_id' => $eur->id]);
     }
 }

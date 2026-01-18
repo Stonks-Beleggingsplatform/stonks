@@ -123,4 +123,12 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+     * ----------------------------------------------------------
+     * | API Keys for External Services
+     * ----------------------------------------------------------
+     */
+    'alphavantage_api' => [
+        'key' => env('ALPHAVANTAGE_API_KEY', 'demo'),
+    ],
 ];

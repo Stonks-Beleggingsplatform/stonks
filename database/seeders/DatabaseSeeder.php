@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Watchlist;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         // Seed standard data (Currencies, Exchanges) first
         $this->call([
+            RegularUserSeeder::class,
             StandardSeeder::class,
+            AdminUserSeeder::class,
         ]);
 
         $usd = \App\Models\Currency::where('name', 'USD')->first();

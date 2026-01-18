@@ -1,11 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\FeeController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\WatchlistController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -14,9 +15,9 @@ Route::post('/check-email', [AuthController::class, 'checkEmail']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('/user', fn () => auth()->user());
+
+    Route::post('/orders', [OrderController::class, 'store']);
 
     // Deposit Routes
     Route::get('/balance', [DepositController::class, 'getBalance']);
@@ -24,7 +25,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/deposit/session', [DepositController::class, 'createSession']);
 
     Route::prefix('/portfolio')->controller(PortfolioController::class)->group(function () {
-        Route::get('/', 'show')->name('portfolio.show');
+        Route::get('/', 'index')->name('portfolio.index');
     });
 
     Route::prefix('/watchlist')->controller(WatchlistController::class)->group(function () {
@@ -42,8 +43,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{security:ticker}', 'show')->name('securities.show');
     });
 
+    Route::get('/securities/{ticker}', [SecurityController::class, 'show']);
+
     Route::prefix('admin')->group(function () {
-        Route::get('/fees', [App\Http\Controllers\FeeController::class, 'index']);
-        Route::post('/fees', [App\Http\Controllers\FeeController::class, 'store']);
+        Route::get('/fees', [FeeController::class, 'index']);
+        Route::post('/fees', [FeeController::class, 'store']);
     });
 });

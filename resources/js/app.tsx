@@ -8,8 +8,10 @@ import { AuthProvider } from './context/AuthContext';
 import Register from './components/Register';
 import Login from './components/Login';
 import SecurityShow from './components/Security/SecurityShow';
+import StockShow from './components/BuyOrder/Stockshow';
 import WatchlistIndex from './components/Watchlist/WatchlistIndex';
 import WatchlistCreate from './components/Watchlist/WatchlistCreate';
+import Portfolio from './components/Portfolio';
 import WatchlistEdit from './components/Watchlist/WatchlistEdit';
 import WatchlistShow from './components/Watchlist/WatchlistShow';
 import { useAuth } from './context/AuthContext';
@@ -17,15 +19,6 @@ import ProtectedLayout from './components/ProtectedLayout.tsx';
 import AdminFees from './components/AdminFees';
 import Dashboard from './components/Dashboard';
 import Deposit from './components/Deposit';
-
-function Portfolio() {
-    return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-2xl font-bold mb-4">My Portfolio</h1>
-            <p className="text-gray-600">This is a placeholder for the portfolio page.</p>
-        </div>
-    );
-}
 
 function App() {
     return (
@@ -63,7 +56,7 @@ function AppRoutes() {
                     <Route path="/deposit" element={<Deposit />} />
                     <Route path="/portfolio" element={<Portfolio />} />
                     <Route path="/securities/:ticker" element={<SecurityShow />} />
-
+                    <Route path="/stocks/:ticker" element={<StockShow />} />
                     <Route path="/watchlists" element={<WatchlistIndex />} />
                     <Route path="/watchlists/create" element={<WatchlistCreate />} />
                     <Route path="/watchlists/:id" element={<WatchlistShow />} />
