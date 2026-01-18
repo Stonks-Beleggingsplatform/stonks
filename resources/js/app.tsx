@@ -14,9 +14,10 @@ import WatchlistCreate from './components/Watchlist/WatchlistCreate';
 import Portfolio from './components/Portfolio';
 import WatchlistEdit from './components/Watchlist/WatchlistEdit';
 import WatchlistShow from './components/Watchlist/WatchlistShow';
-import { useAuth } from './context/AuthContext';
+import TransactionIndex from './components/Transaction/TransactionIndex';
 import ProtectedLayout from './components/ProtectedLayout.tsx';
 import AdminFees from './components/AdminFees';
+import { useAuth } from './context/AuthContext';
 import Dashboard from './components/Dashboard';
 import Deposit from './components/Deposit';
 
@@ -61,7 +62,7 @@ function AppRoutes() {
                     <Route path="/watchlists/create" element={<WatchlistCreate />} />
                     <Route path="/watchlists/:id" element={<WatchlistShow />} />
                     <Route path="/watchlists/:id/edit" element={<WatchlistEdit />} />
-
+                    <Route path="/transactions" element={<TransactionIndex />} />
                     <Route path="/admin/fees" element={<AdminFees />} />
                 </Route>
 
@@ -74,6 +75,6 @@ function AppRoutes() {
 
 const appElement = document.getElementById('app');
 if (appElement) {
-    const root = ReactDOM.createRoot(appElement);
+    const root = ReactDOM. createRoot(appElement);
     root.render(<App />);
 }
