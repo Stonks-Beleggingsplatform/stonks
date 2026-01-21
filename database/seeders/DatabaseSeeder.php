@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Watchlist;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,20 +15,45 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed standard data (Currencies, Exchanges) first
         $this->call([
             StandardSeeder::class,
-            AdminUserSeeder::class,
-            RegularUserSeeder::class,
         ]);
 
-        User::factory()
-            ->has(
-                Watchlist::factory(3)
-            )
-            ->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
+        $usd = \App\Models\Currency::where('name', 'USD')->first();
+
+        // Ensure Admin User
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
                 'password' => bcrypt('password'),
+                'role' => \App\Enums\UserRole::Admin,
+            ]
+        );
+
+        if (! $admin->portfolio) {
+            $admin->portfolio()->create([
+                'currency_id' => $usd->id,
+                'cash' => 10000000, // $100,000.00
             ]);
+        }
+
+        // Ensure Regular User
+        $user = User::updateOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Regular User',
+                'password' => bcrypt('password'),
+                'role' => \App\Enums\UserRole::User,
+            ]
+        );
+
+        if (! $user->portfolio) {
+            $user->portfolio()->create([
+                'currency_id' => $usd->id,
+                'cash' => 10000000, // $100,000.00
+            ]);
+        }
     }
 }

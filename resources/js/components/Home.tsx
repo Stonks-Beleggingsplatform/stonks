@@ -1,76 +1,98 @@
+import { Link } from 'react-router-dom';
+
 export default function Home() {
-    // Mock data for the "Stonks" app
-    const portfolioValue = 12450.80;
-    const dayChange = 234.50;
-    const dayChangePercent = 1.92;
-
-    const stocks = [
-        { symbol: 'AAPL', name: 'Apple Inc.', price: 173.50, change: 1.25, changePercent: 0.72 },
-        { symbol: 'TSLA', name: 'Tesla, Inc.', price: 205.60, change: -3.40, changePercent: -1.63 },
-        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 460.15, change: 12.30, changePercent: 2.75 },
-        { symbol: 'GME', name: 'GameStop Corp.', price: 15.20, change: 0.80, changePercent: 5.56 },
-        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 370.25, change: 2.10, changePercent: 0.57 },
-    ];
-
     return (
-        <div>
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Portfolio Summary */}
-                <section className="mb-8">
-                    <h2 className="text-sm font-medium text-gray-500 mb-2">Total Portfolio Value</h2>
-                    <div className="flex items-baseline gap-4">
-                        <h1 className="text-4xl font-bold tracking-tight">
-                            ${portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+        <div className="bg-white">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden bg-black py-24 sm:py-32">
+                {/* Background Pattern/Image Placeholder */}
+                <div className="absolute inset-0 z-0 opacity-40">
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black" />
+                    {/* Note: In a real app we'd use the generated image path here */}
+                    <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1611974717482-58-958899889502?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale" />
+                </div>
+
+                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+                    <div className="max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-indigo-400 uppercase tracking-widest mb-8">
+                            <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+                            Platform Live
+                        </div>
+                        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-7xl mb-6">
+                            Invest in the <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">future of finance</span>
                         </h1>
-                        <div className={`flex items-center text-sm font-medium ${dayChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            <span>{dayChange >= 0 ? '+' : ''}{dayChange.toFixed(2)} ({dayChangePercent}%)</span>
-                            <span className="ml-1 text-gray-400">Today</span>
+                        <p className="text-lg leading-8 text-gray-300 mb-10">
+                            Stonks is the premier platform for retail investors. Track your global portfolio, manage fees with precision, and gain insights that institutional investors keep for themselves.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Link
+                                to="/register"
+                                className="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-black bg-white rounded-xl hover:bg-gray-200 transition-all shadow-lg"
+                            >
+                                Get Started for Free
+                            </Link>
+                            <Link
+                                to="/login"
+                                className="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-white bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all backdrop-blur-sm"
+                            >
+                                Sign In
+                            </Link>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
 
-                {/* Watchlist / Stocks */}
-                <section>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold">Watchlist</h3>
-                        <button className="text-sm text-blue-600 font-medium hover:text-blue-700">View All</button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {stocks.map((stock) => (
-                            <div key={stock.symbol} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <div className="font-bold text-lg">{stock.symbol}</div>
-                                        <div className="text-sm text-gray-500">{stock.name}</div>
-                                    </div>
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${stock.change >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                                        {stock.change >= 0 ? '↗' : '↘'}
-                                    </div>
-                                </div>
-                                <div className="flex justify-between items-end">
-                                    <div className="text-xl font-semibold">${stock.price.toFixed(2)}</div>
-                                    <div className={`text-sm font-medium ${stock.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                        {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)} ({stock.changePercent}%)
-                                    </div>
-                                </div>
+            {/* Feature Highlights */}
+            <div className="py-24 sm:py-32 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-3 lg:gap-x-12">
+                        <div className="flex flex-col gap-4 p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all">
+                            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
+                                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
                             </div>
-                        ))}
-                    </div>
-                </section>
+                            <h3 className="text-xl font-bold text-gray-900">Real-time Tracking</h3>
+                            <p className="text-gray-600">Track your favorite securities across global exchanges with millisecond precision and live updates.</p>
+                        </div>
 
-                {/* Quick Actions */}
-                <section className="mt-10">
-                    <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {['Buy', 'Sell', 'Transfer', 'History'].map((action) => (
-                            <button key={action} className="p-4 bg-gray-100 rounded-xl font-medium text-gray-700 hover:bg-gray-200 transition-colors text-center">
-                                {action}
-                            </button>
-                        ))}
+                        <div className="flex flex-col gap-4 p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all">
+                            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
+                                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900">Fee Management</h3>
+                            <p className="text-gray-600">Understand exactly what you're paying. Our precise fee calculation engine helps you maximize returns.</p>
+                        </div>
+
+                        <div className="flex flex-col gap-4 p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all">
+                            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
+                                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900">Military-Grade Security</h3>
+                            <p className="text-gray-600">Your data is encrypted using industry-standard protocols. We prioritize your privacy above everything else.</p>
+                        </div>
                     </div>
-                </section>
-            </main>
+                </div>
+            </div>
+
+            {/* Social Proof / Partners */}
+            <div className="py-12 border-t border-gray-100 bg-white">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-8">Trusted by global traders</p>
+                    <div className="flex flex-wrap justify-center items-center gap-12 opacity-30 grayscale saturate-0">
+                        {/* Mock Logos */}
+                        <div className="text-2xl font-black italic">NASDAQ</div>
+                        <div className="text-2xl font-black italic">FTX</div>
+                        <div className="text-2xl font-black italic">BLOOMBERG</div>
+                        <div className="text-2xl font-black italic">REUTERS</div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

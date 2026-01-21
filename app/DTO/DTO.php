@@ -16,6 +16,19 @@ abstract class DTO implements Arrayable, JsonSerializable
         return get_object_vars($this);
     }
 
+    public static function fromArray(array $attributes): static
+    {
+        $dto = new static;
+
+        foreach ($attributes as $key => $value) {
+            if (property_exists($dto, $key)) {
+                $dto->$key = $value;
+            }
+        }
+
+        return $dto;
+    }
+
     public function jsonSerialize(): array
     {
         $base = $this->toArray();
@@ -56,6 +69,17 @@ abstract class DTO implements Arrayable, JsonSerializable
 
             if ($type && $type->getName() === 'float' && is_int($model->$property)) {
                 $dto->$property = $model->$property / 100;
+
+                continue;
+            }
+
+            if ($model->$property instanceof BackedEnum) {
+                $type = $reflectionProperty->getType();
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
+                    $dto->$property = $model->$property->value;
+                } else {
+                    $dto->$property = $model->$property;
+                }
 
                 continue;
             }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,8 +14,20 @@ class Portfolio extends Model
 
     protected $guarded = ['id'];
 
-    // Temporary cash property until a migration adds a cash column to the portfolios table
-    public int $cash = 100000;
+    /**
+     * Get or set the portfolio's cash in dollars, while storing it in cents.
+     */
+    protected function cash(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => (float) ($value / 100),
+            set: fn ($value) => (int) ($value * 100),
+        );
+    }
+
+    protected $casts = [
+        'cash' => 'integer',
+    ];
 
     public function user(): BelongsTo
     {

@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Billable, HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -37,13 +38,13 @@ class User extends Authenticatable
         'role' => UserRole::class,
     ];
 
-    public function watchlists(): HasMany
-    {
-        return $this->hasMany(Watchlist::class);
-    }
-
     public function portfolio(): HasOne
     {
         return $this->hasOne(Portfolio::class);
+    }
+
+    public function watchlists(): HasMany
+    {
+        return $this->hasMany(Watchlist::class);
     }
 }

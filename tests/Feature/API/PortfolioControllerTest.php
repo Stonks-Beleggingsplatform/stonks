@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Portfolio;
 use App\DTO\PortfolioDTO;
+use App\Models\Portfolio;
 
 test('index', function () {
     $portfolio = Portfolio::factory()->create([

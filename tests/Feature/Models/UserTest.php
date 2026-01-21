@@ -1,9 +1,14 @@
 <?php
 
+use App\Models\Portfolio;
 use App\Models\User;
+use App\Models\Watchlist;
 
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()
+        ->hasWatchlists()
+        ->hasPortfolio()
+        ->create();
 });
 
 test('user attributes', function () {
@@ -13,6 +18,6 @@ test('user attributes', function () {
 });
 
 test('user relationships', function () {
-    // No relationships to test currently
-    expect(true)->toBeTrue();
+    expect($this->user->watchlists)->each->toBeInstanceOf(Watchlist::class)
+        ->and($this->user->portfolio)->toBeInstanceOf(Portfolio::class);
 });
