@@ -42,20 +42,20 @@ export default function Dashboard() {
                         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Total Portfolio Value</h2>
                         <div className="flex items-baseline gap-4">
                             <h1 className="text-5xl font-black tracking-tighter">
-                                ${(portfolio.total_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                ${(portfolio.total_value / 100 || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                             </h1>
                             <div className={`flex items-center text-sm font-bold px-2 py-1 rounded-lg ${(portfolio.total_return || 0) >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                <span>{(portfolio.total_return || 0) >= 0 ? '↑' : '↓'} {Math.abs(portfolio.total_return || 0).toFixed(2)}%</span>
+                                <span>{(portfolio.total_return / 100 || 0) >= 0 ? '↑' : '↓'} {Math.abs(portfolio.total_return || 0).toFixed(2)}%</span>
                             </div>
                         </div>
                         <div className="mt-6 flex gap-8">
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Available Cash</p>
-                                <p className="text-lg font-bold">${(portfolio.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                <p className="text-lg font-bold">${(portfolio.cash / 100 || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                             </div>
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Invested</p>
-                                <p className="text-lg font-bold">${((portfolio?.total_value || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                <p className="text-lg font-bold">${((portfolio?.total_value / 100 || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                             </div>
                         </div>
                     </div>
