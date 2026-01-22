@@ -29,6 +29,8 @@ class OrderController extends Controller
     
             return DB::transaction(function () use ($data, $user) {
                 $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
+                $portfolioCash = (int) $portfolio->cash * 100;
+
                 $security = Security::findOrFail($data['security_id']);
                 $is_limit_order = $data['type'] === OrderType::LIMIT->value;
                 $limit_price_cents = $is_limit_order ? (int) round($data['limit_price'] * 100) : 0;
@@ -65,12 +67,13 @@ class OrderController extends Controller
                 $fee = (int) round($subtotal * 0.002);
                 $totalRequired = $subtotal + $fee;
     
-                if ($portfolio->cash < $totalRequired) {
+                if ($portfolioCash < $totalRequired) {
                     abort(422, 'Insufficient cash');
                 }
     
                 // Deduct cash and update portfolio value
-                $portfolio->cash -= $totalRequired;
+                $portfolioCash -= $totalRequired;
+                $portfolio->cash = $portfolioCash / 100;
                 $portfolio->total_value += $subtotal;
                 $portfolio->save();
     
@@ -115,7 +118,7 @@ class OrderController extends Controller
                 Transaction::create([
                     'order_id' => $order->id,
                     'type' => 'buy',
-                    'amount' => $totalRequired,
+                    'amount' => $data['quantity'],
                     'price' => $price,
                     'exchange_rate' => null,
                 ]);
