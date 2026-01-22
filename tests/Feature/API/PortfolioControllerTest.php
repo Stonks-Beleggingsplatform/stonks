@@ -17,8 +17,8 @@ test('index', function () {
 
     expect($response->status())->toBe(200)
         ->and($response->json('user_id'))->toBe($this->user->id)
-        ->and($response->json('cash'))->toBeFloat()
-        ->and($response->json('total_value'))->toBeFloat()
-        ->and($response->json('total_return'))->toBeFloat();
+        ->and($response->json('cash'))->toBeInt()
+        ->and($response->json('total_value'))->toBeInt()
+        ->and($response->json('total_return'))->toBeInt();
 });
 

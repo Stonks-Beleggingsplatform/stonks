@@ -11,7 +11,9 @@ beforeEach(function () {
         ->create();
 
     $this->portfolio->orders()->saveMany(
-        Order::factory()->count(3)->create()
+        Order::factory()->count(3)->create([
+            'type' => 'market',
+        ])
     );
 
     foreach ($this->portfolio->orders as $order) {
