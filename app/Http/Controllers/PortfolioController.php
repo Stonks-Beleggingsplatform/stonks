@@ -12,10 +12,14 @@ class PortfolioController extends Controller
     {
         $portfolio = Portfolio::where('user_id', auth()->id())
             ->with(['user', 'holdings', 'orders'])
-            ->get();
+            ->first();
+
+        if (!$portfolio) {
+            return response(['message' => 'Portfolio not found.'], 404);
+        }
 
         return response(
-            PortfolioDTO::collection($portfolio),
+            PortfolioDTO::make($portfolio),
             200
         );
     }

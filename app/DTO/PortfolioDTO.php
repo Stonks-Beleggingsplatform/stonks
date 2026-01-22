@@ -11,6 +11,8 @@ class PortfolioDTO extends DTO
 {
     public int $id;
 
+    public int $user_id;
+
     public float $cash;
 
     public float $total_value;
@@ -19,14 +21,22 @@ class PortfolioDTO extends DTO
 
     public array $holdings;
 
+    public array $orders;
+
     public static function make(object $model): PortfolioDTO
     {
         /* @var Portfolio $model */
         $base = parent::make($model);
 
-        $model->loadMissing('holdings', 'holdings.security');
+        $model->loadMissing('holdings', 'holdings.security', 'orders', 'orders.security');
 
+        $base->user_id = $model->user_id;
         $base->holdings = $model->holdings->map(fn (Holding $holding) => HoldingDTO::make($holding))->toArray();
+        $base->orders = $model->orders->map(fn ($order) => OrderDTO::make($order))->toArray();
+
+        $base->cash = $model->cash;
+        $base->total_value = $model->total_value;
+        $base->total_return = $model->total_return;
 
         return $base;
     }

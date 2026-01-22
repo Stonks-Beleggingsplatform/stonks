@@ -94,6 +94,12 @@ export default function Navbar() {
 								Dashboard
 							</Link>
 							<Link
+								to="/portfolio"
+								className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
+							>
+								Portfolio
+							</Link>
+							<Link
 								to="/watchlists"
 								className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
 							>
@@ -167,7 +173,7 @@ export default function Navbar() {
 									</span>
 									<span className="text-sm font-bold text-green-600">
 										$
-										{(balance || 0).toLocaleString('en-US', {
+										{(balance / 100 || 0).toLocaleString('en-US', {
 											minimumFractionDigits: 2,
 										})}
 									</span>
