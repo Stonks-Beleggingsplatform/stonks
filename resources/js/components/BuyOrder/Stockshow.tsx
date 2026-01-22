@@ -61,9 +61,9 @@ export default function StockShow() {
 		setIsLoadingPortfolio(true);
 		try {
 			const res = await api.get('/portfolio');
-			const portfolios = res.data;
-			if (portfolios && portfolios.length > 0) {
-				setCash(Number(portfolios[0].cash ?? 0));
+			const portfolio = res.data;
+			if (portfolio) {
+				setCash(Number(portfolio.cash ?? 0));
 			}
 
 		} catch (e) {

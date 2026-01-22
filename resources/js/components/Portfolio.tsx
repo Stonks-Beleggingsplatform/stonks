@@ -106,7 +106,7 @@ export default function Portfolio() {
                         <div className="mt-6 flex gap-8">
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Available Cash</p>
-                                <p className="text-lg font-bold">${(portfolio.cash / 100 || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                <p className="text-lg font-bold">${(portfolio.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                             </div>
                             <div>
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Invested</p>
