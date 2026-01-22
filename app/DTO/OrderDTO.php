@@ -12,15 +12,25 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class OrderDTO extends DTO
 {
     public int $id;
+
     public int $security_id;
+
     public string $ticker;
+
     public int $quantity;
+
     public float $price;
+
     public OrderType $type;
+
     public OrderAction $action;
+
     public OrderStatus $status;
+
     public ?string $end_date;
+
     public string $created_at;
+
     public string $updated_at;
 
     public static function make(object $model): self
@@ -29,6 +39,7 @@ class OrderDTO extends DTO
         $dto = parent::make($model);
         $dto->price = $model->price / 100;
         $dto->ticker = $model->security->ticker;
+
         return $dto;
     }
 }
