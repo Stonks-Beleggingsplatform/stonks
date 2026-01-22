@@ -29,7 +29,7 @@ class OrderController extends Controller
 
         return DB::transaction(function () use ($data, $user) {
             $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
-                $portfolioCash = (int) $portfolio->cash * 100;
+            $portfolioCash = (int) $portfolio->cash * 100;
 
             $security = Security::findOrFail($data['security_id']);
             $is_limit_order = $data['type'] === OrderType::LIMIT->value;
@@ -73,7 +73,7 @@ class OrderController extends Controller
 
             // Deduct cash and update portfolio value
             $portfolioCash -= $totalRequired;
-                $portfolio->cash = $portfolioCash / 100;
+            $portfolio->cash = $portfolioCash / 100;
             $portfolio->total_value += $subtotal;
             $portfolio->save();
 
