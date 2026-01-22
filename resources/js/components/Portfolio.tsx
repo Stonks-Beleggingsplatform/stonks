@@ -2,20 +2,14 @@ import { useEffect, useState } from 'react';
 import api from '../lib/axios';
 import { Link } from 'react-router-dom';
 
-interface Security {
-    ticker: string;
-    name: string;
-    price: number;
-}
-
 interface Holding {
     id: number;
+    security_id: number;
     ticker: string;
     quantity: number;
     purchase_price: number;
     avg_price: number;
     gain_loss: number;
-    security: Security;
 }
 
 interface Order {
@@ -25,7 +19,8 @@ interface Order {
     status: string;
     quantity: number;
     price: number;
-    security: Security;
+    security_id: number;
+    ticker: string;
 }
 
 interface Portfolio {
@@ -87,36 +82,39 @@ export default function Portfolio() {
             </div>
         );
     }
-
-    const buyOrders = portfolio.orders?.filter(order => order.action === 'buy') || [];
-    const sellOrders = portfolio.orders?.filter(order => order.action === 'sell') || [];
+    
+    const buyOrders = portfolio.orders?.filter(order => order.action === 'buy' && order.status === 'pending') || [];
+    const sellOrders = portfolio.orders?.filter(order => order.action === 'sell' && order.status === 'pending') || [];
 
     return (
         <div>
             <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-2xl font-bold">My Portfolio</h1>
-                        <p className="text-gray-600">Monitor your holdings and orders here.</p>
-                    </div>
-                </div>
+                {/* Portfolio Summary */}
+                <section className="mb-10 p-8 bg-black rounded-3xl text-white shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Beschikbare Cash</h3>
-                        <p className="text-2xl font-bold text-gray-900">€{portfolio.cash}</p>
+                    <div className="relative z-10">
+                        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Total Portfolio Value</h2>
+                        <div className="flex items-baseline gap-4">
+                            <h1 className="text-5xl font-black tracking-tighter">
+                                ${(portfolio.total_value || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            </h1>
+                            <div className={`flex items-center text-sm font-bold px-2 py-1 rounded-lg ${(portfolio.total_return || 0) >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                <span>{(portfolio.total_return || 0) >= 0 ? '↑' : '↓'} {Math.abs(portfolio.total_return || 0).toFixed(2)}%</span>
+                            </div>
+                        </div>
+                        <div className="mt-6 flex gap-8">
+                            <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Available Cash</p>
+                                <p className="text-lg font-bold">${(portfolio.cash || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Invested</p>
+                                <p className="text-lg font-bold">${((portfolio?.total_value || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Totale Waarde</h3>
-                        <p className="text-2xl font-bold text-gray-900">€{portfolio.total_value}</p>
-                    </div>
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Totaal Rendement</h3>
-                        <p className={`text-2xl font-bold ${portfolio.total_return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            €{portfolio.total_return}
-                        </p>
-                    </div>
-                </div>
+                </section>
 
                 {/* Holdings Section */}
                 <div className="mb-8">
@@ -134,7 +132,7 @@ export default function Portfolio() {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Security</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Price</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buy Price</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gain/Loss</th>
                                     </tr>
                                 </thead>
@@ -146,14 +144,13 @@ export default function Portfolio() {
                                                     <div className="font-medium text-gray-900">
                                                         <Link to={`/securities/${holding.ticker}`} className="hover:underline">{holding.ticker}</Link>
                                                     </div>
-                                                    <div className="text-sm text-gray-500 ml-2">{holding.security.name}</div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">{holding.quantity}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">${holding.avg_price.toFixed(2)}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">${holding.security.price.toFixed(2)}</td>
-                                            <td className={`px-6 py-4 whitespace-nowrap ${holding.gain_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                {holding.gain_loss.toFixed(2)}
+                                            <td className="px-6 py-4 whitespace-nowrap">${holding.purchase_price.toFixed(2)}</td>
+                                            <td className={`px-6 py-4 whitespace-nowrap ${(holding.avg_price - holding.purchase_price) * holding.quantity >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {(((holding.avg_price - holding.purchase_price) / holding.purchase_price) * 100).toFixed(2)}%
                                             </td>
                                         </tr>
                                     ))}
@@ -189,9 +186,8 @@ export default function Portfolio() {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="font-medium text-gray-900">
-                                                        <Link to={`/securities/${order.security.ticker}`} className="hover:underline">{order.security.ticker}</Link>
+                                                        <Link to={`/securities/${order.ticker}`} className="hover:underline">{order.ticker}</Link>
                                                     </div>
-                                                    <div className="text-sm text-gray-500 ml-2">{order.security.name}</div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">{order.type}</td>
@@ -236,9 +232,8 @@ export default function Portfolio() {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <div className="font-medium text-gray-900">
-                                                        <Link to={`/securities/${order.security.ticker}`} className="hover:underline">{order.security.ticker}</Link>
+                                                        <Link to={`/securities/${order.ticker}`} className="hover:underline">{order.ticker}</Link>
                                                     </div>
-                                                    <div className="text-sm text-gray-500 ml-2">{order.security.name}</div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">{order.type}</td>

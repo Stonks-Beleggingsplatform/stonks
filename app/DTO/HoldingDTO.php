@@ -9,6 +9,8 @@ class HoldingDTO extends DTO
 {
     public int $id;
 
+    public int $security_id;
+
     public string $ticker;
 
     public int $quantity;
@@ -23,6 +25,7 @@ class HoldingDTO extends DTO
     {
         $base = parent::make($model);
 
+        $base->security_id = $model->security_id;
         $base->ticker = $model->security->ticker;
 
         return $base;

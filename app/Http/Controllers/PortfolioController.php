@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DTO\PortfolioDTO;
-use App\Models\Currency;
 use App\Models\Portfolio;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class PortfolioController extends Controller
 {
