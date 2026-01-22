@@ -21,4 +21,3 @@ test('index', function () {
         ->and($response->json('total_value'))->toBeInt()
         ->and($response->json('total_return'))->toBeInt();
 });
-

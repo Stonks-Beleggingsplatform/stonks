@@ -23,7 +23,7 @@ class RegularUserSeeder extends Seeder
             ]
         );
 
-        if (!$user->portfolio) {
+        if (! $user->portfolio) {
             Portfolio::factory()->create([
                 'user_id' => $user->id,
             ]);

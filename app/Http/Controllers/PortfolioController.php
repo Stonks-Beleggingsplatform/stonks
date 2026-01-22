@@ -14,7 +14,7 @@ class PortfolioController extends Controller
             ->with(['user', 'holdings', 'orders'])
             ->first();
 
-        if (!$portfolio) {
+        if (! $portfolio) {
             return response(['message' => 'Portfolio not found.'], 404);
         }
 
