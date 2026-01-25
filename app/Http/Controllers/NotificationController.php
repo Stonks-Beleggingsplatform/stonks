@@ -39,4 +39,11 @@ class NotificationController extends Controller
 
         return response($condition, 200);
     }
+
+    public function destroyCondition(NotificationCondition $condition): Response
+    {
+        $condition->delete();
+
+        return response(null, 204);
+    }
 }

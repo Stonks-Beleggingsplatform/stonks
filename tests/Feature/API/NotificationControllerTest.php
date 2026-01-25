@@ -2,6 +2,7 @@
 
 use App\DTO\NotificationDTO;
 use App\Models\Bond;
+use App\Models\NotificationCondition;
 
 test('index', function () {
     $notification = \App\Models\Notification::factory()->create([
@@ -33,4 +34,12 @@ test('storeCondition', function () {
         ->and($response->json('value'))->toBe($payload['value'])
         ->and($response->json('notifiable_type'))->toBe($payload['notifiable_type'])
         ->and($response->json('notifiable_id'))->toBe($payload['notifiable_id']);
+});
+
+test('destroyCondition', function () {
+    $condition = NotificationCondition::factory()->create();
+
+    $response = $this->deleteJson(route('notifications.conditions.destroy', ['condition' => $condition->id]));
+
+    expect($response->status())->toBe(204);
 });
