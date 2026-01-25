@@ -17,6 +17,7 @@ class CryptoDTO extends SecurityDTO
     {
         $dto = parent::mock($identifier);
         $dto->type = CryptoType::from(fake()->randomElement(CryptoType::cases())->value);
+
         return $dto;
     }
 }

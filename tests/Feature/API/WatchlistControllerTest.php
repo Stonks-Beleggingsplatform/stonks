@@ -17,7 +17,8 @@ test('index', function () {
             WatchlistDTO::collection(
                 $this->user->watchlists()
                     ->with(['user', 'securities'])
-                    ->get()
+                    ->get(),
+                true
             )
                 ->map(fn (WatchlistDTO $dto) => $dto->jsonSerialize())
                 ->toArray()
@@ -186,7 +187,7 @@ test('remove securities', function () {
     $security1 = createTestableSecurity();
     $security2 = createTestableSecurity();
 
-    $watchlist->securities()->attach([$security1->id, $security2->id]);
+    $watchlist->securities()->attach([$security1->security->id, $security2->security->id]);
 
     $data = [
         'securities' => [

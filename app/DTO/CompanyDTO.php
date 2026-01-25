@@ -33,7 +33,7 @@ class CompanyDTO extends DTO implements Mockable
 
     public static function mock(?string $identifier = null): static
     {
-        $dto = new static();
+        $dto = new static;
         $dto->name = $identifier ?? fake()->company();
         $dto->sectors = fake()->randomElements(
             Sector::cases(),
@@ -48,6 +48,7 @@ class CompanyDTO extends DTO implements Mockable
         $dto->city = fake()->city();
         $dto->country = fake()->country();
         $dto->about = fake()->paragraph();
+
         return $dto;
     }
 }

@@ -36,10 +36,18 @@ total_return: number;
 holdings: Array<any>;
 };
 export type SecurityDTO = (StockDTO & { dto_type: 'stock' }) | (BondDTO & { dto_type: 'bond' }) | (CryptoDTO & { dto_type: 'crypto' });
+export type TransactionDTO = {
+type: App.Enums.TransactionType;
+amount: number;
+price: number;
+exchange_rate: number;
+created_at: string;
+};
 export type UserDTO = {
 id: number;
 name: string;
 email: string;
+balance: number;
 };
 export type WatchlistDTO = {
 id: number;
@@ -66,6 +74,15 @@ ticker: string;
 name: string;
 price: number;
 };
+export type FeeDTO = {
+id: number;
+name: string;
+description: string;
+currency: string;
+transaction_fee: number;
+maintenance_fee: number;
+order_fee: number;
+};
 export type StockDTO = {
 dto_type: string;
 pe_ratio: number;
@@ -83,4 +100,5 @@ export type OrderStatus = 'pending' | 'completed' | 'canceled';
 export type OrderType = 'market' | 'limit';
 export type Sector = 'technology' | 'finance' | 'healthcare' | 'retail' | 'manufacturing' | 'energy' | 'transportation' | 'real_estate';
 export type TransactionType = 'deposit' | 'withdrawal' | 'buy' | 'sell' | 'dividend';
+export type UserRole = 'admin' | 'user';
 }

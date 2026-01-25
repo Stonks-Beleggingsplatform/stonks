@@ -30,7 +30,7 @@ class MockAdapter implements SecurityDataAdapter
         $results = [];
 
         for ($i = 0; $i < 5; $i++) {
-            $ticker = strtoupper(substr($term, 0, 3)) . fake()->randomNumber(3);
+            $ticker = strtoupper(substr($term, 0, 3)).fake()->randomNumber(3);
             $results[] = $this->getSecurityDetails($ticker);
         }
 

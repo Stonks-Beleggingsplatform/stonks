@@ -7,7 +7,7 @@ use App\Services\SecurityData\SecurityDataService;
 
 beforeEach(function () {
     $this->service = new SecurityDataService(
-        new MockAdapter()
+        new MockAdapter
     );
 });
 
@@ -32,7 +32,7 @@ it('can search securities', function () {
 });
 
 it('can get historical data', function () {
-    $security = new Security();
+    $security = new Security;
     $security->ticker = 'AAPL';
 
     $historicalData = $this->service->getHistoricalData($security);

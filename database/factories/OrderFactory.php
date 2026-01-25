@@ -27,7 +27,7 @@ class OrderFactory extends Factory
             'status' => $this->faker->randomElement(OrderStatus::cases()),
             'end_date' => $this->faker->date(),
             'portfolio_id' => Portfolio::factory(),
-            'security_id' => $securityClass::factory(),
+            'security_id' => ($securityClass::factory()->create())->security->id,
         ];
     }
 }

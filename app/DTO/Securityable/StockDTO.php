@@ -36,6 +36,7 @@ class StockDTO extends SecurityDTO
         $dto->pe_ratio = fake()->numberBetween(5, 30);
         $dto->dividend_yield = fake()->randomFloat(2, 0, 5);
         $dto->company = CompanyDTO::mock();
+
         return $dto;
     }
 }
