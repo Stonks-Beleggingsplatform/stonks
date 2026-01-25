@@ -22,116 +22,204 @@ class OrderController extends Controller
         $data = $request->validate([
             'security_id' => ['required', 'exists:securities,id'],
             'quantity' => ['required', 'integer', 'min:1'],
-            'action' => ['required', Rule::in(['buy'])],
+            'action' => ['required', Rule::in(['buy', 'sell'])],
             'type' => ['required', Rule::in(array_column(OrderType::cases(), 'value'))],
             'limit_price' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         return DB::transaction(function () use ($data, $user) {
             $portfolio = Portfolio::where('user_id', $user->id)->lockForUpdate()->firstOrFail();
-            $portfolioCash = (int) $portfolio->cash * 100;
+            $portfolioCash = (int) ($portfolio->cash * 100);
 
             $security = Security::findOrFail($data['security_id']);
             $is_limit_order = $data['type'] === OrderType::LIMIT->value;
             $limit_price_cents = $is_limit_order ? (int) round($data['limit_price'] * 100) : 0;
 
-            // Add limit order uncompleted
-            if ($is_limit_order && $limit_price_cents < $security->price) {
+            if ($data['action'] === 'buy') {
+                // Add limit order uncompleted
+                if ($is_limit_order && $limit_price_cents < $security->price) {
+                    $order = Order::create([
+                        'portfolio_id' => $portfolio->id,
+                        'security_id' => $security->id,
+                        'quantity' => $data['quantity'],
+                        'price' => $limit_price_cents,
+                        'type' => $data['type'],
+                        'action' => 'buy',
+                        'status' => 'pending',
+                    ]);
+
+                    return response()->json([
+                        'message' => 'Limit order placed and is pending execution.',
+                        'order' => [
+                            'id' => $order->id,
+                            'status' => $order->status,
+                        ],
+                    ], 201);
+                }
+
+                // Proceed with immediate execution for Market Orders OR for Limit Orders where the price condition is met.
+                $price = $is_limit_order ? $limit_price_cents : (int) $security->price;
+
+                if (! $price || $price <= 0) {
+                    abort(422, 'Invalid price');
+                }
+
+                $subtotal = $data['quantity'] * $price;
+                $fee = (int) round($subtotal * 0.002);
+                $totalRequired = $subtotal + $fee;
+
+                if ($portfolioCash < $totalRequired) {
+                    abort(422, 'Insufficient cash');
+                }
+
+                // Deduct cash and update portfolio value
+                $portfolioCash -= $totalRequired;
+                $portfolio->cash = $portfolioCash / 100;
+                $portfolio->total_value += $subtotal;
+                $portfolio->save();
+
+                // Create and immediately complete the order
                 $order = Order::create([
                     'portfolio_id' => $portfolio->id,
                     'security_id' => $security->id,
                     'quantity' => $data['quantity'],
-                    'price' => $limit_price_cents,
+                    'price' => $price,
                     'type' => $data['type'],
                     'action' => 'buy',
-                    'status' => 'pending',
+                    'status' => 'completed',
+                ]);
+
+                // Update or create a holding
+                $holding = Holding::query()
+                    ->where('portfolio_id', $portfolio->id)
+                    ->where('security_id', $security->id)
+                    ->first();
+
+                if (! $holding) {
+                    $holding = Holding::create([
+                        'portfolio_id' => $portfolio->id,
+                        'security_id' => $security->id,
+                        'quantity' => $data['quantity'],
+                        'purchase_price' => $price,
+                        'avg_price' => $price,
+                        'gain_loss' => 0,
+                    ]);
+                } else {
+                    $oldQty = (int) $holding->quantity;
+                    $newQty = $oldQty + (int) $data['quantity'];
+                    $oldAvg = (float) ($holding->avg_price ?? $price);
+                    $newAvg = (int) round((($oldQty * $oldAvg) + ($data['quantity'] * $price)) / max(1, $newQty));
+
+                    $holding->quantity = $newQty;
+                    $holding->avg_price = $newAvg;
+                    $holding->save();
+                }
+
+                // Create a transaction record
+                Transaction::create([
+                    'order_id' => $order->id,
+                    'type' => 'buy',
+                    'amount' => $data['quantity'],
+                    'price' => $price,
+                    'exchange_rate' => null,
                 ]);
 
                 return response()->json([
-                    'message' => 'Limit order placed and is pending execution.',
+                    'message' => 'Order executed successfully',
                     'order' => [
                         'id' => $order->id,
                         'status' => $order->status,
+                        'executed_price' => $price / 100,
+                        'executed_at' => now()->toDateTimeString(),
                     ],
                 ], 201);
-            }
+            } else {
+                // Sell logic
+                $holding = Holding::query()
+                    ->where('portfolio_id', $portfolio->id)
+                    ->where('security_id', $security->id)
+                    ->first();
 
-            // Proceed with immediate execution for Market Orders OR for Limit Orders where the price condition is met.
-            $price = $is_limit_order ? $limit_price_cents : (int) $security->price;
+                if (! $holding || $holding->quantity < $data['quantity']) {
+                    abort(422, 'Insufficient holdings');
+                }
 
-            if (! $price || $price <= 0) {
-                abort(422, 'Invalid price');
-            }
+                // Add sell limit order uncompleted
+                if ($is_limit_order && $limit_price_cents > $security->price) {
+                    $order = Order::create([
+                        'portfolio_id' => $portfolio->id,
+                        'security_id' => $security->id,
+                        'quantity' => $data['quantity'],
+                        'price' => $limit_price_cents,
+                        'type' => $data['type'],
+                        'action' => 'sell',
+                        'status' => 'pending',
+                    ]);
 
-            $subtotal = $data['quantity'] * $price;
-            $fee = (int) round($subtotal * 0.002);
-            $totalRequired = $subtotal + $fee;
+                    return response()->json([
+                        'message' => 'Sell limit order placed and is pending execution.',
+                        'order' => [
+                            'id' => $order->id,
+                            'status' => $order->status,
+                        ],
+                    ], 201);
+                }
 
-            if ($portfolioCash < $totalRequired) {
-                abort(422, 'Insufficient cash');
-            }
+                $price = $is_limit_order ? $limit_price_cents : (int) $security->price;
 
-            // Deduct cash and update portfolio value
-            $portfolioCash -= $totalRequired;
-            $portfolio->cash = $portfolioCash / 100;
-            $portfolio->total_value += $subtotal;
-            $portfolio->save();
+                if (! $price || $price <= 0) {
+                    abort(422, 'Invalid price');
+                }
 
-            // Create and immediately complete the order
-            $order = Order::create([
-                'portfolio_id' => $portfolio->id,
-                'security_id' => $security->id,
-                'quantity' => $data['quantity'],
-                'price' => $price,
-                'type' => $data['type'],
-                'action' => 'buy',
-                'status' => 'completed', // Status is completed as it's executed
-            ]);
+                $subtotal = $data['quantity'] * $price;
+                $fee = (int) round($subtotal * 0.002);
+                $proceeds = $subtotal - $fee;
 
-            // Update or create a holding
-            $holding = Holding::query()
-                ->where('portfolio_id', $portfolio->id)
-                ->where('security_id', $security->id)
-                ->first();
+                // Update cash and portfolio value
+                $portfolioCash += $proceeds;
+                $portfolio->cash = $portfolioCash / 100;
+                $portfolio->total_value -= $data['quantity'] * $holding->avg_price;
+                $portfolio->save();
 
-            if (! $holding) {
-                $holding = Holding::create([
+                // Update or delete holding
+                if ($holding->quantity == $data['quantity']) {
+                    $holding->delete();
+                } else {
+                    $holding->quantity -= $data['quantity'];
+                    $holding->save();
+                }
+
+                // Create completed sell order
+                $order = Order::create([
                     'portfolio_id' => $portfolio->id,
                     'security_id' => $security->id,
                     'quantity' => $data['quantity'],
-                    'purchase_price' => $price,
-                    'avg_price' => $price,
-                    'gain_loss' => 0,
+                    'price' => $price,
+                    'type' => $data['type'],
+                    'action' => 'sell',
+                    'status' => 'completed',
                 ]);
-            } else {
-                $oldQty = (int) $holding->quantity;
-                $newQty = $oldQty + (int) $data['quantity'];
-                $oldAvg = (float) ($holding->avg_price ?? $price);
-                $newAvg = (int) round((($oldQty * $oldAvg) + ($data['quantity'] * $price)) / max(1, $newQty));
 
-                $holding->quantity = $newQty;
-                $holding->avg_price = $newAvg;
-                $holding->save();
+                // Create transaction
+                Transaction::create([
+                    'order_id' => $order->id,
+                    'type' => 'sell',
+                    'amount' => $data['quantity'],
+                    'price' => $price,
+                    'exchange_rate' => null,
+                ]);
+
+                return response()->json([
+                    'message' => 'Security sold successfully',
+                    'order' => [
+                        'id' => $order->id,
+                        'status' => $order->status,
+                        'executed_price' => $price / 100,
+                        'proceeds' => $proceeds / 100,
+                        'executed_at' => now()->toDateTimeString(),
+                    ],
+                ], 201);
             }
-
-            // Create a transaction record
-            Transaction::create([
-                'order_id' => $order->id,
-                'type' => 'buy',
-                'amount' => $data['quantity'],
-                'price' => $price,
-                'exchange_rate' => null,
-            ]);
-
-            return response()->json([
-                'message' => 'Order executed successfully',
-                'order' => [
-                    'id' => $order->id,
-                    'status' => $order->status,
-                    'executed_price' => $price / 100,
-                    'executed_at' => now()->toDateTimeString(),
-                ],
-            ], 201);
         });
     }
 }
