@@ -10,6 +10,11 @@ class Notification extends Model
 {
     use HasFactory;
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function notificationCondition(): BelongsTo
     {
         return $this->belongsTo(NotificationCondition::class);

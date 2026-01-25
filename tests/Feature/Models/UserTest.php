@@ -3,11 +3,13 @@
 use App\Models\Portfolio;
 use App\Models\User;
 use App\Models\Watchlist;
+use App\Models\Notification;
 
 beforeEach(function () {
     $this->user = User::factory()
         ->hasWatchlists()
         ->hasPortfolio()
+        ->hasNotifications()
         ->create();
 });
 
@@ -19,5 +21,6 @@ test('user attributes', function () {
 
 test('user relationships', function () {
     expect($this->user->watchlists)->each->toBeInstanceOf(Watchlist::class)
-        ->and($this->user->portfolio)->toBeInstanceOf(Portfolio::class);
+        ->and($this->user->portfolio)->toBeInstanceOf(Portfolio::class)
+        ->and($this->user->notifications)->each->toBeInstanceOf(Notification::class);
 });

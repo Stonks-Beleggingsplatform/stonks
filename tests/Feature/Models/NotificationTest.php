@@ -2,10 +2,12 @@
 
 use App\Models\Notification;
 use App\Models\NotificationCondition;
+use App\Models\User;
 
 beforeEach(function () {
     $this->notification = Notification::factory()
         ->forNotificationCondition()
+        ->forUser()
         ->create();
 });
 
@@ -15,5 +17,6 @@ test('notification attributes', function () {
 });
 
 test('notification relations', function () {
-    expect($this->notification->notificationCondition)->toBeInstanceOf(NotificationCondition::class);
+    expect($this->notification->notificationCondition)->toBeInstanceOf(NotificationCondition::class)
+        ->and($this->notification->user)->toBeInstanceOf(User::class);
 });
