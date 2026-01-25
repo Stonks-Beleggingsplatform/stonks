@@ -31,4 +31,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/search/{term}', 'index')->name('securities.search');
         Route::get('/{security:ticker}', 'show')->name('securities.show');
     });
+
+    Route::prefix('/notifications')->group(function () {
+        //TODO: Notification routes will be added here in the future
+    });
 });
