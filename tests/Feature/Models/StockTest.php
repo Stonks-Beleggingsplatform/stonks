@@ -1,12 +1,14 @@
 <?php
 
 use App\Models\Company;
+use App\Models\NotificationCondition;
 use App\Models\Security;
 use App\Models\Stock;
 
 beforeEach(function () {
     $this->stock = Stock::factory()
         ->forCompany()
+        ->hasNotificationConditions()
         ->create();
 });
 
@@ -21,5 +23,6 @@ test('stock attributes', function () {
 test('stock relationships', function () {
     expect($this->stock->security)->not->toBeNull()
         ->and($this->stock->security)->toBeInstanceOf(Security::class)
-        ->and($this->stock->company)->toBeInstanceOf(Company::class);
+        ->and($this->stock->company)->toBeInstanceOf(Company::class)
+        ->and($this->stock->notificationConditions)->each->toBeInstanceOf(NotificationCondition::class);
 });

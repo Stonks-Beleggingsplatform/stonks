@@ -1,12 +1,15 @@
 <?php
 
 use App\Models\Bond;
+use App\Models\NotificationCondition;
 use App\Models\Security;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 
 beforeEach(function () {
-    $this->bond = Bond::factory()->create();
+    $this->bond = Bond::factory()
+        ->hasNotificationConditions()
+        ->create();
 });
 
 test('bond attributes', function () {
@@ -19,5 +22,6 @@ test('bond attributes', function () {
 
 test('bond relationships', function () {
     expect($this->bond->security)->not->toBeNull()
-        ->and($this->bond->security)->toBeInstanceOf(Security::class);
+        ->and($this->bond->security)->toBeInstanceOf(Security::class)
+        ->and($this->bond->notificationConditions)->each->toBeInstanceOf(NotificationCondition::class);
 });
