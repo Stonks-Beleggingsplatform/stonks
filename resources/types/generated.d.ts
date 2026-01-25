@@ -29,6 +29,12 @@ purchase_price: number;
 avg_price: number;
 gain_loss: number;
 };
+export type NotificationConditionDTO = {
+field: string;
+operator: string;
+value: number;
+security: App.DTO.SecurityDTO;
+};
 export type NotificationDTO = {
 message: string;
 subject_type: string;

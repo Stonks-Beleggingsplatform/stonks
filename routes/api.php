@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('notifications')->controller(NotificationController::class)->group(function () {
         Route::get('/', 'index')->name('notifications.index');
+        Route::get('/conditions', 'indexConditions')->name('notifications.conditions.index');
         Route::post('/conditions/create', 'storeCondition')->name('notifications.conditions.store');
         Route::delete('/conditions/{condition}', 'destroyCondition')->name('notifications.conditions.destroy');
     });
