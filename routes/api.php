@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('notifications')->controller(NotificationController::class)->group(function () {
         Route::get('/', 'index')->name('notifications.index');
+        Route::post('/conditions', 'storeCondition')->name('notifications.conditions.store');
     });
 
     Route::get('/securities/{ticker}', [SecurityController::class, 'show']);
