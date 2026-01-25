@@ -66,13 +66,14 @@ class NotificationController extends Controller
 
     public function destroyCondition(NotificationCondition $condition): Response
     {
-        // Check if user owns any notification with this condition
-        $notification = Notification::where('user_id', auth()->id())
-            ->where('notification_condition_id', $condition->id)
+        $condition = NotificationCondition::where('id', $condition->id)
+            ->where('user_id', auth()->id())
             ->first();
 
-        if (!$notification) {
-            return response(['message' => 'Unauthorized'], 403);
+        if (!$condition) {
+            return response([
+                'message' => 'Notification condition not found',
+            ], 404);
         }
 
         $condition->delete();

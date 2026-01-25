@@ -8,7 +8,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 #[TypeScript]
 class NotificationDTO extends DTO
 {
-
+    public int $id;
     public string $message;
     public string $subject_type;
     public SecurityDTO $subject;
