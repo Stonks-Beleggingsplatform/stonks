@@ -22,18 +22,42 @@ volume: number;
 };
 export type HoldingDTO = {
 id: number;
+security_id: number;
 ticker: string;
 quantity: number;
 purchase_price: number;
 avg_price: number;
 gain_loss: number;
 };
+export type NotificationDTO = {
+message: string;
+subject_type: string;
+subject: App.DTO.SecurityDTO;
+field: string;
+operator: App.Enums.Comparator;
+value: number;
+};
+export type OrderDTO = {
+id: number;
+security_id: number;
+ticker: string;
+quantity: number;
+price: number;
+type: App.Enums.OrderType;
+action: App.Enums.OrderAction;
+status: App.Enums.OrderStatus;
+end_date: string | null;
+created_at: string;
+updated_at: string;
+};
 export type PortfolioDTO = {
 id: number;
+user_id: number;
 cash: number;
 total_value: number;
 total_return: number;
 holdings: Array<any>;
+orders: Array<any>;
 };
 export type SecurityDTO = (StockDTO & { dto_type: 'stock' }) | (BondDTO & { dto_type: 'bond' }) | (CryptoDTO & { dto_type: 'crypto' });
 export type TransactionDTO = {
@@ -47,7 +71,7 @@ export type UserDTO = {
 id: number;
 name: string;
 email: string;
-balance: number;
+role: App.Enums.UserRole;
 };
 export type WatchlistDTO = {
 id: number;
@@ -94,6 +118,7 @@ price: number;
 };
 }
 declare namespace App.Enums {
+export type Comparator = '=' | '!=' | '<' | '>' | '<=' | '>=';
 export type CryptoType = 'coin' | 'stablecoin' | 'token' | 'nft' | 'other';
 export type OrderAction = 'buy' | 'sell';
 export type OrderStatus = 'pending' | 'completed' | 'canceled';
