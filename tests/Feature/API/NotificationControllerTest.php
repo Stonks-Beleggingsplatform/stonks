@@ -16,14 +16,15 @@ test('index', function () {
 });
 
 test('storeCondition', function () {
-    $notifiable = Bond::factory()->create();
+    $bond = Bond::factory()->create();
+    $security = $bond->security;
 
     $payload = [
         'field' => 'price',
         'operator' => '>=',
         'value' => 105.5,
-        'notifiable_type' => get_class($notifiable),
-        'notifiable_id' => $notifiable->id,
+        'ticker' => $security->ticker,
+        'notifiable_type' => get_class($bond),
     ];
 
     $response = $this->postJson(route('notifications.conditions.store'), $payload);
@@ -33,11 +34,14 @@ test('storeCondition', function () {
         ->and($response->json('operator'))->toBe($payload['operator'])
         ->and($response->json('value'))->toBe($payload['value'])
         ->and($response->json('notifiable_type'))->toBe($payload['notifiable_type'])
-        ->and($response->json('notifiable_id'))->toBe($payload['notifiable_id']);
+        ->and($response->json('notifiable_id'))->toBe($bond->id);
 });
 
+
 test('destroyCondition', function () {
-    $condition = NotificationCondition::factory()->create();
+    $condition = NotificationCondition::factory()->create([
+        'user_id' => $this->user->id,
+    ]);
 
     $response = $this->deleteJson(route('notifications.conditions.destroy', ['condition' => $condition->id]));
 

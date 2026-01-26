@@ -24,7 +24,7 @@ class CheckNotificationConditions implements ShouldQueue
                 foreach ($users as $user) {
                     $this->checkConditionsForUser($user);
                 }
-            }, 'id', 'users');
+            }, 'id');
     }
 
     protected function checkConditionsForUser(User $user): void
@@ -46,7 +46,7 @@ class CheckNotificationConditions implements ShouldQueue
                 continue;
             }
 
-            $fieldValue = $notifiable->getAttribute($condition->field);
+            $fieldValue = $notifiable->{$condition->field};
 
             if ($this->evaluateCondition($fieldValue, $condition->operator, $condition->value)) {
                 Notification::create([

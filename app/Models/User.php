@@ -41,7 +41,7 @@ class User extends Authenticatable
     public function portfolio(): HasOne
     {
         return $this->hasOne(Portfolio::class);
-    }
+}
 
     public function watchlists(): HasMany
     {
@@ -51,5 +51,10 @@ class User extends Authenticatable
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function notificationConditions(): HasMany
+    {
+        return $this->hasMany(NotificationCondition::class);
     }
 }
