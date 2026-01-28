@@ -10,6 +10,13 @@ class Notification extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function notificationCondition(): BelongsTo
     {
         return $this->belongsTo(NotificationCondition::class);

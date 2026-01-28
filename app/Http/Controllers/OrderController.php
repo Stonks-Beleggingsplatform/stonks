@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Enums\OrderType;
-use App\Http\Controllers\Controller;
 use App\Models\Holding;
 use App\Models\Order;
 use App\Models\Portfolio;

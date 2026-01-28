@@ -12,6 +12,8 @@ class NotificationCondition extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     protected $casts = [
         'operator' => Comparator::class,
     ];
