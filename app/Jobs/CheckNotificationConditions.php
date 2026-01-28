@@ -10,6 +10,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 
+/**
+ * Job to check notification conditions for users and create notifications if conditions are met.
+ */
 class CheckNotificationConditions implements ShouldQueue
 {
     use Queueable;
@@ -20,6 +23,7 @@ class CheckNotificationConditions implements ShouldQueue
         User::query()
             ->whereHas('notificationConditions')
             ->with('notificationConditions.notifiable')
+            //Chunk by ID to not load all users into memory at once
             ->chunkById(50, function (Collection $users) {
                 foreach ($users as $user) {
                     $this->checkConditionsForUser($user);
@@ -36,6 +40,7 @@ class CheckNotificationConditions implements ShouldQueue
         $conditions = NotificationCondition::query()
             ->where('user_id', $user->id)
             ->with('notifiable')
+            //If there is a notification for this condition, do not check it again
             ->whereNotIn('id', $existingNotifications)
             ->get();
 
@@ -46,6 +51,7 @@ class CheckNotificationConditions implements ShouldQueue
                 continue;
             }
 
+            //Dynamically get the field value from the notifiable model
             $fieldValue = $notifiable->{$condition->field};
 
             if ($this->evaluateCondition($fieldValue, $condition->operator, $condition->value)) {
@@ -64,6 +70,9 @@ class CheckNotificationConditions implements ShouldQueue
         }
     }
 
+    /**
+     * Evaluate a condition based on the operator.
+     */
     protected function evaluateCondition($fieldValue, Comparator $operator, $conditionValue): bool
     {
         return match ($operator) {
