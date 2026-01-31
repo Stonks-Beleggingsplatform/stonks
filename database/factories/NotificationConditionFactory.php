@@ -15,7 +15,7 @@ class NotificationConditionFactory extends Factory
         $notifiableClass = $this->faker->randomElement([
             Crypto::class,
             Stock::class,
-            Bond::class
+            Bond::class,
         ]);
 
         return [
