@@ -11,29 +11,76 @@ use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
 use App\Services\SecurityData\SecurityDataService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
 class SecurityController extends Controller
 {
-    public function index(string $term): Response
+    public function all(Request $request): Response
     {
-        $lowerTerm = strtolower($term);
-
-        $matchingSecurities =
-            SecurityDTO::collection(
-                Security::where(function ($query) use ($lowerTerm) {
-                    $query->whereRaw('LOWER(ticker) LIKE ?', ["%{$lowerTerm}%"])
-                        ->orWhereRaw('LOWER(name) LIKE ?', ["%{$lowerTerm}%"]);
-                })
-                    ->get()
-            );
-
-        if (count($matchingSecurities) === 0) {
-            $matchingSecurities = (new SecurityDataService)->search($term);
+        $perPage = (int) $request->query('per_page', 10);
+        $perPage = max(1, min(100, $perPage));
+    
+        $types = $this->resolveSecurityableTypes($request->query('type'));
+    
+        $query = Security::with(['securityable', 'exchange.currency'])
+            ->orderBy('price', 'asc');
+    
+        if (!empty($types)) {
+            $query->whereIn('securityable_type', $types);
         }
 
-        return response($matchingSecurities, 200);
+        $priceMin = $request->query('price_min');
+        if ($priceMin !== null && is_numeric($priceMin)) {
+            $minCents = max(0, (int) round(((float) $priceMin) * 100));
+            $query->where('price', '>=', $minCents);
+        }
+
+        $priceMax = $request->query('price_max');
+        if ($priceMax !== null && is_numeric($priceMax)) {
+            $maxCents = max(0, (int) round(((float) $priceMax) * 100));
+            $query->where('price', '<=', $maxCents);
+        }
+    
+        $securities = $query->paginate($perPage);
+    
+        $securities->setCollection(
+            SecurityDTO::collection($securities->getCollection())
+        );
+    
+        return response($securities, 200);
+    }
+
+   public function index(string $term, Request $request): Response
+    {
+        $types = $this->resolveSecurityableTypes($request->query('type'));
+
+        $query = Security::with(['securityable', 'exchange.currency'])
+            ->where(function ($q) use ($term) {
+                $q->where('ticker', 'like', "%{$term}%")
+                ->orWhere('name', 'like', "%{$term}%");
+            });
+
+        if (!empty($types)) {
+            $query->whereIn('securityable_type', $types);
+        }
+
+        $priceMin = $request->query('price_min');
+        if ($priceMin !== null && is_numeric($priceMin)) {
+            $minCents = max(0, (int) round(((float) $priceMin) * 100));
+            $query->where('price', '>=', $minCents);
+        }
+
+        $priceMax = $request->query('price_max');
+        if ($priceMax !== null && is_numeric($priceMax)) {
+            $maxCents = max(0, (int) round(((float) $priceMax) * 100));
+            $query->where('price', '<=', $maxCents);
+        }
+
+        $securities = $query->limit(50)->get();
+
+        return response(SecurityDTO::collection($securities), 200);
     }
 
     public function show(string $ticker): Response
@@ -73,4 +120,25 @@ class SecurityController extends Controller
             ]
         ), 200);
     }
+
+    private function resolveSecurityableTypes($input): array
+{
+    $map = [
+        'crypto' => \App\Models\Crypto::class,
+        'stock'  => \App\Models\Stock::class,
+        'bond'   => \App\Models\Bond::class,
+    ];
+
+    if (empty($input)) {
+        return [];
+    }
+
+    $types = is_array($input) ? $input : [$input];
+
+    return array_values(array_unique(
+        array_map(fn ($t) => $map[$t] ?? $t, $types)
+    ));
+}
+
+    
 }
