@@ -17,7 +17,7 @@ Route::post('/check-email', [AuthController::class, 'checkEmail']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', fn() => auth()->user());
+    Route::get('/user', fn () => auth()->user());
 
     Route::post('/orders', [OrderController::class, 'store']);
 

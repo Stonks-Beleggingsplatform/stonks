@@ -7,7 +7,6 @@ use App\DTO\NotificationDTO;
 use App\Models\Notification;
 use App\Models\NotificationCondition;
 use App\Models\Security;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -45,7 +44,7 @@ class NotificationController extends Controller
         $security = Security::where('ticker', $data['ticker'])->firstOrFail();
         $notifiable = $security->securityable;
 
-        if (!$notifiable) {
+        if (! $notifiable) {
             return response([
                 'message' => 'Security type not found',
                 'errors' => ['ticker' => ['Could not determine security type']],
@@ -70,7 +69,7 @@ class NotificationController extends Controller
             ->where('user_id', auth()->id())
             ->first();
 
-        if (!$condition) {
+        if (! $condition) {
             return response([
                 'message' => 'Notification condition not found',
             ], 404);

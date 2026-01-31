@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Notification;
 use App\Models\Portfolio;
 use App\Models\User;
 use App\Models\Watchlist;
-use App\Models\Notification;
 
 beforeEach(function () {
     $this->user = User::factory()

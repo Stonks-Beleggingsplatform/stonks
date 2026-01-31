@@ -2,10 +2,8 @@
 
 use App\Enums\Comparator;
 use App\Jobs\CheckNotificationConditions;
-use App\Models\Exchange;
 use App\Models\Notification;
 use App\Models\NotificationCondition;
-use App\Models\Security;
 use App\Models\Stock;
 use App\Models\User;
 
@@ -27,7 +25,7 @@ it('creates notifications when conditions are met', function () {
         'value' => 100,
     ]);
 
-    (new CheckNotificationConditions())->handle();
+    (new CheckNotificationConditions)->handle();
 
     expect(Notification::where('user_id', $this->user->id)->count())->toBe(1)
         ->and(Notification::first()->message)->toContain($this->stock->ticker)
@@ -46,7 +44,7 @@ it('does not create notifications when conditions are not met', function () {
         'value' => 100,
     ]);
 
-    (new CheckNotificationConditions())->handle();
+    (new CheckNotificationConditions)->handle();
 
     expect(Notification::count())->toBe(0);
 });
@@ -66,7 +64,7 @@ it('does not create duplicate notifications', function () {
         'notification_condition_id' => $condition->id,
     ]);
 
-    (new CheckNotificationConditions())->handle();
+    (new CheckNotificationConditions)->handle();
 
     expect(Notification::count())->toBe(1);
 });
@@ -94,13 +92,12 @@ it('handles multiple users with different conditions', function () {
         'value' => 200,
     ]);
 
-    (new CheckNotificationConditions())->handle();
+    (new CheckNotificationConditions)->handle();
 
     expect(Notification::count())->toBe(2)
         ->and(Notification::where('user_id', $this->user->id)->exists())->toBeTrue()
         ->and(Notification::where('user_id', $user2->id)->exists())->toBeTrue();
 });
-
 
 it('skips conditions with missing notifiable', function () {
     NotificationCondition::factory()->create([
@@ -112,7 +109,7 @@ it('skips conditions with missing notifiable', function () {
         'value' => 100,
     ]);
 
-    (new CheckNotificationConditions())->handle();
+    (new CheckNotificationConditions)->handle();
 
     expect(Notification::count())->toBe(0);
 });

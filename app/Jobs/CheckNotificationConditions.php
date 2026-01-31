@@ -17,13 +17,12 @@ class CheckNotificationConditions implements ShouldQueue
 {
     use Queueable;
 
-
     public function handle(): void
     {
         User::query()
             ->whereHas('notificationConditions')
             ->with('notificationConditions.notifiable')
-            //Chunk by ID to not load all users into memory at once
+            // Chunk by ID to not load all users into memory at once
             ->chunkById(50, function (Collection $users) {
                 foreach ($users as $user) {
                     $this->checkConditionsForUser($user);
@@ -40,18 +39,18 @@ class CheckNotificationConditions implements ShouldQueue
         $conditions = NotificationCondition::query()
             ->where('user_id', $user->id)
             ->with('notifiable')
-            //If there is a notification for this condition, do not check it again
+            // If there is a notification for this condition, do not check it again
             ->whereNotIn('id', $existingNotifications)
             ->get();
 
         foreach ($conditions as $condition) {
             $notifiable = $condition->notifiable;
 
-            if (!$notifiable) {
+            if (! $notifiable) {
                 continue;
             }
 
-            //Dynamically get the field value from the notifiable model
+            // Dynamically get the field value from the notifiable model
             $fieldValue = $notifiable->{$condition->field};
 
             if ($this->evaluateCondition($fieldValue, $condition->operator, $condition->value)) {

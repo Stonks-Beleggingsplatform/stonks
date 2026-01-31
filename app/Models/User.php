@@ -41,7 +41,7 @@ class User extends Authenticatable
     public function portfolio(): HasOne
     {
         return $this->hasOne(Portfolio::class);
-}
+    }
 
     public function watchlists(): HasMany
     {

@@ -9,11 +9,17 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class NotificationDTO extends DTO
 {
     public int $id;
+
     public string $message;
+
     public string $subject_type;
+
     public SecurityDTO $subject;
+
     public string $field;
+
     public Comparator $operator;
+
     public float $value;
 
     public static function make(object $model): NotificationDTO

@@ -37,7 +37,6 @@ test('storeCondition', function () {
         ->and($response->json('notifiable_id'))->toBe($bond->id);
 });
 
-
 test('destroyCondition', function () {
     $condition = NotificationCondition::factory()->create([
         'user_id' => $this->user->id,

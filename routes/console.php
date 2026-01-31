@@ -2,4 +2,4 @@
 
 use App\Jobs\CheckNotificationConditions;
 
-Schedule::job(new CheckNotificationConditions())->everyFiveMinutes();
+Schedule::job(new CheckNotificationConditions)->everyFiveMinutes();
