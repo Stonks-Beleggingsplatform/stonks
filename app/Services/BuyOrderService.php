@@ -11,7 +11,7 @@ use App\Models\Transaction;
 
 class BuyOrderService
 {
-    public function execute(Portfolio $portfolio, Security $security, array $data)
+    public function execute(Portfolio $portfolio, Security $security, array $data): array
     {
         $portfolioCash = (int) ($portfolio->cash * 100);
         $is_limit_order = $data['type'] === OrderType::LIMIT->value;
