@@ -11,7 +11,7 @@ const FEE_PERCENTAGE = 0.002; // 0.2% fee
 export default function StockShow() {
 	const { ticker } = useParams<{ ticker: string }>();
 	const navigate = useNavigate();
-	const { user } = useAuth();
+	const { user, fetchBalance } = useAuth();
 
 
 	const [security, setSecurity] = useState<Security | null>(null);
@@ -20,6 +20,7 @@ export default function StockShow() {
 	const [success, setSuccess] = useState('');
 
 	// Order state
+	const [action, setAction] = useState<'buy' | 'sell'>('buy');
 	const [amount, setAmount] = useState<number>(0);
 	const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
 	const [limitPrice, setLimitPrice] = useState<number | ''>('');
@@ -28,6 +29,7 @@ export default function StockShow() {
 
 	// Portfolio state
 	const [cash, setCash] = useState<number | null>(null);
+	const [portfolio, setPortfolio] = useState<any>(null);
 	const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(false);
 
 
@@ -61,9 +63,10 @@ export default function StockShow() {
 		setIsLoadingPortfolio(true);
 		try {
 			const res = await api.get('/portfolio');
-			const portfolio = res.data;
-			if (portfolio) {
-				setCash(Number(portfolio.cash ?? 0));
+			const data = res.data;
+			setPortfolio(data);
+			if (data) {
+				setCash(Number(data.cash ?? 0));
 			}
 
 		} catch (e) {
@@ -100,23 +103,47 @@ export default function StockShow() {
 		return marketPrice;
 	}, [orderType, limitPrice, marketPrice]);
 
-	const quantity = useMemo(() => {
-		if (usedPrice <= 0) return 0;
-		return Math.floor(amount / usedPrice);
-	}, [amount, usedPrice]);
+	const currentHolding = useMemo(() => {
+		if (!portfolio || !security) return null;
+		return portfolio.holdings?.find((h: any) => h.security_id === (security as any).id) || null;
+	}, [portfolio, security]);
 
-	const subtotal = useMemo(() => quantity * usedPrice, [quantity, usedPrice]);
+	const quantity = useMemo(() => {
+		if (action === 'buy') {
+			if (usedPrice <= 0) return 0;
+			return Math.floor(amount / usedPrice);
+		}
+		// For sell, amount is already the quantity
+		return amount;
+	}, [amount, usedPrice, action]);
+
+	const subtotal = useMemo(() => {
+		if (action === 'buy') {
+			return quantity * usedPrice;
+		}
+		// For sell, subtotal is quantity * usedPrice
+		return amount * usedPrice;
+	}, [amount, quantity, usedPrice, action]);
+
 	const feeEstimate = useMemo(() => subtotal * FEE_PERCENTAGE, [subtotal]);
-	const totalRequired = useMemo(() => subtotal + feeEstimate, [subtotal, feeEstimate]);
+	const totalRequired = useMemo(() => action === 'buy' ? subtotal + feeEstimate : subtotal - feeEstimate, [action, subtotal, feeEstimate]);
 
 	const hasEnoughCash = useMemo(() => {
+		if (action === 'sell') return true;
 		if (cash === null) return true;
 		return totalRequired <= cash;
-	}, [cash, totalRequired]);
+	}, [action, cash, totalRequired]);
+
+	const hasEnoughHoldings = useMemo(() => {
+		if (action === 'buy') return true;
+		if (!currentHolding) return false;
+		return quantity <= currentHolding.quantity;
+	}, [action, currentHolding, quantity]);
 
 	const handleOrder = async () => {
 		if (!user || !security || quantity <= 0) return;
-		if (cash !== null && !hasEnoughCash) return;
+		if (action === 'buy' && cash !== null && !hasEnoughCash) return;
+		if (action === 'sell' && !hasEnoughHoldings) return;
 
 		setIsSubmitting(true);
 		setError('');
@@ -126,13 +153,14 @@ export default function StockShow() {
 			const res = await api.post('/orders', {
 				security_id: (security as any).id,
 				quantity: quantity,
-				action: 'buy',
+				action: action,
 				type: orderType,
 				limit_price: orderType === 'limit' ? limitPrice : null,
 			});
 
 			await fetchPortfolio();
-			setSuccess(`Order successfully placed! Order ID: #${res.data.order.id || 'N/A'}`);
+			await fetchBalance();
+			setSuccess(`${action === 'buy' ? 'Buy' : 'Sell'} order successfully placed! Order ID: #${res.data.order.id || 'N/A'}`);
 			setShowSummary(false);
 			setAmount(0);
 		} catch (err: any) {
@@ -184,7 +212,10 @@ export default function StockShow() {
 
 	const dtoType = (security as any).dto_type;
 	const exchange = (security as any).exchange;
-	const isDisabled = !user || isSubmitting || quantity <= 0 || (user && cash !== null && !hasEnoughCash) || (orderType === 'limit' && (!limitPrice || Number(limitPrice) <= 0));
+	const isDisabled = !user || isSubmitting || quantity <= 0 ||
+		(action === 'buy' && user && cash !== null && !hasEnoughCash) ||
+		(action === 'sell' && !hasEnoughHoldings) ||
+		(orderType === 'limit' && (!limitPrice || Number(limitPrice) <= 0));
 
 	return (
 		<div className="min-h-screen bg-gray-50/50">
@@ -230,9 +261,19 @@ export default function StockShow() {
 					<div className="lg:col-span-4">
 						<div className="sticky top-8">
 							<div className="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden">
-								<div className="p-6 border-b border-gray-100 bg-gray-50/50">
-									<h2 className="text-lg font-bold text-gray-900">Place Buy Order</h2>
-									<p className="text-sm text-gray-500">Buy shares of {security.ticker}</p>
+								<div className="p-0 flex border-b border-gray-100">
+									<button
+										onClick={() => { setAction('buy'); setShowSummary(false); }}
+										className={`flex-1 py-4 text-center font-bold text-sm transition-all ${action === 'buy' ? 'bg-white text-black border-b-2 border-black' : 'bg-gray-50 text-gray-400 hover:text-gray-600'}`}
+									>
+										BUY
+									</button>
+									<button
+										onClick={() => { setAction('sell'); setShowSummary(false); }}
+										className={`flex-1 py-4 text-center font-bold text-sm transition-all ${action === 'sell' ? 'bg-white text-black border-b-2 border-black' : 'bg-gray-50 text-gray-400 hover:text-gray-600'}`}
+									>
+										SELL
+									</button>
 								</div>
 
 								<div className="p-6 space-y-6">
@@ -248,16 +289,31 @@ export default function StockShow() {
 										</div>
 									)}
 
-									{/* Available Cash Card */}
-									<div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
-										<div className="text-xs text-blue-600 font-semibold uppercase tracking-wider mb-1">Available Funds</div>
-										<div className="text-xl font-bold text-blue-900">
-											{!user ? 'Log in to view' : isLoadingPortfolio ? '...' : `${formatPrice(cash ?? 0)}`}
+									{/* Context Card: Funds or Holdings */}
+									{action === 'buy' ? (
+										<div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+											<div className="text-xs text-blue-600 font-semibold uppercase tracking-wider mb-1">Available Funds</div>
+											<div className="text-xl font-bold text-blue-900">
+												{!user ? 'Log in to view' : isLoadingPortfolio ? '...' : `${formatPrice(cash ?? 0)}`}
+											</div>
+											{user && cash !== null && !hasEnoughCash && (
+												<p className="text-xs text-red-600 mt-1 font-medium italic">⚠️ Insufficient funds for this order</p>
+											)}
 										</div>
-										{user && cash !== null && !hasEnoughCash && (
-											<p className="text-xs text-red-600 mt-1 font-medium italic">⚠️ Insufficient funds for this order</p>
-										)}
-									</div>
+									) : (
+										<div className="bg-orange-50/50 rounded-xl p-4 border border-orange-100">
+											<div className="text-xs text-orange-600 font-semibold uppercase tracking-wider mb-1">Current Holding</div>
+											<div className="text-xl font-bold text-orange-900">
+												{isLoadingPortfolio ? '...' : `${currentHolding?.quantity ?? 0} units`}
+											</div>
+											{currentHolding && (
+												<p className="text-xs text-orange-500 mt-1">Avg Cost: {formatPrice(currentHolding.avg_price / 100)}</p>
+											)}
+											{action === 'sell' && !hasEnoughHoldings && currentHolding && (
+												<p className="text-xs text-red-600 mt-1 font-medium italic">⚠️ Not enough units to sell</p>
+											)}
+										</div>
+									)}
 
 									<div className="space-y-4">
 										<div>
@@ -296,7 +352,9 @@ export default function StockShow() {
 										)}
 
 										<div>
-											<label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Investment Amount ($)</label>
+											<label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+												{action === 'buy' ? 'Investment amount ($)' : 'Amount to sell'}
+											</label>
 											<input
 												type="number"
 												className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg font-bold focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
@@ -305,7 +363,7 @@ export default function StockShow() {
 													setAmount(Math.max(0, Number(e.target.value) || 0));
 													setShowSummary(false);
 												}}
-												placeholder="0.00"
+												placeholder={action === 'buy' ? '0.00' : '0'}
 											/>
 										</div>
 									</div>
@@ -321,15 +379,15 @@ export default function StockShow() {
 											<span className="text-gray-900">{formatPrice(feeEstimate)}</span>
 										</div>
 										<div className="flex justify-between items-center pt-2">
-											<span className="text-base font-bold text-gray-900">Total Charged</span>
-											<span className="text-xl font-black text-black">{formatPrice(totalRequired)}</span>
+											<span className="text-base font-bold text-gray-900">{action === 'buy' ? 'Total Charged' : 'Total Proceeds'}</span>
+											<span className={`text-xl font-black ${action === 'buy' ? 'text-black' : 'text-orange-600'}`}>{formatPrice(totalRequired)}</span>
 										</div>
 									</div>
 
 									{showSummary && (
-										<div className="bg-gray-900 text-white rounded-xl p-4 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-											<div className="font-bold border-b border-gray-700 pb-2 mb-2">Execution Plan</div>
-											<p>Buying <span className="text-blue-400 font-bold">{quantity}</span> shares of <span className="text-blue-400 font-bold">{security.ticker}</span> at <span className="text-blue-400 font-bold">{formatPrice(usedPrice)}</span> per share.</p>
+										<div className={`rounded-xl p-4 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300 ${action === 'buy' ? 'bg-gray-900 text-white' : 'bg-orange-600 text-white'}`}>
+											<div className={`font-bold border-b pb-2 mb-2 ${action === 'buy' ? 'border-gray-700' : 'border-orange-500'}`}>Execution Plan</div>
+											<p>{action === 'buy' ? 'Buying' : 'Selling'} <span className="font-bold">{quantity}</span> shares of <span className="font-bold">{security.ticker}</span> at <span className="font-bold">{formatPrice(usedPrice)}</span> per share.</p>
 										</div>
 									)}
 
@@ -338,7 +396,7 @@ export default function StockShow() {
 										<button
 											onClick={() => setShowSummary(true)}
 											disabled={isDisabled}
-											className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg active:scale-[0.98]"
+											className={`w-full py-4 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg active:scale-[0.98] ${action === 'buy' ? 'bg-black text-white hover:bg-gray-800' : 'bg-orange-600 text-white hover:bg-orange-700'}`}
 										>
 											Review Order
 										</button>
@@ -353,9 +411,9 @@ export default function StockShow() {
 											<button
 												onClick={handleOrder}
 												disabled={isDisabled}
-												className="flex-[2] bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg active:scale-[0.98]"
+												className={`flex-[2] py-4 rounded-xl font-bold disabled:opacity-50 transition-all shadow-lg active:scale-[0.98] ${action === 'buy' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-orange-600 text-white hover:bg-orange-700'}`}
 											>
-												{isSubmitting ? 'Processing...' : 'Confirm Buy'}
+												{isSubmitting ? 'Processing...' : `Confirm ${action === 'buy' ? 'Buy' : 'Sell'}`}
 											</button>
 										</div>
 									)}
