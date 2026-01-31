@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Bond;
 use App\Models\Crypto;
 use App\Models\Stock;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NotificationConditionFactory extends Factory
@@ -23,6 +24,7 @@ class NotificationConditionFactory extends Factory
             'value' => $this->faker->randomNumber(2),
             'notifiable_type' => $notifiableClass,
             'notifiable_id' => $notifiableClass::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

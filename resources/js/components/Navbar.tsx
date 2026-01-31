@@ -111,6 +111,12 @@ export default function Navbar() {
 							>
 								Transactions
 							</Link>
+							<Link
+								to="/notifications"
+								className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
+							>
+								Notifications
+							</Link>
 							{user?.role === 'admin' && (
 								<Link
 									to="/admin/fees"
