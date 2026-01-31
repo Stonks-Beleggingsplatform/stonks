@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 abstract class Securityable extends Model
 {
+    use Notifiable;
+
     protected $guarded = ['id'];
 
     protected $with = ['security'];
@@ -22,7 +24,7 @@ abstract class Securityable extends Model
     {
         $parent = parent::getAttribute($key);
 
-        if (! is_null($parent)) {
+        if (!is_null($parent)) {
             return $parent;
         }
 
@@ -37,7 +39,7 @@ abstract class Securityable extends Model
         if (isset($this->security)) {
             $securityValue = $this->security->getAttribute($key);
 
-            if (! is_null($securityValue)) {
+            if (!is_null($securityValue)) {
                 return $securityValue;
             }
         }

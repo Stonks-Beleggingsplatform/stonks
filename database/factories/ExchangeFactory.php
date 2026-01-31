@@ -10,7 +10,7 @@ class ExchangeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company().' Exchange',
+            'name' => $this->faker->unique()->company().' Exchange',
             'code' => strtoupper($this->faker->unique()->lexify('???')),
             'currency_id' => Currency::factory()->create(),
         ];
