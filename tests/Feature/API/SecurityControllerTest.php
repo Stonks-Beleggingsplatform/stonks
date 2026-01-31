@@ -38,7 +38,7 @@ test('index returns empty array when no securities match', function () {
     $response = $this->getJson('/api/securities/search/gibberish');
 
     expect($response->status())->toBe(200)
-        ->and($response->json())->toHaveCount(5); // MockAdapter returns 5 results
+        ->and($response->json())->toHaveCount(0);
 });
 
 test('show returns stock details', function () {
