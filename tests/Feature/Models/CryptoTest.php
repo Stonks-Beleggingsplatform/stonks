@@ -2,8 +2,8 @@
 
 use App\Enums\CryptoType;
 use App\Models\Crypto;
-use App\Models\Security;
 use App\Models\NotificationCondition;
+use App\Models\Security;
 
 beforeEach(function () {
     $this->crypto = Crypto::factory()
