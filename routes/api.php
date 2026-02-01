@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\TransactionController;
@@ -47,6 +48,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('/transactions')->controller(TransactionController::class)->group(function () {
         Route::get('/', 'index')->name('transactions.index');
+    });
+
+    Route::prefix('notifications')->controller(NotificationController::class)->group(function () {
+        Route::get('/', 'index')->name('notifications.index');
+        Route::get('/conditions', 'indexConditions')->name('notifications.conditions.index');
+        Route::post('/conditions/create', 'storeCondition')->name('notifications.conditions.store');
+        Route::delete('/conditions/{condition}', 'destroyCondition')->name('notifications.conditions.destroy');
     });
 
     Route::get('/securities/{ticker}', [SecurityController::class, 'show']);

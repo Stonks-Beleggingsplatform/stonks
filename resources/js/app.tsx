@@ -21,6 +21,7 @@ import { useAuth } from './context/AuthContext';
 import Dashboard from './components/Dashboard';
 import Deposit from './components/Deposit';
 import Markets from './components/Markets';
+import NotificationIndex from './components/Notification/NotificationIndex';
 
 function App() {
     return (
@@ -65,6 +66,7 @@ function AppRoutes() {
                     <Route path="/watchlists/:id" element={<WatchlistShow />} />
                     <Route path="/watchlists/:id/edit" element={<WatchlistEdit />} />
                     <Route path="/transactions" element={<TransactionIndex />} />
+                    <Route path="/notifications" element={<NotificationIndex />} />
                     <Route path="/admin/fees" element={<AdminFees />} />
                 </Route>
 
