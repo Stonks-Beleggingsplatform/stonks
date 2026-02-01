@@ -17,7 +17,7 @@ use Illuminate\Http\Response;
 
 class SecurityController extends Controller
 {
-    public function all(Request $request): Response
+    public function index(Request $request): Response
     {
         $perPage = (int) $request->query('per_page', 10);
         $perPage = max(1, min(100, $perPage));
@@ -38,7 +38,7 @@ class SecurityController extends Controller
         }
 
         $priceMax = $request->query('price_max');
-        if ($priceMax !== null && is_numeric($priceMax)) {
+        if ($priceMax !== null && is_numeric($priceMax)) { 
             $maxCents = max(0, (int) round(((float) $priceMax) * 100));
             $query->where('price', '<=', $maxCents);
         }
@@ -52,7 +52,7 @@ class SecurityController extends Controller
         return response($securities, 200);
     }
 
-   public function index(string $term, Request $request): Response
+   public function search(string $term, Request $request): Response
     {
         $types = $this->resolveSecurityableTypes($request->query('type'));
 
