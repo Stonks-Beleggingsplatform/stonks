@@ -8,11 +8,16 @@ use App\Models\Order;
 use App\Models\Portfolio;
 use App\Models\Security;
 use App\Models\Transaction;
+use App\Services\Forex\ForexDataService;
 
 class BuyOrderService
 {
     public function execute(Portfolio $portfolio, Security $security, array $data): array
     {
+        $forexDataService = new ForexDataService;
+        $portfolio->load('currency');
+        $security->load('exchange.currency');
+
         $portfolioCash = (int) ($portfolio->cash * 100);
         $is_limit_order = $data['type'] === OrderType::LIMIT->value;
         $limit_price_cents = $is_limit_order ? (int) round($data['limit_price'] * 100) : 0;
@@ -45,7 +50,15 @@ class BuyOrderService
             abort(422, 'Invalid price');
         }
 
-        $subtotal = $data['quantity'] * $price;
+        $exchangeRate = 1.0;
+        $convertedPrice = $price;
+
+        if ($portfolio->currency->id !== $security->exchange->currency->id) {
+            $convertedPrice = $forexDataService->convert($security->exchange->currency, $portfolio->currency, $price);
+            $exchangeRate = $convertedPrice / $price;
+        }
+
+        $subtotal = $data['quantity'] * $convertedPrice;
         $fee = (int) round($subtotal * 0.002);
         $totalRequired = $subtotal + $fee;
 
@@ -81,15 +94,15 @@ class BuyOrderService
                 'portfolio_id' => $portfolio->id,
                 'security_id' => $security->id,
                 'quantity' => $data['quantity'],
-                'purchase_price' => $price,
-                'avg_price' => $price,
+                'purchase_price' => $convertedPrice,
+                'avg_price' => $convertedPrice,
                 'gain_loss' => 0,
             ]);
         } else {
             $oldQty = (int) $holding->quantity;
             $newQty = $oldQty + (int) $data['quantity'];
-            $oldAvg = (float) ($holding->avg_price ?? $price);
-            $newAvg = (int) round((($oldQty * $oldAvg) + ($data['quantity'] * $price)) / max(1, $newQty));
+            $oldAvg = (float) ($holding->avg_price ?? $convertedPrice);
+            $newAvg = (int) round((($oldQty * $oldAvg) + ($data['quantity'] * $convertedPrice)) / max(1, $newQty));
 
             $holding->quantity = $newQty;
             $holding->avg_price = $newAvg;
@@ -102,7 +115,7 @@ class BuyOrderService
             'type' => 'buy',
             'amount' => $data['quantity'],
             'price' => $price,
-            'exchange_rate' => null,
+            'exchange_rate' => $exchangeRate,
         ]);
 
         return [
