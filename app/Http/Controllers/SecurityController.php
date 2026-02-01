@@ -10,7 +10,6 @@ use App\Models\Bond;
 use App\Models\Crypto;
 use App\Models\Security;
 use App\Models\Stock;
-use App\Services\SecurityData\SecurityDataService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
@@ -21,13 +20,13 @@ class SecurityController extends Controller
     {
         $perPage = (int) $request->query('per_page', 10);
         $perPage = max(1, min(100, $perPage));
-    
+
         $types = $this->resolveSecurityableTypes($request->query('type'));
-    
+
         $query = Security::with(['securityable', 'exchange.currency'])
             ->orderBy('price', 'asc');
-    
-        if (!empty($types)) {
+
+        if (! empty($types)) {
             $query->whereIn('securityable_type', $types);
         }
 
@@ -38,31 +37,31 @@ class SecurityController extends Controller
         }
 
         $priceMax = $request->query('price_max');
-        if ($priceMax !== null && is_numeric($priceMax)) { 
+        if ($priceMax !== null && is_numeric($priceMax)) {
             $maxCents = max(0, (int) round(((float) $priceMax) * 100));
             $query->where('price', '<=', $maxCents);
         }
-    
+
         $securities = $query->paginate($perPage);
-    
+
         $securities->setCollection(
             SecurityDTO::collection($securities->getCollection())
         );
-    
+
         return response($securities, 200);
     }
 
-   public function search(string $term, Request $request): Response
+    public function search(string $term, Request $request): Response
     {
         $types = $this->resolveSecurityableTypes($request->query('type'));
 
         $query = Security::with(['securityable', 'exchange.currency'])
             ->where(function ($q) use ($term) {
                 $q->where('ticker', 'like', "%{$term}%")
-                ->orWhere('name', 'like', "%{$term}%");
+                    ->orWhere('name', 'like', "%{$term}%");
             });
 
-        if (!empty($types)) {
+        if (! empty($types)) {
             $query->whereIn('securityable_type', $types);
         }
 
@@ -122,23 +121,21 @@ class SecurityController extends Controller
     }
 
     private function resolveSecurityableTypes($input): array
-{
-    $map = [
-        'crypto' => \App\Models\Crypto::class,
-        'stock'  => \App\Models\Stock::class,
-        'bond'   => \App\Models\Bond::class,
-    ];
+    {
+        $map = [
+            'crypto' => \App\Models\Crypto::class,
+            'stock' => \App\Models\Stock::class,
+            'bond' => \App\Models\Bond::class,
+        ];
 
-    if (empty($input)) {
-        return [];
+        if (empty($input)) {
+            return [];
+        }
+
+        $types = is_array($input) ? $input : [$input];
+
+        return array_values(array_unique(
+            array_map(fn ($t) => $map[$t] ?? $t, $types)
+        ));
     }
-
-    $types = is_array($input) ? $input : [$input];
-
-    return array_values(array_unique(
-        array_map(fn ($t) => $map[$t] ?? $t, $types)
-    ));
-}
-
-    
 }
