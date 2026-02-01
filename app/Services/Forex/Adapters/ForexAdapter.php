@@ -19,7 +19,7 @@ class ForexAdapter implements ForexDataAdapter
 
     public function getExchangeRate(Currency $sourceCurrency, Currency $targetCurrency): ?float
     {
-        if ($sourceCurrency->symbol === $targetCurrency->symbol) {
+        if ($sourceCurrency->id === $targetCurrency->id) {
             return 1.0;
         }
 
@@ -28,7 +28,7 @@ class ForexAdapter implements ForexDataAdapter
             return null;
         }
 
-        $url = "https://api.apilayer.com/fixer/latest?symbols={$targetCurrency->symbol}&base={$sourceCurrency->symbol}";
+        $url = "https://api.apilayer.com/fixer/latest?symbols={$targetCurrency->name}&base={$sourceCurrency->name}";
 
         try {
             $response = Http::withHeaders([
@@ -38,10 +38,10 @@ class ForexAdapter implements ForexDataAdapter
             if ($response->successful()) {
                 $data = $response->json();
 
-                if (isset($data['rates'][$targetCurrency->symbol])) {
-                    return (float) $data['rates'][$targetCurrency->symbol];
+                if (isset($data['rates'][$targetCurrency->name])) {
+                    return (float) $data['rates'][$targetCurrency->name];
                 } else {
-                    Log::warning("Fixer API: Rate for {$sourceCurrency->symbol} to {$targetCurrency->symbol} not found in response.", ['response' => $data]);
+                    Log::warning("Fixer API: Rate for {$sourceCurrency->name} to {$targetCurrency->name} not found in response.", ['response' => $data]);
                     return null;
                 }
             } else {
