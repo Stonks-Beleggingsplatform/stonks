@@ -43,4 +43,9 @@ class Portfolio extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
 }
