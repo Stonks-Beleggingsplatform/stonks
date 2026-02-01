@@ -20,6 +20,7 @@ import AdminFees from './components/AdminFees';
 import { useAuth } from './context/AuthContext';
 import Dashboard from './components/Dashboard';
 import Deposit from './components/Deposit';
+import Markets from './components/Markets';
 import NotificationIndex from './components/Notification/NotificationIndex';
 
 function App() {
@@ -57,6 +58,7 @@ function AppRoutes() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/deposit" element={<Deposit />} />
                     <Route path="/portfolio" element={<Portfolio />} />
+                    <Route path="/markets" element={<Markets />} />
                     <Route path="/securities/:ticker" element={<SecurityShow />} />
                     <Route path="/stocks/:ticker" element={<StockShow />} />
                     <Route path="/watchlists" element={<WatchlistIndex />} />
