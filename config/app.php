@@ -131,7 +131,7 @@ return [
     'alphavantage_api' => [
         'key' => env('ALPHAVANTAGE_API_KEY', 'demo'),
     ],
-    
+
     'forex_api' => [
         'key' => env('FOREX_API_KEY', 'demo'),
     ],

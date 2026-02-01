@@ -1,10 +1,10 @@
 <?php
 
 namespace Tests\Feature\Services;
+
+use App\Models\Currency;
 use App\Services\Forex\Adapters\MockForexAdapter;
 use App\Services\Forex\ForexDataService;
-use App\Models\Currency;
-
 
 beforeEach(function () {
     $this->service = new ForexDataService(

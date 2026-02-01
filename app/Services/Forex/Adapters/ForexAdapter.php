@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class ForexAdapter implements ForexDataAdapter
 {
-
     private ?string $apiKey;
 
     public function __construct()
@@ -25,6 +24,7 @@ class ForexAdapter implements ForexDataAdapter
 
         if (empty($this->apiKey)) {
             Log::error('Fixer API Key is not set for ForexAdapter.');
+
             return null;
         }
 
@@ -42,14 +42,17 @@ class ForexAdapter implements ForexDataAdapter
                     return (float) $data['rates'][$targetCurrency->name];
                 } else {
                     Log::warning("Fixer API: Rate for {$sourceCurrency->name} to {$targetCurrency->name} not found in response.", ['response' => $data]);
+
                     return null;
                 }
             } else {
                 Log::error("Fixer API Request Failed: {$response->status()}", ['response' => $response->body()]);
+
                 return null;
             }
         } catch (\Throwable $e) {
             Log::error("Fixer API Exception: {$e->getMessage()}", ['exception' => $e]);
+
             return null;
         }
     }
